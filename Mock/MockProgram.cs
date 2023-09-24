@@ -29,6 +29,7 @@ public class MockProgram : IDisposable
     private ImGuiController _controller;
     private Vector3 _clearColor = new Vector3(0.45f, 0.55f, 0.6f);
     private MockPluginInterfaceService _mockPluginInterfaceService;
+    private IPluginInterfaceService _pluginInterfaceService;
     private MockService? _mockService;
     private IMockPlugin? _mockPlugin;    
     
@@ -37,7 +38,7 @@ public class MockProgram : IDisposable
     public CommandList CommandList => _commandList;
     public ImGuiController Controller => _controller;
     public MockService MockService => _mockService;
-    public MockPluginInterfaceService MockPluginInterfaceService => _mockPluginInterfaceService;
+    private Dictionary<Type, object> _extraServices = new Dictionary<Type, object>();
     
     public MockProgram(IServiceContainer serviceContainer)
     {
@@ -98,6 +99,11 @@ public class MockProgram : IDisposable
     {
         _mockPlugin = mockPlugin;
     }
+
+    public void AddService(Type interfaceType, object mockObject)
+    {
+        _extraServices.Add(interfaceType, mockObject);
+    }
     
     
     public bool StartPlugin()
@@ -111,16 +117,25 @@ public class MockProgram : IDisposable
             {
                 PanicOnSheetChecksumMismatch = false
             });
-            var configFile = Path.Combine(configDirectory, internalName + ".json");        
-            var configFolder = Path.Combine(configDirectory,internalName);
+            var configFile = Path.Combine(configDirectory, internalName + ".json");
+            var configFolder = Path.Combine(configDirectory, internalName);
             _mockPluginInterfaceService = new MockPluginInterfaceService(this, new FileInfo(configFile),
                 new DirectoryInfo(configFolder));
-            _mockService ??= new MockService(this,_serviceContainer, _gameData,
-                ClientLanguage.English, _seriLog);
+            _pluginInterfaceService = _mockPluginInterfaceService;
+            if (_mockService == null)
+            {
+                _mockService = new MockService(this, _serviceContainer, _mockPluginInterfaceService, _gameData,
+                    ClientLanguage.English, _seriLog);
+                _mockService.BuildMockServices(_extraServices);
+                _mockService.InjectMockServices();
+            }
+            else
+            {
+                _serviceContainer.PluginInterfaceService = _pluginInterfaceService;
+            }
             _mockPlugin.Start(this, _mockService, _mockPluginInterfaceService);
             return true;
         }
-
         return false;
     }
 

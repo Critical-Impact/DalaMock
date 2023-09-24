@@ -33,7 +33,6 @@ static void Main(string[] args)
     if (MockPlugin != null)
     {
         MockPlugin.Dispose();
-        ConfigurationManager.Save();
     }
 
     _program.Dispose();

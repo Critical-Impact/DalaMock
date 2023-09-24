@@ -1,4 +1,4 @@
-using CriticalCommonLib;
+using DalaMock.Interfaces;
 using Dalamud;
 using Dalamud.Plugin.Services;
 using Lumina;
@@ -9,6 +9,7 @@ namespace DalaMock.Dalamud;
 public class MockService
 {
     private MockContainer _mockContainer;
+    private readonly IServiceContainer _serviceContainer;
     private readonly MockProgram _mockProgram;
     private readonly MockPluginInterfaceService _mockPluginInterfaceService;
     private readonly GameData _gameData;
@@ -44,8 +45,9 @@ public class MockService
     
     public MockGameGui MockGameGui => _mockGameGui;
 
-    public MockService(MockProgram mockProgram, GameData gameData, ClientLanguage clientLanguage, ILogger log)
+    public MockService(MockProgram mockProgram, IServiceContainer serviceContainer, GameData gameData, ClientLanguage clientLanguage, ILogger log)
     {
+        _serviceContainer = serviceContainer;
         _mockProgram = mockProgram;
         _gameData = gameData;
         _clientLanguage = clientLanguage;
@@ -73,16 +75,6 @@ public class MockService
         _mockContainer.AddInstance(typeof(ICommandManager), _mockCommandManager);
         _mockContainer.AddInstance(typeof(ITextureProvider), _textureProvider);
         _mockContainer.AddInstance(typeof(IGameGui), _mockGameGui);
-        _mockContainer.Create<Service>();
-        
-        MockContainer mockContainer = new MockContainer(_mockPluginLog);
-        mockContainer.AddInstance(typeof(IClientState), _mockClientState);
-        mockContainer.AddInstance(typeof(IDataManager), _mockDataManager);
-        mockContainer.AddInstance(typeof(IFramework), _mockFramework);
-        mockContainer.AddInstance(typeof(IKeyState), _mockKeyState);
-        mockContainer.AddInstance(typeof(ICommandManager), _mockCommandManager);
-        mockContainer.AddInstance(typeof(ITextureProvider), _textureProvider);
-        mockContainer.AddInstance(typeof(IGameGui), _mockGameGui);
-        mockContainer.Create<Service>();        
+        _mockContainer.Create<IServiceContainer>(_serviceContainer);
     }
 }

@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.Serialization;
+using DalaMock.Interfaces;
 using Dalamud.IoC;
 using Dalamud.Plugin.Services;
 
@@ -22,6 +23,10 @@ public class MockContainer
     public T? Create<T>(params object[] scopedObjects) where T : class
     {
         return (T) this.CreateSync(typeof (T), this.GetPublicIocScopes((IEnumerable<object>) scopedObjects));
+    }
+    public T? Create<T>(IServiceContainer serviceContainer, params object[] scopedObjects) where T : class
+    {
+        return (T) this.CreateSync(serviceContainer.GetType(), this.GetPublicIocScopes((IEnumerable<object>) scopedObjects));
     }
 
 

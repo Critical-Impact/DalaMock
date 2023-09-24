@@ -20,13 +20,9 @@ namespace DalaMock;
 
 public class MockProgram : IDisposable
 {
+    private readonly IServiceContainer _serviceContainer;
     private GameData? _gameData;
-    public Sdl2Window Window => _window;
-    public GraphicsDevice GraphicsDevice => _graphicsDevice;
-    public CommandList CommandList => _commandList;
-    public ImGuiController Controller => _controller;
     private Logger _seriLog;
-
     private Sdl2Window _window;
     private GraphicsDevice _graphicsDevice;
     private CommandList _commandList;
@@ -34,13 +30,18 @@ public class MockProgram : IDisposable
     private Vector3 _clearColor = new Vector3(0.45f, 0.55f, 0.6f);
     private MockPluginInterfaceService _mockPluginInterfaceService;
     private MockService? _mockService;
-    private IMockPlugin? _mockPlugin;
-
+    private IMockPlugin? _mockPlugin;    
+    
+    public Sdl2Window Window => _window;
+    public GraphicsDevice GraphicsDevice => _graphicsDevice;
+    public CommandList CommandList => _commandList;
+    public ImGuiController Controller => _controller;
     public MockService MockService => _mockService;
     public MockPluginInterfaceService MockPluginInterfaceService => _mockPluginInterfaceService;
     
-    public MockProgram()
+    public MockProgram(IServiceContainer serviceContainer)
     {
+        _serviceContainer = serviceContainer;
         var levelSwitch = new LoggingLevelSwitch
         {
             MinimumLevel = LogEventLevel.Verbose,
@@ -114,7 +115,7 @@ public class MockProgram : IDisposable
             var configFolder = Path.Combine(configDirectory,internalName);
             _mockPluginInterfaceService = new MockPluginInterfaceService(this, new FileInfo(configFile),
                 new DirectoryInfo(configFolder));
-            _mockService ??= new MockService(this, _gameData,
+            _mockService ??= new MockService(this,_serviceContainer, _gameData,
                 ClientLanguage.English, _seriLog);
             _mockPlugin.Start(this, _mockService, _mockPluginInterfaceService);
             return true;

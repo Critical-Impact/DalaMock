@@ -81,8 +81,4 @@
         <EmbeddedResource Include="Shaders/Metal/imgui-frag.metallib" LogicalName="imgui-frag.metallib" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\OtterGui\OtterGui.csproj" />
-    </ItemGroup>
-
 </Project>

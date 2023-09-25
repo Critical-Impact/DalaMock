@@ -64,7 +64,7 @@ public class MockService
         _mockFramework = new MockFramework();
         _mockKeyState = new MockKeyState(_mockProgram.Window);
         _mockCommandManager = new MockCommandManager(_mockPluginLog,_clientLanguage);
-        _mockTextureManger = new MockTextureManager(_mockProgram.GraphicsDevice,_mockProgram.Controller, _mockFramework, _mockDataManager, _clientLanguage );
+        _mockTextureManger = new MockTextureManager(_mockProgram.GraphicsDevice,_mockProgram.Controller, _mockFramework, _mockDataManager, _clientLanguage, _mockPluginLog );
         _textureProvider = new MockTextureProvider(_mockTextureManger);
         _mockGameGui = new MockGameGui();
         _mockChatGui = new MockChatGui();
@@ -78,6 +78,7 @@ public class MockService
         _mockContainer.AddInstance(typeof(ITextureProvider), _textureProvider);
         _mockContainer.AddInstance(typeof(IGameGui), _mockGameGui);
         _mockContainer.AddInstance(typeof(IChatGui), _mockChatGui);
+        _mockContainer.AddInstance(typeof(IPluginLog), _mockPluginLog);
         _mockContainer.AddInstance(typeof(IPluginInterfaceService), _mockPluginInterfaceService);
         if (extraServices != null)
         {

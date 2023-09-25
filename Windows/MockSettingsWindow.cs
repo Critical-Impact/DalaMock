@@ -1,10 +1,9 @@
 using System.Numerics;
 using DalaMock;
 using DalaMock.Configuration;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using OtterGui;
-using OtterGui.Raii;
 
 namespace InventoryToolsMock;
 
@@ -40,7 +39,12 @@ public class MockSettingsWindow : Window
                 }
             }
 
-            ImGuiUtil.HoverTooltip("Must be the game/sqpack directory");
+            var tooltip = "Must be the game/sqpack directory";
+            if (tooltip.Length > 0 && ImGui.IsItemHovered(ImGuiHoveredFlags.None))
+            {
+                using var tt = ImRaii.Tooltip();
+                ImGui.TextUnformatted(tooltip);
+            }
 
             if (gamePath != "" && !Directory.Exists(gamePath))
             {

@@ -18,6 +18,7 @@ public class MockPluginInterfaceService : IPluginInterfaceService
     }
     public event Action? Draw;
     public event Action? OpenConfigUi;
+    public event Action? OpenMainUi;
     public FileInfo ConfigFile { get; }
     public DirectoryInfo ConfigDirectory { get; }
 

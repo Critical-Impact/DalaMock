@@ -9,6 +9,8 @@ public interface IPluginInterfaceService
     public event Action? Draw;
 
     public event Action OpenConfigUi;
+    
+    public event Action OpenMainUi;
     FileInfo ConfigFile { get; }
     
     DirectoryInfo ConfigDirectory { get; }

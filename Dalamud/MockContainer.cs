@@ -8,11 +8,11 @@ namespace DalaMock.Dalamud;
 
 public class MockContainer
 {
-    private readonly IPluginLog _pluginLog;
+    private readonly IPluginLog _log;
 
-    public MockContainer(IPluginLog pluginLog)
+    public MockContainer(IPluginLog log)
     {
-        _pluginLog = pluginLog;
+        _log = log;
     }
     
     private object[] GetPublicIocScopes(IEnumerable<object> scopedObjects) => scopedObjects.Append<object>((object) this).ToArray<object>();
@@ -53,7 +53,7 @@ public class MockContainer
       ConstructorInfo? ctor = this.FindApplicableCtor(objectType, scopedObjects);
       if (ctor == null)
       {
-        _pluginLog.Error("Failed to create {TypeName}, an eligible ctor with satisfiable services could not be found", (object) objectType.FullName);
+        _log.Error("Failed to create {TypeName}, an eligible ctor with satisfiable services could not be found", (object) objectType.FullName);
         return (object) null;
       }
       List<Type> list = ((IEnumerable<ParameterInfo>) ctor.GetParameters()).Select<ParameterInfo, Type>((Func<ParameterInfo, Type>) (p => (p.ParameterType))).ToList<Type>();
@@ -62,19 +62,19 @@ public class MockContainer
       {
         object service = this.GetService(p, scopedObjects);
         if (service == null)
-          _pluginLog.Error("Requested ctor service type {TypeName} was not available (null)", (object) p.FullName);
+          _log.Error("Requested ctor service type {TypeName} was not available (null)", (object) p.FullName);
         return service;
       })).ToArray();
       
       if (((IEnumerable<object>) resolvedParams).Any<object>((Func<object, bool>) (p => p == null)))
       {
-        _pluginLog.Error("Failed to create {TypeName}, a requested service type could not be satisfied", (object) objectType.FullName);
+        _log.Error("Failed to create {TypeName}, a requested service type could not be satisfied", (object) objectType.FullName);
         return (object) null;
       }
       object instance = FormatterServices.GetUninitializedObject(objectType);
       if (!this.InjectProperties(instance, scopedObjects))
       {
-        _pluginLog.Error("Failed to create {TypeName}, a requested property service type could not be satisfied", (object) objectType.FullName);
+        _log.Error("Failed to create {TypeName}, a requested property service type could not be satisfied", (object) objectType.FullName);
         return (object) null;
       }
       ctor.Invoke(instance, resolvedParams);
@@ -105,7 +105,7 @@ public class MockContainer
                 flag = IsTypeValid(type);
             if (!flag)
             {
-                _pluginLog.Error("Failed to validate {TypeName}, unable to find any services that satisfy the type", (object) parameter.ParameterType.FullName);
+                _log.Error("Failed to validate {TypeName}, unable to find any services that satisfy the type", (object) parameter.ParameterType.FullName);
                 return false;
             }
         }
@@ -133,7 +133,7 @@ public class MockContainer
             object service = GetService(prop.Item1.PropertyType, publicScopes);
             if (service == null)
             {
-                _pluginLog.Error("Requested service type {TypeName} was not available (null)",
+                _log.Error("Requested service type {TypeName} was not available (null)",
                     prop.Item1.PropertyType.FullName);
                 //For the sake of mocking, log the error but continue trying to inject other properties
                 continue;

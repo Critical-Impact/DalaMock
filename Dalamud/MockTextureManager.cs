@@ -22,19 +22,21 @@ public class MockTextureManager
     private readonly IFramework framework;
     private readonly IDataManager dataManager;
     private readonly ClientLanguage _clientLanguage;
+    private readonly IPluginLog _log;
 
     private readonly Dictionary<string, TextureInfo> activeTextures = new();
     private const uint MillisecondsEvictionTime = 2000;
 
     private IDalamudTextureWrap? fallbackTextureWrap;
 
-    public MockTextureManager(GraphicsDevice graphicsDevice, ImGuiController controller, IFramework framework, IDataManager dataManager, ClientLanguage clientLanguage)
+    public MockTextureManager(GraphicsDevice graphicsDevice, ImGuiController controller, IFramework framework, IDataManager dataManager, ClientLanguage clientLanguage, IPluginLog log)
     {
         _graphicsDevice = graphicsDevice;
         _controller = controller;
         this.framework = framework;
         this.dataManager = dataManager;
         _clientLanguage = clientLanguage;
+        _log = log;
 
         this.framework.Update += this.FrameworkOnUpdate;
 
@@ -313,13 +315,13 @@ public class MockTextureManager
             // TODO: We could support this, but I don't think it's worth it at the moment.
             var extents = new Vector2(wrap.Width, wrap.Height);
             if (info.Extents != Vector2.Zero && info.Extents != extents)
-                PluginLog.Warning("Texture at {Path} changed size between reloads, this is currently not supported.", path);
+                _log.Warning("Texture at {Path} changed size between reloads, this is currently not supported.", path);
 
             info.Extents = extents;
         }
         catch (Exception e)
         {
-            PluginLog.Error(e, "Could not load texture from {Path}", path);
+            _log.Error(e, "Could not load texture from {Path}", path);
 
             // When creating the texture initially, we want to be able to pass errors back to the plugin
             if (rethrow)
@@ -379,7 +381,7 @@ public class MockTextureManager
         {
             if (!this.activeTextures.TryGetValue(path, out var info))
             {
-                PluginLog.Warning("Disposing texture that didn't exist: {Path}", path);
+                _log.Warning("Disposing texture that didn't exist: {Path}", path);
                 return;
             }
             
@@ -435,7 +437,7 @@ public class MockTextureManager
             {
                 if (texInfo.Value.RefCount == 0)
                 {
-                    PluginLog.Verbose("Evicting {Path} since no refs", texInfo.Key);
+                    _log.Verbose("Evicting {Path} since no refs", texInfo.Key);
 
                     Debug.Assert(texInfo.Value.KeepAliveCount == 0, "texInfo.Value.KeepAliveCount == 0");
                     
@@ -450,7 +452,7 @@ public class MockTextureManager
 
                 if (DateTime.UtcNow - texInfo.Value.LastAccess > TimeSpan.FromMilliseconds(MillisecondsEvictionTime))
                 {
-                    PluginLog.Verbose("Evicting {Path} since too old", texInfo.Key);
+                    _log.Verbose("Evicting {Path} since too old", texInfo.Key);
                     texInfo.Value.Wrap.Dispose();
                     texInfo.Value.Wrap = null;
                 }

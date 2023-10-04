@@ -1,4 +1,4 @@
-namespace DalaMock.Interfaces;
+namespace DalaMock.Shared.Interfaces;
 
 public interface IServiceContainer
 {

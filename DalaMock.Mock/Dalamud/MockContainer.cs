@@ -1,6 +1,6 @@
 using System.Reflection;
 using System.Runtime.Serialization;
-using DalaMock.Interfaces;
+using DalaMock.Shared.Interfaces;
 using Dalamud.IoC;
 using Dalamud.Plugin.Services;
 

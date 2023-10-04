@@ -1,8 +1,7 @@
 using Dalamud.Interface.Internal;
 using Dalamud.Plugin.Ipc;
-using ImGuiScene;
 
-namespace DalaMock.Interfaces;
+namespace DalaMock.Shared.Interfaces;
 
 public interface IPluginInterfaceService
 {

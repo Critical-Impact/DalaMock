@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using Dalamud;
 using Dalamud.Game.Command;
-using Dalamud.Logging;
 using Dalamud.Plugin.Services;
 
 namespace DalaMock.Dalamud;

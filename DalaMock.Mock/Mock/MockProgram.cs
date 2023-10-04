@@ -2,21 +2,20 @@ using System.Reflection;
 using DalaMock.Configuration;
 using DalaMock.Dalamud;
 using DalaMock.Interfaces;
-using DalaMock.Mock;
+using DalaMock.Shared.Interfaces;
 using Dalamud;
 using Dalamud.Interface.Utility;
 using ImGuiNET;
-using InventoryToolsMock;
 using Lumina;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using SharpDX;
 using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
+using Vector3 = System.Numerics.Vector3;
 
-namespace DalaMock;
+namespace DalaMock.Mock;
 
 public class MockProgram : IDisposable
 {

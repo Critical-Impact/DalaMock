@@ -1,4 +1,5 @@
-using DalaMock.Interfaces;
+using DalaMock.Mock;
+using DalaMock.Shared.Interfaces;
 using Dalamud.Interface.Internal;
 using Dalamud.Plugin.Ipc;
 using StbiSharp;

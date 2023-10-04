@@ -5,11 +5,15 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <RootNamespace>DalaMock</RootNamespace>
     </PropertyGroup>
 
 
     <PropertyGroup>
-        <DalamudLibPath>$(AppData)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+        <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+        <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('Linux'))">$(HOME)/.xlcore/dalamud/Hooks/dev/</DalamudLibPath>
+        <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(HOME)/Library/Application Support/XIV on Mac/dalamud/Hooks/dev/</DalamudLibPath>
+        <DalamudLibPath Condition="$(DALAMUD_HOME) != ''">$(DALAMUD_HOME)/</DalamudLibPath>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -46,10 +50,10 @@
             <Private>True</Private>
         </Reference>
         <Reference Include="SharpDX.Mathematics">
-          <HintPath>..\..\..\..\AppData\Roaming\XIVLauncher\addon\Hooks\dev\SharpDX.Mathematics.dll</HintPath>
+          <HintPath>$(DalamudLibPath)SharpDX.Mathematics.dll</HintPath>
         </Reference>
         <Reference Include="StbiSharp">
-            <HintPath>..\..\..\..\AppData\Roaming\XIVLauncher\addon\Hooks\dev\StbiSharp.dll</HintPath>
+            <HintPath>$(DalamudLibPath)StbiSharp.dll</HintPath>
         </Reference>
     </ItemGroup>
 
@@ -79,6 +83,10 @@
         <EmbeddedResource Include="Shaders/SPIR-V/imgui-frag.spv" LogicalName="imgui-frag.spv" />
         <EmbeddedResource Include="Shaders/Metal/imgui-vertex.metallib" LogicalName="imgui-vertex.metallib" />
         <EmbeddedResource Include="Shaders/Metal/imgui-frag.metallib" LogicalName="imgui-frag.metallib" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DalaMock.Shared\DalaMock.Shared.csproj" />
     </ItemGroup>
 
 </Project>

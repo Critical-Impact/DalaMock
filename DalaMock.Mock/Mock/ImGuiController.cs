@@ -1,8 +1,10 @@
 ﻿using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using DalaMock.Extensions;
 using ImGuiNET;
 using Veldrid;
+using Veldrid.Sdl2;
 
 namespace DalaMock.Mock
 {
@@ -293,6 +295,8 @@ namespace DalaMock.Mock
             }
         }
 
+        private ImGuiMouseCursor? _mouseCursor;
+
         /// <summary>
         /// Updates ImGui input and IO configuration state.
         /// </summary>
@@ -358,6 +362,13 @@ namespace DalaMock.Mock
             io.MouseDown[2] = middlePressed || snapshot.IsMouseDown(MouseButton.Middle);
             io.MousePos = mousePosition;
             io.MouseWheel = snapshot.WheelDelta;
+            
+            if (_mouseCursor != ImGui.GetMouseCursor())
+            {
+                _mouseCursor = ImGui.GetMouseCursor();
+                var nativeCursor = Sdl2Native.SDL_CreateSystemCursor(_mouseCursor.Value.ToSdlCursor());
+                Sdl2Native.SDL_SetCursor(nativeCursor);
+            }
 
             IReadOnlyList<char> keyCharPresses = snapshot.KeyCharPresses;
             for (int i = 0; i < keyCharPresses.Count; i++)

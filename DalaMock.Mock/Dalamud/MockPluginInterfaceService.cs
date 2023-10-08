@@ -1,6 +1,12 @@
 using DalaMock.Mock;
 using DalaMock.Shared.Interfaces;
+using Dalamud.Configuration;
+using Dalamud.Game.Text;
+using Dalamud.Game.Text.Sanitizer;
+using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface.Internal;
+using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
 using StbiSharp;
 using Veldrid;
@@ -20,7 +26,68 @@ public class MockPluginInterfaceService : IPluginInterfaceService
     public event Action? Draw;
     public event Action? OpenConfigUi;
     public event Action? OpenMainUi;
+    public event DalamudPluginInterface.LanguageChangedDelegate? LanguageChanged;
+    public event DalamudPluginInterface.ActivePluginsChangedDelegate? ActivePluginsChanged;
+
+    public PluginLoadReason Reason => throw new NotImplementedException();
+
+    public bool IsAutoUpdateComplete => throw new NotImplementedException();
+
+    public string SourceRepository => throw new NotImplementedException();
+
+    public string InternalName => throw new NotImplementedException();
+
+    public bool IsDev => throw new NotImplementedException();
+
+    public bool IsTesting => throw new NotImplementedException();
+
+    public DateTime LoadTime => throw new NotImplementedException();
+
+    public DateTime LoadTimeUTC => throw new NotImplementedException();
+
+    public TimeSpan LoadTimeDelta => throw new NotImplementedException();
+
+    public DirectoryInfo DalamudAssetDirectory => throw new NotImplementedException();
+
     public FileInfo ConfigFile { get; }
+
+    public bool IsDevMenuOpen => throw new NotImplementedException();
+
+    public bool IsDebugging => throw new NotImplementedException();
+
+    public string UiLanguage => throw new NotImplementedException();
+
+    public ISanitizer Sanitizer => throw new NotImplementedException();
+
+    public XivChatType GeneralChatType => throw new NotImplementedException();
+
+    public IEnumerable<InstalledPluginState> InstalledPlugins => throw new NotImplementedException();
+
+    public bool OpenPluginInstaller()
+    {
+        throw new NotImplementedException();
+    }
+
+    public T GetOrCreateData<T>(string tag, Func<T> dataGenerator) where T : class
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RelinquishData(string tag)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool TryGetData<T>(string tag, out T? data) where T : class
+    {
+        throw new NotImplementedException();
+    }
+
+    public T? GetData<T>(string tag) where T : class
+    {
+        throw new NotImplementedException();
+    }
+
     public DirectoryInfo ConfigDirectory { get; }
 
     public FileInfo AssemblyLocation
@@ -149,8 +216,53 @@ public class MockPluginInterfaceService : IPluginInterfaceService
         throw new NotImplementedException();
     }
 
-    public void Dispose()
+    public void SavePluginConfig(IPluginConfiguration? currentConfig)
     {
         throw new NotImplementedException();
+    }
+
+    public IPluginConfiguration? GetPluginConfig()
+    {
+        throw new NotImplementedException();
+    }
+
+    public string GetPluginConfigDirectory()
+    {
+        throw new NotImplementedException();
+    }
+
+    public string GetPluginLocDirectory()
+    {
+        throw new NotImplementedException();
+    }
+
+    public DalamudLinkPayload AddChatLinkHandler(uint commandId, Action<uint, SeString> commandAction)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveChatLinkHandler(uint commandId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveChatLinkHandler()
+    {
+        throw new NotImplementedException();
+    }
+
+    public T? Create<T>(params object[] scopedObjects) where T : class
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool Inject(object instance, params object[] scopedObjects)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Dispose()
+    {
+
     }
 }

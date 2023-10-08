@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Reflection;
 using DalaMock.Configuration;
 using DalaMock.Dalamud;

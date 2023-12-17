@@ -26,6 +26,10 @@ public class MockChatGui : IChatGui
     public void PrintError(SeString message, string? messageTag = null, ushort? tagColor = null)
     {
     }
+    public IReadOnlyDictionary<(string PluginName, uint CommandId), Action<uint, SeString>> RegisteredLinkHandlers
+    {
+        get;
+    }
 
     public int LastLinkedItemId { get; }
     public byte LastLinkedItemFlags { get; }

@@ -41,9 +41,10 @@ public class MockService
     public MockGameGui MockGameGui => _mockGameGui;
     public MockCondition MockCondition => _mockCondition;
 
-    public MockService(MockProgram mockProgram, IServiceContainer serviceContainer, MockPluginInterfaceService pluginInterfaceService, GameData gameData, ClientLanguage clientLanguage, ILogger log)
+    public MockService(MockProgram mockProgram, IServiceContainer serviceContainer, MockPluginInterfaceService pluginInterfaceService, MockFramework mockFramework, GameData gameData, ClientLanguage clientLanguage, ILogger log)
     {
         _mockPluginInterfaceService = pluginInterfaceService;
+        _mockFramework = mockFramework;
         _serviceContainer = serviceContainer;
         _mockProgram = mockProgram;
         _gameData = gameData;
@@ -56,7 +57,6 @@ public class MockService
         _mockPluginLog = new MockPluginLog(_log);
         _mockClientState = new MockClientState();
         _mockDataManager = new MockDataManager(_gameData, _clientLanguage);
-        _mockFramework = new MockFramework();
         _mockKeyState = new MockKeyState(_mockProgram.Window);
         _mockCommandManager = new MockCommandManager(_mockPluginLog,_clientLanguage);
         _mockTextureManger = new MockTextureManager(_mockProgram.GraphicsDevice,_mockProgram.Controller, _mockFramework, _mockDataManager, _clientLanguage, _mockPluginLog );

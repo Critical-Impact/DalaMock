@@ -31,7 +31,8 @@ public class MockProgram : IDisposable
     private MockPluginInterfaceService _mockPluginInterfaceService;
     private IPluginInterfaceService _pluginInterfaceService;
     private MockService? _mockService;
-    private IMockPlugin? _mockPlugin;    
+    private IMockPlugin? _mockPlugin;
+    private MockFramework _mockFramework;
     
     public Sdl2Window Window => _window;
     public GraphicsDevice GraphicsDevice => _graphicsDevice;
@@ -43,6 +44,8 @@ public class MockProgram : IDisposable
     public MockProgram(IServiceContainer serviceContainer)
     {
         _serviceContainer = serviceContainer;
+        _mockFramework = new MockFramework();
+        _mockFramework.FireUpdate();
         var levelSwitch = new LoggingLevelSwitch
         {
             MinimumLevel = LogEventLevel.Verbose,
@@ -124,7 +127,7 @@ public class MockProgram : IDisposable
             _pluginInterfaceService = _mockPluginInterfaceService;
             if (_mockService == null)
             {
-                _mockService = new MockService(this, _serviceContainer, _mockPluginInterfaceService, _gameData,
+                _mockService = new MockService(this, _serviceContainer, _mockPluginInterfaceService, _mockFramework, _gameData,
                     ClientLanguage.English, _seriLog);
                 _mockService.BuildMockServices(_extraServices);
                 _mockService.InjectMockServices();

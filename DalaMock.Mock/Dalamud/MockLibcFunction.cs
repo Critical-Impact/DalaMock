@@ -4,15 +4,15 @@ using Dalamud.Plugin.Services;
 
 namespace DalaMock.Dalamud;
 
-public class MockILibcFunction : ILibcFunction
+public class MockLibcFunction : ILibcFunction
 {
     public OwnedStdString NewString(byte[] content)
     {
-        throw new NotImplementedException();
+        return null!;
     }
 
     public OwnedStdString NewString(string content, Encoding? encoding = null)
     {
-        throw new NotImplementedException();
+        return null!;
     }
 }

@@ -39,13 +39,18 @@ public class MockProgram : IDisposable
     public CommandList CommandList => _commandList;
     public ImGuiController Controller => _controller;
     public MockService MockService => _mockService;
+
+    public Logger SeriLog => _seriLog;
+
+    public MockFramework Framework => _mockFramework;
+
     private Dictionary<Type, object> _extraServices = new Dictionary<Type, object>();
     
     public MockProgram(IServiceContainer serviceContainer)
     {
         _serviceContainer = serviceContainer;
         _mockFramework = new MockFramework();
-        _mockFramework.FireUpdate();
+        Framework.FireUpdate();
         var levelSwitch = new LoggingLevelSwitch
         {
             MinimumLevel = LogEventLevel.Verbose,
@@ -127,8 +132,8 @@ public class MockProgram : IDisposable
             _pluginInterfaceService = _mockPluginInterfaceService;
             if (_mockService == null)
             {
-                _mockService = new MockService(this, _serviceContainer, _mockPluginInterfaceService, _mockFramework, _gameData,
-                    ClientLanguage.English, _seriLog);
+                _mockService = new MockService(this, _serviceContainer, _mockPluginInterfaceService, Framework, _gameData,
+                    ClientLanguage.English, SeriLog);
                 _mockService.BuildMockServices(_extraServices);
                 _mockService.InjectMockServices();
             }

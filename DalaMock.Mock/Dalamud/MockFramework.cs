@@ -68,6 +68,8 @@ public class MockFramework : IDisposable, IFramework
     /// <inheritdoc/>
     public DateTime LastUpdateUTC { get; private set; } = DateTime.MinValue;
 
+    public TaskFactory FrameworkThreadTaskFactory { get; }
+
     /// <inheritdoc/>
     public TimeSpan UpdateDelta { get; private set; } = TimeSpan.Zero;
 
@@ -81,6 +83,36 @@ public class MockFramework : IDisposable, IFramework
     /// Gets or sets a value indicating whether to dispatch update events.
     /// </summary>
     internal bool DispatchUpdateEvents { get; set; } = true;
+
+    public TaskFactory GetTaskFactory()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DelayTicks(long numTicks, CancellationToken cancellationToken = new CancellationToken())
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task Run(Action action, CancellationToken cancellationToken = new CancellationToken())
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<T> Run<T>(Func<T> action, CancellationToken cancellationToken = new CancellationToken())
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task Run(Func<Task> action, CancellationToken cancellationToken = new CancellationToken())
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<T> Run<T>(Func<Task<T>> action, CancellationToken cancellationToken = new CancellationToken())
+    {
+        throw new NotImplementedException();
+    }
 
     /// <inheritdoc/>
     public Task<T> RunOnFrameworkThread<T>(Func<T> func) =>

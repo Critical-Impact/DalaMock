@@ -1,6 +1,7 @@
 using DalaMock.Mock;
 using DalaMock.Shared.Interfaces;
 using Dalamud;
+using Dalamud.Game.ClientState.Objects;
 using Dalamud.Plugin.Services;
 using Lumina;
 using ILogger = Serilog.ILogger;
@@ -29,6 +30,13 @@ public class MockService
     private MockGameGui _mockGameGui;
     private MockChatGui _mockChatGui;
     private MockCondition _mockCondition;
+    private MockAddonLifecycle _mockAddonLifecycle;
+    private MockGameInteropProvider _mockGameInteropProvider;
+    private MockLibcFunction _mockLibcFunction;
+    private MockGameNetwork _mockGameNetwork;
+    private MockObjectTable _mockObjectTable;
+    private MockTargetManager _mockTargetManager;
+    private MockToastGui _mockToastGui;
 
     public MockPluginLog MockPluginLog => _mockPluginLog;
     public MockClientState MockClientState => _mockClientState;
@@ -40,6 +48,7 @@ public class MockService
     public MockTextureProvider TextureProvider => _textureProvider;
     public MockGameGui MockGameGui => _mockGameGui;
     public MockCondition MockCondition => _mockCondition;
+    public MockAddonLifecycle MockAddonLifecycle => _mockAddonLifecycle;
 
     public MockService(MockProgram mockProgram, IServiceContainer serviceContainer, MockPluginInterfaceService pluginInterfaceService, MockFramework mockFramework, GameData gameData, ClientLanguage clientLanguage, ILogger log)
     {
@@ -64,6 +73,14 @@ public class MockService
         _mockGameGui = new MockGameGui();
         _mockChatGui = new MockChatGui();
         _mockCondition = new MockCondition();
+        _mockAddonLifecycle = new MockAddonLifecycle();
+        _mockGameInteropProvider = new MockGameInteropProvider();
+        _mockLibcFunction = new MockLibcFunction();
+        _mockGameNetwork = new MockGameNetwork();
+        _mockObjectTable = new MockObjectTable();
+        _mockTargetManager = new MockTargetManager();
+        _mockToastGui = new MockToastGui();
+        
 
         _mockContainer = new MockContainer(_mockPluginLog);
         _mockContainer.AddInstance(typeof(IClientState), _mockClientState);
@@ -76,7 +93,14 @@ public class MockService
         _mockContainer.AddInstance(typeof(IChatGui), _mockChatGui);
         _mockContainer.AddInstance(typeof(IPluginLog), _mockPluginLog);
         _mockContainer.AddInstance(typeof(ICondition), _mockCondition);
+        _mockContainer.AddInstance(typeof(IAddonLifecycle), _mockAddonLifecycle);
+        _mockContainer.AddInstance(typeof(IGameInteropProvider), _mockGameInteropProvider);
+        _mockContainer.AddInstance(typeof(ILibcFunction), _mockLibcFunction);
+        _mockContainer.AddInstance(typeof(IGameNetwork), _mockGameNetwork);
+        _mockContainer.AddInstance(typeof(IObjectTable), _mockObjectTable);
+        _mockContainer.AddInstance(typeof(ITargetManager), _mockTargetManager);
         _mockContainer.AddInstance(typeof(IPluginInterfaceService), _mockPluginInterfaceService);
+        _mockContainer.AddInstance(typeof(IToastGui), _mockToastGui);
         if (extraServices != null)
         {
             foreach (var extraService in extraServices)

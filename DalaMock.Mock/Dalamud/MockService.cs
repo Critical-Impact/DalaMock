@@ -60,16 +60,36 @@ public class MockService
         _clientLanguage = clientLanguage;
         _log = log;
     }
+    
+    public MockService(IServiceContainer serviceContainer, MockPluginInterfaceService pluginInterfaceService, MockFramework mockFramework, GameData gameData, ClientLanguage clientLanguage, ILogger log)
+    {
+        _mockPluginInterfaceService = pluginInterfaceService;
+        _mockFramework = mockFramework;
+        _serviceContainer = serviceContainer;
+        _gameData = gameData;
+        _clientLanguage = clientLanguage;
+        _log = log;
+    }
 
-    internal void BuildMockServices(Dictionary<Type, object>? extraServices = null)
+    public void BuildMockServices(Dictionary<Type, object>? extraServices = null)
     {
         _mockPluginLog = new MockPluginLog(_log);
         _mockClientState = new MockClientState();
         _mockDataManager = new MockDataManager(_gameData, _clientLanguage);
-        _mockKeyState = new MockKeyState(_mockProgram.Window);
+        if (_mockProgram.Window != null)
+        {
+            _mockKeyState = new MockKeyState(_mockProgram.Window);
+        }
+
         _mockCommandManager = new MockCommandManager(_mockPluginLog,_clientLanguage);
-        _mockTextureManger = new MockTextureManager(_mockProgram.GraphicsDevice,_mockProgram.Controller, _mockFramework, _mockDataManager, _clientLanguage, _mockPluginLog );
-        _textureProvider = new MockTextureProvider(_mockTextureManger);
+        if (_mockProgram.GraphicsDevice != null && _mockProgram.Controller != null)
+        {
+            _mockTextureManger = new MockTextureManager(_mockProgram.GraphicsDevice, _mockProgram.Controller,
+                _mockFramework, _mockDataManager, _clientLanguage, _mockPluginLog);
+
+            _textureProvider = new MockTextureProvider(_mockTextureManger);
+        }
+
         _mockGameGui = new MockGameGui();
         _mockChatGui = new MockChatGui();
         _mockCondition = new MockCondition();
@@ -86,9 +106,17 @@ public class MockService
         _mockContainer.AddInstance(typeof(IClientState), _mockClientState);
         _mockContainer.AddInstance(typeof(IDataManager), _mockDataManager);
         _mockContainer.AddInstance(typeof(IFramework), _mockFramework);
-        _mockContainer.AddInstance(typeof(IKeyState), _mockKeyState);
+        if (_mockProgram.Window != null)
+        {
+            _mockContainer.AddInstance(typeof(IKeyState), _mockKeyState);
+        }
+
         _mockContainer.AddInstance(typeof(ICommandManager), _mockCommandManager);
-        _mockContainer.AddInstance(typeof(ITextureProvider), _textureProvider);
+        if (_mockProgram.GraphicsDevice != null && _mockProgram.Controller != null)
+        {
+            _mockContainer.AddInstance(typeof(ITextureProvider), _textureProvider);
+        }
+
         _mockContainer.AddInstance(typeof(IGameGui), _mockGameGui);
         _mockContainer.AddInstance(typeof(IChatGui), _mockChatGui);
         _mockContainer.AddInstance(typeof(IPluginLog), _mockPluginLog);
@@ -110,7 +138,7 @@ public class MockService
         }
     }
 
-    internal void InjectMockServices()
+    public void InjectMockServices()
     {
         _mockContainer?.Create<IServiceContainer>(_serviceContainer);
     }

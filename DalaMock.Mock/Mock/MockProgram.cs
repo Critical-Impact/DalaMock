@@ -21,12 +21,13 @@ namespace DalaMock.Mock;
 public class MockProgram : IDisposable
 {
     private readonly IServiceContainer _serviceContainer;
+    private readonly bool _createWindow;
     private GameData? _gameData;
     private Logger _seriLog;
-    private Sdl2Window _window;
-    private GraphicsDevice _graphicsDevice;
-    private CommandList _commandList;
-    private ImGuiController _controller;
+    private Sdl2Window? _window;
+    private GraphicsDevice? _graphicsDevice;
+    private CommandList? _commandList;
+    private ImGuiController? _controller;
     private Vector3 _clearColor = new Vector3(0.45f, 0.55f, 0.6f);
     private MockPluginInterfaceService _mockPluginInterfaceService;
     private IPluginInterfaceService _pluginInterfaceService;
@@ -34,10 +35,10 @@ public class MockProgram : IDisposable
     private IMockPlugin? _mockPlugin;
     private MockFramework _mockFramework;
     
-    public Sdl2Window Window => _window;
-    public GraphicsDevice GraphicsDevice => _graphicsDevice;
-    public CommandList CommandList => _commandList;
-    public ImGuiController Controller => _controller;
+    public Sdl2Window? Window => _window;
+    public GraphicsDevice? GraphicsDevice => _graphicsDevice;
+    public CommandList? CommandList => _commandList;
+    public ImGuiController? Controller => _controller;
     public MockService MockService => _mockService;
 
     public Logger SeriLog => _seriLog;
@@ -46,9 +47,10 @@ public class MockProgram : IDisposable
 
     private Dictionary<Type, object> _extraServices = new Dictionary<Type, object>();
     
-    public MockProgram(IServiceContainer serviceContainer)
+    public MockProgram(IServiceContainer serviceContainer, bool createWindow = true)
     {
         _serviceContainer = serviceContainer;
+        _createWindow = createWindow;
         _mockFramework = new MockFramework();
         Framework.FireUpdate();
         var levelSwitch = new LoggingLevelSwitch
@@ -65,41 +67,56 @@ public class MockProgram : IDisposable
             BindingFlags.Static | 
             BindingFlags.Public);
         field.SetValue(null, 1);
-            
-        VeldridStartup.CreateWindowAndGraphicsDevice(
-            new WindowCreateInfo(50, 50, 1280, 720, WindowState.Normal, "DalaMock"),
-            new GraphicsDeviceOptions(true, null, true, ResourceBindingModel.Improved, true, true),
-            out _window,
-            out _graphicsDevice);
-        _window.Resized += () =>
-        {
-            _graphicsDevice.MainSwapchain.Resize((uint)_window.Width, (uint)_window.Height);
-            _controller.WindowResized(_window.Width, _window.Height);
-        };
-            
-        _commandList = _graphicsDevice.ResourceFactory.CreateCommandList();
 
-        _controller = new ImGuiController(_graphicsDevice, _graphicsDevice.MainSwapchain.Framebuffer.OutputDescription, _window.Width, _window.Height);
-        var property = typeof(ImGuiHelpers).GetProperty("MainViewport", 
-            BindingFlags.Static | 
-            BindingFlags.Public);
-        property.SetValue(null, ImGui.GetMainViewport());
+        if (createWindow)
+        {
+            VeldridStartup.CreateWindowAndGraphicsDevice(
+                new WindowCreateInfo(50, 50, 1280, 720, WindowState.Normal, "DalaMock"),
+                new GraphicsDeviceOptions(true, null, true, ResourceBindingModel.Improved, true, true),
+                out _window,
+                out _graphicsDevice);
+            _window.Resized += () =>
+            {
+                _graphicsDevice.MainSwapchain.Resize((uint)_window.Width, (uint)_window.Height);
+                _controller!.WindowResized(_window.Width, _window.Height);
+            };
+
+            _commandList = _graphicsDevice.ResourceFactory.CreateCommandList();
+
+            _controller = new ImGuiController(_graphicsDevice,
+                _graphicsDevice.MainSwapchain.Framebuffer.OutputDescription, _window.Width, _window.Height);
+            var property = typeof(ImGuiHelpers).GetProperty("MainViewport",
+                BindingFlags.Static |
+                BindingFlags.Public);
+            property.SetValue(null, ImGui.GetMainViewport());
+        }
     }
 
     public bool PumpEvents(Action preUpdate, Action postUpdate)
     {
-        InputSnapshot snapshot = _window.PumpEvents();
-        if (!_window.Exists) { return false; }
+        if (_createWindow)
+        {
+            InputSnapshot snapshot = _window.PumpEvents();
+            if (!_window.Exists)
+            {
+                return false;
+            }
+
+            preUpdate.Invoke();
+            _controller.Update(1f / 60f, snapshot);
+            postUpdate.Invoke();
+            _commandList.Begin();
+            _commandList.SetFramebuffer(_graphicsDevice.MainSwapchain.Framebuffer);
+            _commandList.ClearColorTarget(0, new RgbaFloat(_clearColor.X, _clearColor.Y, _clearColor.Z, 1f));
+            _controller.Render(_graphicsDevice, _commandList);
+            _commandList.End();
+            _graphicsDevice.SubmitCommands(_commandList);
+            _graphicsDevice.SwapBuffers(_graphicsDevice.MainSwapchain);
+            return true;
+        }
+
         preUpdate.Invoke();
-        _controller.Update(1f / 60f, snapshot);
         postUpdate.Invoke();
-        _commandList.Begin();
-        _commandList.SetFramebuffer(_graphicsDevice.MainSwapchain.Framebuffer);
-        _commandList.ClearColorTarget(0, new RgbaFloat(_clearColor.X, _clearColor.Y, _clearColor.Z, 1f));
-        _controller.Render(_graphicsDevice, _commandList);
-        _commandList.End();
-        _graphicsDevice.SubmitCommands(_commandList);
-        _graphicsDevice.SwapBuffers(_graphicsDevice.MainSwapchain);
         return true;
     }
 
@@ -154,9 +171,9 @@ public class MockProgram : IDisposable
 
     public void Dispose()
     {
-        _graphicsDevice.WaitForIdle();
-        _controller.Dispose();
-        _commandList.Dispose();
-        _graphicsDevice.Dispose();
+        _graphicsDevice?.WaitForIdle();
+        _controller?.Dispose();
+        _commandList?.Dispose();
+        _graphicsDevice?.Dispose();
     }
 }

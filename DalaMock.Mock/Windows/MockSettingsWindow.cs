@@ -1,5 +1,4 @@
 using System.Numerics;
-using DalaMock;
 using DalaMock.Configuration;
 using DalaMock.Mock;
 using Dalamud.Interface.Utility.Raii;

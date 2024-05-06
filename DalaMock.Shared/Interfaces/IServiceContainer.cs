@@ -1,6 +1,6 @@
 namespace DalaMock.Shared.Interfaces;
 
-public interface IServiceContainer
+public interface IServiceContainer : IDisposable
 {
     IPluginInterfaceService PluginInterfaceService { get; set; }
 }

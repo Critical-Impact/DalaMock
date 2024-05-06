@@ -10,6 +10,7 @@ public class MockClientState : IClientState
 {
     public ClientLanguage ClientLanguage { get; }
     public ushort TerritoryType { get; }
+    public uint MapId { get; }
     public PlayerCharacter? LocalPlayer { get; }
     public ulong LocalContentId { get; }
     public bool IsLoggedIn { get; }

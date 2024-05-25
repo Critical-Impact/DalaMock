@@ -86,7 +86,7 @@ jobs:
         uses: actions/setup-dotnet@v4
       - name: Run tests
         run: |
-          export DALAMUD_HOME=${{ env.DALAMUD_HOME }}
+          $env:DALAMUD_HOME = "${{ env.DALAMUD_HOME }}"
           dotnet test --configuration Release
 
   deploy:

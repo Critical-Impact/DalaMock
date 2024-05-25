@@ -8,6 +8,12 @@
         <RootNamespace>DalaMock</RootNamespace>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <Authors>Critical Impact</Authors>
+        <Description>Provides a way of mocking Dalamud plugins, allowing them to run outside of the game</Description>
+        <PackageProjectUrl>https://github.com/Critical-Impact/DalaMock</PackageProjectUrl>
+        <PackageTags>dalamud, library</PackageTags>
+    </PropertyGroup>
 
     <PropertyGroup>
         <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
@@ -18,6 +24,11 @@
 
     <PropertyGroup>
         <AssemblySearchPaths>{HintPathFromItem};{TargetFrameworkDirectory};{RawFileName}</AssemblySearchPaths>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);CS1591</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

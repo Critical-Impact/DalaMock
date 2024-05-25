@@ -39,6 +39,7 @@ public class MockService
     private MockToastGui _mockToastGui;
     private MockContextMenu _mockContextMenu;
     private MockTitleScreenMenu _mockTitleScreenMenu;
+    private MockGameInventory _mockGameInventory;
 
     public MockPluginLog MockPluginLog => _mockPluginLog;
     public MockClientState MockClientState => _mockClientState;
@@ -52,6 +53,8 @@ public class MockService
     public MockCondition MockCondition => _mockCondition;
     public MockAddonLifecycle MockAddonLifecycle => _mockAddonLifecycle;
     public MockContextMenu MockContextMenu => _mockContextMenu;
+    public MockGameInteropProvider MockGameInteropProvider => _mockGameInteropProvider;
+    public MockGameInventory MockGameInventory => _mockGameInventory;
 
     public MockService(MockProgram mockProgram, IServiceContainer serviceContainer, MockPluginInterfaceService pluginInterfaceService, MockFramework mockFramework, GameData gameData, ClientLanguage clientLanguage, ILogger log)
     {
@@ -105,6 +108,7 @@ public class MockService
         _mockToastGui = new MockToastGui();
         _mockContextMenu = new MockContextMenu();
         _mockTitleScreenMenu = new MockTitleScreenMenu();
+        _mockGameInventory = new MockGameInventory();
 
         _mockContainer = new MockContainer(_mockPluginLog);
         _mockContainer.AddInstance(typeof(IClientState), _mockClientState);

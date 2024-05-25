@@ -9,6 +9,10 @@
     </PropertyGroup>
 
     <PropertyGroup>
+        <MinVerIgnoreHeight>true</MinVerIgnoreHeight>
+    </PropertyGroup>
+
+    <PropertyGroup>
         <Authors>Critical Impact</Authors>
         <Description>Provides a way of mocking Dalamud plugins, allowing them to run outside of the game</Description>
         <PackageProjectUrl>https://github.com/Critical-Impact/DalaMock</PackageProjectUrl>

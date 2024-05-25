@@ -1,3 +1,4 @@
+using System.Reflection;
 using DalaMock.Mock;
 using DalaMock.Shared.Interfaces;
 using Dalamud;
@@ -9,6 +10,7 @@ using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface.Internal;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
+using Dalamud.Plugin.Ipc.Exceptions;
 using StbiSharp;
 using Veldrid;
 
@@ -289,12 +291,16 @@ public class MockCallGateProvider<T1, T2, T3, T4, T5, T6, T7, T8, TRet> : MockCa
 public class MockPluginInterfaceService : IPluginInterfaceService
 {
     private readonly MockProgram _mockProgram;
+    private readonly string _internalName;
+    private PluginConfiguration _pluginConfiguration;
 
-    public MockPluginInterfaceService(MockProgram mockProgram, FileInfo configFile, DirectoryInfo configDirectory)
+    public MockPluginInterfaceService(MockProgram mockProgram, FileInfo configFile, DirectoryInfo configDirectory, string internalName)
     {
         _mockProgram = mockProgram;
+        _internalName = internalName;
         ConfigFile = configFile;
         ConfigDirectory = configDirectory;
+        _pluginConfiguration = new PluginConfiguration(configDirectory.FullName);
     }
     public event Action? Draw;
     public event Action? OpenConfigUi;
@@ -308,7 +314,7 @@ public class MockPluginInterfaceService : IPluginInterfaceService
 
     public string SourceRepository => "";
 
-    public string InternalName => "";
+    public string InternalName => _internalName;
 
     public bool IsDev => true;
 
@@ -496,6 +502,16 @@ public class MockPluginInterfaceService : IPluginInterfaceService
 
     public IPluginConfiguration? GetPluginConfig()
     {
+       foreach (var type in Assembly.GetCallingAssembly().GetTypes())
+       {
+          if (type.IsAssignableTo(typeof(IPluginConfiguration)))
+          {
+             var mi = _pluginConfiguration.GetType().GetMethod("LoadForType");
+             var fn = mi.MakeGenericMethod(type);
+             return (IPluginConfiguration)fn.Invoke(_pluginConfiguration, new object[] { this.InternalName });
+          }
+       }
+
        return null!;
     }
 

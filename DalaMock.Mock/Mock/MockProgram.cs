@@ -144,7 +144,7 @@ public class MockProgram : IDisposable
             var configFile = Path.Combine(configDirectory, internalName + ".json");
             var configFolder = Path.Combine(configDirectory, internalName);
             _mockPluginInterfaceService = new MockPluginInterfaceService(this, new FileInfo(configFile),
-                new DirectoryInfo(configFolder));
+                new DirectoryInfo(configFolder), internalName);
             _pluginInterfaceService = _mockPluginInterfaceService;
             if (_mockService == null)
             {

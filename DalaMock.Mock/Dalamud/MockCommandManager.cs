@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Dalamud;
 using Dalamud.Game.Command;
 using Dalamud.Plugin.Services;
+using ClientLanguage = Dalamud.Game.ClientLanguage;
 
 namespace DalaMock.Dalamud;
 
@@ -14,7 +15,7 @@ public class MockCommandManager : ICommandManager
     private readonly Regex commandRegexDe = new Regex("^„(?<command>.+)“ existiert nicht als Textkommando\\.$", RegexOptions.Compiled);
     private readonly Regex commandRegexFr = new Regex("^La commande texte “(?<command>.+)” n'existe pas\\.$", RegexOptions.Compiled);
     private readonly Regex commandRegexCn = new Regex("^^(“|「)(?<command>.+)(”|」)(出现问题：该命令不存在|出現問題：該命令不存在)。$", RegexOptions.Compiled);
-    private readonly ConcurrentDictionary<string, CommandInfo> commandMap = new ConcurrentDictionary<string, CommandInfo>();
+    private readonly ConcurrentDictionary<string, IReadOnlyCommandInfo> commandMap = new ConcurrentDictionary<string, IReadOnlyCommandInfo>();
 
     private readonly IPluginLog _logger;
     private readonly ClientLanguage _clientLanguage;
@@ -45,7 +46,7 @@ public class MockCommandManager : ICommandManager
         }
         this.currentLangCommandRegex = regex;
     }
-    public void DispatchCommand(string command, string argument, CommandInfo info)
+    public void DispatchCommand(string command, string argument, IReadOnlyCommandInfo info)
     {
         try
         {
@@ -67,10 +68,10 @@ public class MockCommandManager : ICommandManager
         return false;
     }
 
-    public bool RemoveHandler(string command) => this.commandMap.Remove<string, CommandInfo>(command, out CommandInfo _);
+    public bool RemoveHandler(string command) => this.commandMap.Remove(command, out IReadOnlyCommandInfo _);
 
 
-    public ReadOnlyDictionary<string, CommandInfo> Commands => new ReadOnlyDictionary<string, CommandInfo>((IDictionary<string, CommandInfo>) this.commandMap);
+    public ReadOnlyDictionary<string, IReadOnlyCommandInfo> Commands => new((IDictionary<string, IReadOnlyCommandInfo>) this.commandMap);
 
     public bool ProcessCommand(string content)
     {
@@ -90,7 +91,7 @@ public class MockCommandManager : ICommandManager
             int startIndex = num;
             str2 = str3.Substring(startIndex, str3.Length - startIndex);
         }
-        CommandInfo info;
+        IReadOnlyCommandInfo info;
         if (!this.commandMap.TryGetValue(str1, out info))
             return false;
         this.DispatchCommand(str1, str2, info);

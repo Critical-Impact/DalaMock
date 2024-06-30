@@ -31,6 +31,16 @@ public class MockGameInteropProvider : IGameInteropProvider
         return null!;
     }
 
+    public Hook<T> HookFromAddress<T>(UIntPtr procAddress, T detour, IGameInteropProvider.HookBackend backend = IGameInteropProvider.HookBackend.Automatic) where T : Delegate
+    {
+        throw new NotImplementedException();
+    }
+
+    public unsafe Hook<T> HookFromAddress<T>(void* procAddress, T detour, IGameInteropProvider.HookBackend backend = IGameInteropProvider.HookBackend.Automatic) where T : Delegate
+    {
+        throw new NotImplementedException();
+    }
+
     public Hook<T> HookFromSignature<T>(string signature, T detour, IGameInteropProvider.HookBackend backend = IGameInteropProvider.HookBackend.Automatic) where T : Delegate
     {
         return null!;

@@ -13,13 +13,14 @@ using Serilog.Events;
 using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
+using ClientLanguage = Dalamud.Game.ClientLanguage;
+using IDalamudPluginInterface = Dalamud.Plugin.IDalamudPluginInterface;
 using Vector3 = System.Numerics.Vector3;
 
 namespace DalaMock.Mock;
 
 public class MockProgram : IDisposable
 {
-    private readonly IServiceContainer _serviceContainer;
     private readonly bool _createWindow;
     private GameData? _gameData;
     private Logger _seriLog;
@@ -28,8 +29,8 @@ public class MockProgram : IDisposable
     private CommandList? _commandList;
     private ImGuiController? _controller;
     private Vector3 _clearColor = new Vector3(0.45f, 0.55f, 0.6f);
-    private MockPluginInterfaceService _mockPluginInterfaceService;
-    private IPluginInterfaceService _pluginInterfaceService;
+    private MockPluginInterface _mockPluginInterface;
+    private MockUiBuilder _mockUiBuilder;
     private MockService? _mockService;
     private IMockPlugin? _mockPlugin;
     private MockFramework _mockFramework;
@@ -38,7 +39,7 @@ public class MockProgram : IDisposable
     public GraphicsDevice? GraphicsDevice => _graphicsDevice;
     public CommandList? CommandList => _commandList;
     public ImGuiController? Controller => _controller;
-    public MockService MockService => _mockService;
+    public MockService? MockService => _mockService;
 
     public Logger SeriLog => _seriLog;
 
@@ -46,9 +47,8 @@ public class MockProgram : IDisposable
 
     private Dictionary<Type, object> _extraServices = new Dictionary<Type, object>();
     
-    public MockProgram(IServiceContainer serviceContainer, bool createWindow = true)
+    public MockProgram(bool createWindow = true)
     {
-        _serviceContainer = serviceContainer;
         _createWindow = createWindow;
         _mockFramework = new MockFramework();
         Framework.FireUpdate();
@@ -65,7 +65,7 @@ public class MockProgram : IDisposable
         var field = typeof(ImGuiHelpers).GetProperty("GlobalScale", 
             BindingFlags.Static | 
             BindingFlags.Public);
-        field.SetValue(null, 1);
+        field!.SetValue(null, 1);
 
         if (createWindow)
         {
@@ -87,7 +87,7 @@ public class MockProgram : IDisposable
             var property = typeof(ImGuiHelpers).GetProperty("MainViewport",
                 BindingFlags.Static |
                 BindingFlags.Public);
-            property.SetValue(null, ImGui.GetMainViewport());
+            property!.SetValue(null, ImGui.GetMainViewport());
         }
     }
 
@@ -95,17 +95,17 @@ public class MockProgram : IDisposable
     {
         if (_createWindow)
         {
-            InputSnapshot snapshot = _window.PumpEvents();
+            InputSnapshot snapshot = _window!.PumpEvents();
             if (!_window.Exists)
             {
                 return false;
             }
 
             preUpdate.Invoke();
-            _controller.Update(1f / 60f, snapshot);
+            _controller!.Update(1f / 60f, snapshot);
             postUpdate.Invoke();
-            _commandList.Begin();
-            _commandList.SetFramebuffer(_graphicsDevice.MainSwapchain.Framebuffer);
+            _commandList!.Begin();
+            _commandList.SetFramebuffer(_graphicsDevice!.MainSwapchain.Framebuffer);
             _commandList.ClearColorTarget(0, new RgbaFloat(_clearColor.X, _clearColor.Y, _clearColor.Z, 1f));
             _controller.Render(_graphicsDevice, _commandList);
             _commandList.End();
@@ -143,21 +143,16 @@ public class MockProgram : IDisposable
             });
             var configFile = Path.Combine(configDirectory, internalName + ".json");
             var configFolder = Path.Combine(configDirectory, internalName);
-            _mockPluginInterfaceService = new MockPluginInterfaceService(this, new FileInfo(configFile),
+            _mockUiBuilder = new MockUiBuilder();
+            _mockPluginInterface = new MockPluginInterface(this, _mockUiBuilder, new FileInfo(configFile),
                 new DirectoryInfo(configFolder));
-            _pluginInterfaceService = _mockPluginInterfaceService;
             if (_mockService == null)
             {
-                _mockService = new MockService(this, _serviceContainer, _mockPluginInterfaceService, Framework, _gameData,
+                _mockService = new MockService(this, _mockPluginInterface, Framework, _gameData,
                     ClientLanguage.English, SeriLog);
                 _mockService.BuildMockServices(_extraServices);
-                _mockService.InjectMockServices();
             }
-            else
-            {
-                _serviceContainer.PluginInterfaceService = _pluginInterfaceService;
-            }
-            _mockPlugin.Start(this, _mockService, _mockPluginInterfaceService);
+            _mockPlugin.Start(this, _mockService, _mockPluginInterface);
             return true;
         }
         return false;
@@ -165,7 +160,7 @@ public class MockProgram : IDisposable
 
     public void StopPlugin()
     {
-        _mockPlugin?.Stop(this, _mockService!, _mockPluginInterfaceService);
+        _mockPlugin?.Stop(this, _mockService!, _mockPluginInterface);
     }
 
     public void Dispose()

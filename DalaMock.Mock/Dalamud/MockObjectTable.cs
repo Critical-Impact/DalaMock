@@ -6,7 +6,7 @@ namespace DalaMock.Dalamud;
 
 public class MockObjectTable : IObjectTable
 {
-    public IEnumerator<GameObject> GetEnumerator()
+    public IEnumerator<IGameObject> GetEnumerator()
     {
         throw new NotImplementedException();
     }
@@ -17,7 +17,7 @@ public class MockObjectTable : IObjectTable
     }
 
     public int Count { get; }
-    public GameObject? SearchById(ulong objectId)
+    public IGameObject? SearchById(ulong objectId)
     {
         throw new NotImplementedException();
     }
@@ -27,7 +27,7 @@ public class MockObjectTable : IObjectTable
         throw new NotImplementedException();
     }
 
-    public GameObject? CreateObjectReference(nint address)
+    public IGameObject? CreateObjectReference(nint address)
     {
         throw new NotImplementedException();
     }
@@ -35,5 +35,5 @@ public class MockObjectTable : IObjectTable
     public nint Address { get; }
     public int Length { get; }
 
-    public GameObject? this[int index] => throw new NotImplementedException();
+    public IGameObject? this[int index] => throw new NotImplementedException();
 }

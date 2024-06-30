@@ -3,15 +3,23 @@ using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Plugin.Services;
 using Lumina.Excel.GeneratedSheets;
 using Action = System.Action;
+using ClientLanguage = Dalamud.Game.ClientLanguage;
+using ConditionFlag = Dalamud.Game.ClientState.Conditions.ConditionFlag;
 
 namespace DalaMock.Dalamud;
 
 public class MockClientState : IClientState
 {
+    public bool IsClientIdle(out ConditionFlag blockingFlag)
+    {
+        blockingFlag = ConditionFlag.None;
+        return false;
+    }
+
     public ClientLanguage ClientLanguage { get; }
     public ushort TerritoryType { get; }
     public uint MapId { get; }
-    public PlayerCharacter? LocalPlayer { get; }
+    public IPlayerCharacter? LocalPlayer { get; }
     public ulong LocalContentId { get; }
     public bool IsLoggedIn { get; }
     public bool IsPvP { get; }

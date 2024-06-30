@@ -1,6 +1,6 @@
 using System.Numerics;
-using Dalamud.Interface.Internal;
 using ImGuiScene;
+using IDalamudTextureWrap = Dalamud.Interface.Textures.TextureWraps.IDalamudTextureWrap;
 
 namespace DalaMock.Dalamud
 {

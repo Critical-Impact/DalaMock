@@ -7,6 +7,8 @@ using Dalamud.Plugin.Services;
 using Lumina.Data.Files;
 using StbiSharp;
 using Veldrid;
+using ClientLanguage = Dalamud.Game.ClientLanguage;
+using IDalamudTextureWrap = Dalamud.Interface.Textures.TextureWraps.IDalamudTextureWrap;
 
 namespace DalaMock.Dalamud;
 

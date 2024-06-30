@@ -56,7 +56,7 @@ public class MockGameGui : IGameGui
 
     public void SetHoveredItem(uint itemId, InventoryItem.ItemFlags flags)
     {
-        if (flags == InventoryItem.ItemFlags.HQ)
+        if (flags == InventoryItem.ItemFlags.HighQuality)
         {
             itemId += 1_000_000;
         }

@@ -5,6 +5,11 @@ namespace DalaMock.Dalamud;
 
 public class MockCondition : ICondition
 {
+    public IReadOnlySet<ConditionFlag> AsReadOnlySet()
+    {
+        throw new NotImplementedException();
+    }
+
     public bool Any()
     {
         return false;
@@ -13,6 +18,21 @@ public class MockCondition : ICondition
     public bool Any(params ConditionFlag[] flags)
     {
         return false;
+    }
+
+    public bool AnyExcept(params ConditionFlag[] except)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool OnlyAny(params ConditionFlag[] other)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool EqualTo(params ConditionFlag[] other)
+    {
+        throw new NotImplementedException();
     }
 
     public int MaxEntries { get; } = 0;

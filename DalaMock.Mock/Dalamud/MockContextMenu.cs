@@ -5,12 +5,12 @@ namespace DalaMock.Dalamud;
 
 public class MockContextMenu : IContextMenu
 {
-    public void AddMenuItem(ContextMenuType menuType, MenuItem item)
+    public void AddMenuItem(ContextMenuType menuType, IMenuItem item)
     {
         
     }
 
-    public bool RemoveMenuItem(ContextMenuType menuType, MenuItem item)
+    public bool RemoveMenuItem(ContextMenuType menuType, IMenuItem item)
     {
         return true;
     }

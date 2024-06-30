@@ -1,25 +1,26 @@
 using Dalamud.Interface;
 using Dalamud.Interface.Internal;
 using Dalamud.Plugin.Services;
+using IDalamudTextureWrap = Dalamud.Interface.Textures.TextureWraps.IDalamudTextureWrap;
 
 namespace DalaMock.Dalamud;
 
 public class MockTitleScreenMenu : ITitleScreenMenu
 {
-    public TitleScreenMenuEntry AddEntry(string text, IDalamudTextureWrap texture, Action onTriggered)
+    public IReadOnlyTitleScreenMenuEntry AddEntry(string text, IDalamudTextureWrap texture, Action onTriggered)
     {
         return null!;
     }
 
-    public TitleScreenMenuEntry AddEntry(ulong priority, string text, IDalamudTextureWrap texture, Action onTriggered)
+    public IReadOnlyTitleScreenMenuEntry AddEntry(ulong priority, string text, IDalamudTextureWrap texture, Action onTriggered)
     {
         return null!;
     }
 
-    public void RemoveEntry(TitleScreenMenuEntry entry)
+    public void RemoveEntry(IReadOnlyTitleScreenMenuEntry entry)
     {
         
     }
 
-    public IReadOnlyList<TitleScreenMenuEntry> Entries { get; } = null!;
+    public IReadOnlyList<IReadOnlyTitleScreenMenuEntry> Entries { get; } = null!;
 }

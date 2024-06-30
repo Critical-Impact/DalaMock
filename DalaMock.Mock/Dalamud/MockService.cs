@@ -4,6 +4,8 @@ using Dalamud;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Plugin.Services;
 using Lumina;
+using ClientLanguage = Dalamud.Game.ClientLanguage;
+using IDalamudPluginInterface = Dalamud.Plugin.IDalamudPluginInterface;
 using ILogger = Serilog.ILogger;
 
 namespace DalaMock.Dalamud;
@@ -11,9 +13,8 @@ namespace DalaMock.Dalamud;
 public class MockService
 {
     private MockContainer? _mockContainer;
-    private readonly IServiceContainer _serviceContainer;
     private readonly MockProgram _mockProgram;
-    private readonly MockPluginInterfaceService _mockPluginInterfaceService;
+    private readonly MockPluginInterface mockPluginInterface;
     private readonly GameData _gameData;
     private readonly ClientLanguage _clientLanguage;
     private readonly ILogger _log;
@@ -32,7 +33,6 @@ public class MockService
     private MockCondition _mockCondition;
     private MockAddonLifecycle _mockAddonLifecycle;
     private MockGameInteropProvider _mockGameInteropProvider;
-    private MockLibcFunction _mockLibcFunction;
     private MockGameNetwork _mockGameNetwork;
     private MockObjectTable _mockObjectTable;
     private MockTargetManager _mockTargetManager;
@@ -53,22 +53,20 @@ public class MockService
     public MockAddonLifecycle MockAddonLifecycle => _mockAddonLifecycle;
     public MockContextMenu MockContextMenu => _mockContextMenu;
 
-    public MockService(MockProgram mockProgram, IServiceContainer serviceContainer, MockPluginInterfaceService pluginInterfaceService, MockFramework mockFramework, GameData gameData, ClientLanguage clientLanguage, ILogger log)
+    public MockService(MockProgram mockProgram, MockPluginInterface pluginInterface, MockFramework mockFramework, GameData gameData, ClientLanguage clientLanguage, ILogger log)
     {
-        _mockPluginInterfaceService = pluginInterfaceService;
+        mockPluginInterface = pluginInterface;
         _mockFramework = mockFramework;
-        _serviceContainer = serviceContainer;
         _mockProgram = mockProgram;
         _gameData = gameData;
         _clientLanguage = clientLanguage;
         _log = log;
     }
     
-    public MockService(IServiceContainer serviceContainer, MockPluginInterfaceService pluginInterfaceService, MockFramework mockFramework, GameData gameData, ClientLanguage clientLanguage, ILogger log)
+    public MockService(MockPluginInterface pluginInterface, MockFramework mockFramework, GameData gameData, ClientLanguage clientLanguage, ILogger log)
     {
-        _mockPluginInterfaceService = pluginInterfaceService;
+        mockPluginInterface = pluginInterface;
         _mockFramework = mockFramework;
-        _serviceContainer = serviceContainer;
         _gameData = gameData;
         _clientLanguage = clientLanguage;
         _log = log;
@@ -98,7 +96,6 @@ public class MockService
         _mockCondition = new MockCondition();
         _mockAddonLifecycle = new MockAddonLifecycle();
         _mockGameInteropProvider = new MockGameInteropProvider();
-        _mockLibcFunction = new MockLibcFunction();
         _mockGameNetwork = new MockGameNetwork();
         _mockObjectTable = new MockObjectTable();
         _mockTargetManager = new MockTargetManager();
@@ -127,11 +124,10 @@ public class MockService
         _mockContainer.AddInstance(typeof(ICondition), _mockCondition);
         _mockContainer.AddInstance(typeof(IAddonLifecycle), _mockAddonLifecycle);
         _mockContainer.AddInstance(typeof(IGameInteropProvider), _mockGameInteropProvider);
-        _mockContainer.AddInstance(typeof(ILibcFunction), _mockLibcFunction);
         _mockContainer.AddInstance(typeof(IGameNetwork), _mockGameNetwork);
         _mockContainer.AddInstance(typeof(IObjectTable), _mockObjectTable);
         _mockContainer.AddInstance(typeof(ITargetManager), _mockTargetManager);
-        _mockContainer.AddInstance(typeof(IPluginInterfaceService), _mockPluginInterfaceService);
+        _mockContainer.AddInstance(typeof(IDalamudPluginInterface), mockPluginInterface);
         _mockContainer.AddInstance(typeof(IToastGui), _mockToastGui);
         _mockContainer.AddInstance(typeof(IContextMenu), _mockContextMenu);
         _mockContainer.AddInstance(typeof(ITitleScreenMenu), _mockTitleScreenMenu);
@@ -142,10 +138,5 @@ public class MockService
                 _mockContainer.AddInstance(extraService.Key, extraService.Value);
             }
         }
-    }
-
-    public void InjectMockServices()
-    {
-        _mockContainer?.Create<IServiceContainer>(_serviceContainer);
     }
 }

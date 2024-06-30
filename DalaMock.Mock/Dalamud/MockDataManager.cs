@@ -1,8 +1,9 @@
-using Dalamud;
 using Dalamud.Plugin.Services;
 using Lumina;
 using Lumina.Data;
 using Lumina.Excel;
+using Dalamud.Utility;
+using ClientLanguage = Dalamud.Game.ClientLanguage;
 
 namespace DalaMock.Dalamud;
 

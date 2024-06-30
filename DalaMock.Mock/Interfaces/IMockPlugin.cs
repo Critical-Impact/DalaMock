@@ -6,6 +6,6 @@ namespace DalaMock.Interfaces;
 public interface IMockPlugin : IDisposable
 {
     public bool IsStarted { get; }
-    public void Start(MockProgram program, MockService mockService, MockPluginInterfaceService mockPluginInterfaceService);
-    public void Stop(MockProgram program, MockService mockService, MockPluginInterfaceService mockPluginInterfaceService);
+    public void Start(MockProgram program, MockService mockService, MockPluginInterface mockPluginInterface);
+    public void Stop(MockProgram program, MockService mockService, MockPluginInterface mockPluginInterface);
 }

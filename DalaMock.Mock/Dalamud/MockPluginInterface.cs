@@ -11,8 +11,15 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
 using StbiSharp;
 using Veldrid;
+using ClientLanguage = Dalamud.Game.ClientLanguage;
+using IDalamudTextureWrap = Dalamud.Interface.Textures.TextureWraps.IDalamudTextureWrap;
+using IPluginManifest = Dalamud.Plugin.Internal.Types.Manifest.IPluginManifest;
+using IUiBuilder = Dalamud.Interface.IUiBuilder;
+using PluginInstallerOpenKind = Dalamud.Interface.PluginInstallerOpenKind;
+using SettingsOpenKind = Dalamud.Interface.SettingsOpenKind;
 
 namespace DalaMock.Dalamud;
+
 
 public abstract class MockCallGatePubSubBase
 {
@@ -82,7 +89,7 @@ public abstract class MockCallGatePubSubBase
     /// Invoke an action registered for inter-plugin communication.
     /// </summary>
     /// <param name="args">Action arguments.</param>
-    /// <exception cref="IpcNotReadyError">This is thrown when the IPC publisher has not registered an action for calling yet.</exception>
+    /// <exception cref="Dalamud.Plugin.Ipc.Exceptions.IpcNotReadyError">This is thrown when the IPC publisher has not registered an action for calling yet.</exception>
     private protected void InvokeAction(params object?[]? args)
     {
        
@@ -286,21 +293,22 @@ public class MockCallGateProvider<T1, T2, T3, T4, T5, T6, T7, T8, TRet> : MockCa
    }
 }
 
-public class MockPluginInterfaceService : IPluginInterfaceService
+public class MockPluginInterface : IDalamudPluginInterface
 {
     private readonly MockProgram _mockProgram;
+    private readonly MockUiBuilder _uiBuilder;
 
-    public MockPluginInterfaceService(MockProgram mockProgram, FileInfo configFile, DirectoryInfo configDirectory)
+    public MockPluginInterface(MockProgram mockProgram, MockUiBuilder uiBuilder, FileInfo configFile, DirectoryInfo configDirectory)
     {
         _mockProgram = mockProgram;
+        _uiBuilder = uiBuilder;
         ConfigFile = configFile;
         ConfigDirectory = configDirectory;
     }
-    public event Action? Draw;
-    public event Action? OpenConfigUi;
-    public event Action? OpenMainUi;
-    public event DalamudPluginInterface.LanguageChangedDelegate? LanguageChanged;
-    public event DalamudPluginInterface.ActivePluginsChangedDelegate? ActivePluginsChanged;
+
+    public IEnumerable<IExposedPlugin> InstalledPlugins { get; }
+    public event IDalamudPluginInterface.LanguageChangedDelegate? LanguageChanged;
+    public event IDalamudPluginInterface.ActivePluginsChangedDelegate? ActivePluginsChanged;
 
     public PluginLoadReason Reason => PluginLoadReason.Boot;
 
@@ -309,6 +317,7 @@ public class MockPluginInterfaceService : IPluginInterfaceService
     public string SourceRepository => "";
 
     public string InternalName => "";
+    public IPluginManifest Manifest { get; }
 
     public bool IsDev => true;
 
@@ -323,6 +332,7 @@ public class MockPluginInterfaceService : IPluginInterfaceService
     public DirectoryInfo DalamudAssetDirectory => new DirectoryInfo("");
 
     public FileInfo ConfigFile { get; }
+    public IUiBuilder UiBuilder => _uiBuilder;
 
     public bool IsDevMenuOpen => true;
 
@@ -334,11 +344,20 @@ public class MockPluginInterfaceService : IPluginInterfaceService
 
     public XivChatType GeneralChatType => XivChatType.Debug;
 
-    public IEnumerable<InstalledPluginState> InstalledPlugins => new List<InstalledPluginState>();
 
-    public bool OpenPluginInstaller()
+    public bool OpenPluginInstallerTo(PluginInstallerOpenKind openTo = PluginInstallerOpenKind.AllPlugins, string? searchText = null)
     {
-       return false!;
+       return false;
+    }
+
+    public bool OpenDalamudSettingsTo(SettingsOpenKind openTo = SettingsOpenKind.General, string? searchText = null)
+    {
+       return false;
+    }
+
+    public bool OpenDeveloperMenu()
+    {
+       return false;
     }
 
     public T GetOrCreateData<T>(string tag, Func<T> dataGenerator) where T : class
@@ -372,8 +391,8 @@ public class MockPluginInterfaceService : IPluginInterfaceService
     }
     public IDalamudTextureWrap LoadImageRaw(byte[] imageData, int width, int height, int numChannels)
     {
-        var texture = _mockProgram.GraphicsDevice.ResourceFactory.CreateTexture(TextureDescription.Texture2D((uint)width, (uint)height, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Sampled));
-        var CPUframeBufferTextureId = _mockProgram.Controller.GetOrCreateImGuiBinding(_mockProgram.GraphicsDevice.ResourceFactory, texture);
+        var texture = _mockProgram.GraphicsDevice!.ResourceFactory.CreateTexture(TextureDescription.Texture2D((uint)width, (uint)height, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm, TextureUsage.Sampled));
+        var CPUframeBufferTextureId = _mockProgram.Controller!.GetOrCreateImGuiBinding(_mockProgram.GraphicsDevice.ResourceFactory, texture);
         _mockProgram.GraphicsDevice.UpdateTexture(texture, imageData, 0,0,0, (uint)width, (uint)height, 1, 0,0);
         var veldridTextureWrap =
             new MockTextureMap(CPUframeBufferTextureId, width, height);

@@ -24,11 +24,6 @@ public class MockContainer
     {
         return (T) this.CreateSync(typeof (T), this.GetPublicIocScopes((IEnumerable<object>) scopedObjects));
     }
-    public T? Create<T>(IServiceContainer serviceContainer, params object[] scopedObjects) where T : class
-    {
-        return (T) this.CreateSync(serviceContainer.GetType(), this.GetPublicIocScopes((IEnumerable<object>) scopedObjects));
-    }
-
 
     public void AddTypeMapping(Type interfaceType, Type mockType)
     {
@@ -53,28 +48,28 @@ public class MockContainer
       ConstructorInfo? ctor = this.FindApplicableCtor(objectType, scopedObjects);
       if (ctor == null)
       {
-        _log.Error("Failed to create {TypeName}, an eligible ctor with satisfiable services could not be found", (object) objectType.FullName);
+        _log.Error("Failed to create {TypeName}, an eligible ctor with satisfiable services could not be found", objectType.FullName!);
         return (object) null;
       }
       List<Type> list = ((IEnumerable<ParameterInfo>) ctor.GetParameters()).Select<ParameterInfo, Type>((Func<ParameterInfo, Type>) (p => (p.ParameterType))).ToList<Type>();
 
       object[] resolvedParams = list.Select((Func<Type, object>) (p =>
       {
-        object service = this.GetService(p, scopedObjects);
+        object? service = this.GetService(p, scopedObjects);
         if (service == null)
-          _log.Error("Requested ctor service type {TypeName} was not available (null)", (object) p.FullName);
+          _log.Error("Requested ctor service type {TypeName} was not available (null)", p.FullName!);
         return service;
       })).ToArray();
       
       if (((IEnumerable<object>) resolvedParams).Any<object>((Func<object, bool>) (p => p == null)))
       {
-        _log.Error("Failed to create {TypeName}, a requested service type could not be satisfied", (object) objectType.FullName);
+        _log.Error("Failed to create {TypeName}, a requested service type could not be satisfied", objectType.FullName!);
         return (object) null;
       }
       object instance = FormatterServices.GetUninitializedObject(objectType);
       if (!this.InjectProperties(instance, scopedObjects))
       {
-        _log.Error("Failed to create {TypeName}, a requested property service type could not be satisfied", (object) objectType.FullName);
+        _log.Error("Failed to create {TypeName}, a requested property service type could not be satisfied", objectType.FullName!);
         return (object) null;
       }
       ctor.Invoke(instance, resolvedParams);
@@ -105,7 +100,7 @@ public class MockContainer
                 flag = IsTypeValid(type);
             if (!flag)
             {
-                _log.Error("Failed to validate {TypeName}, unable to find any services that satisfy the type", (object) parameter.ParameterType.FullName);
+                _log.Error("Failed to validate {TypeName}, unable to find any services that satisfy the type", parameter.ParameterType.FullName!);
                 return false;
             }
         }
@@ -116,30 +111,21 @@ public class MockContainer
 
     public bool InjectProperties(object instance, object[] publicScopes)
     {
-        Type type = instance.GetType();
-        (PropertyInfo, RequiredVersionAttribute)[] array = type
-            .GetProperties(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-            .Where((Func<PropertyInfo, bool>)(x => x.GetCustomAttributes(typeof(PluginServiceAttribute)).Any())).Select(
-                (Func<PropertyInfo, (PropertyInfo, RequiredVersionAttribute)>)(propertyInfo =>
-                {
-                    RequiredVersionAttribute customAttribute =
-                        propertyInfo.GetCustomAttribute(typeof(RequiredVersionAttribute)) as RequiredVersionAttribute;
-                    return (propertyInfo, customAttribute);
-                })).ToArray();
-        (PropertyInfo, RequiredVersionAttribute)[] valueTupleArray = array;
-        for (int index = 0; index < valueTupleArray.Length; ++index)
+        var objectType = instance.GetType();
+
+        var props = objectType.GetProperties(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public |
+                                             BindingFlags.NonPublic).Where(x => x.GetCustomAttributes(typeof(PluginServiceAttribute)).Any()).ToArray();
+
+        foreach (var prop in props)
         {
-            (PropertyInfo, RequiredVersionAttribute) prop = valueTupleArray[index];
-            object service = GetService(prop.Item1.PropertyType, publicScopes);
+            var service = this.GetService(prop.PropertyType, publicScopes);
             if (service == null)
             {
-                _log.Error("Requested service type {TypeName} was not available (null)",
-                    prop.Item1.PropertyType.FullName);
-                //For the sake of mocking, log the error but continue trying to inject other properties
-                continue;
+                _log.Error("Requested service type {TypeName} was not available (null)", prop.PropertyType.FullName!);
+                return false;
             }
 
-            prop.Item1.SetValue(instance, service);
+            prop.SetValue(instance, service);
         }
 
         return true;

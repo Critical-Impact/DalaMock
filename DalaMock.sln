@@ -1,8 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DalaMock.Mock", "DalaMock.Mock\DalaMock.Mock.csproj", "{F611354F-2A2D-4F80-9093-6E321A9699C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DalaMock.Core", "DalaMock\DalaMock.Core.csproj", "{36A4BFAA-54F7-4B6C-88E6-546F183BE266}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DalaMock.Shared", "DalaMock.Shared\DalaMock.Shared.csproj", "{4F8F692B-2DA7-4C64-86A9-30DB09B08ED1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DalaMock.Sample", "DalaMock.Sample\DalaMock.Sample.csproj", "{26073B40-20E1-4928-AB14-C5622C12517C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DalaMock.Shared", "DalaMock.Shared\DalaMock.Shared.csproj", "{75B6A19E-EF6A-4535-B616-F660CD08AB4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DalaMock.Host", "DalaMock.Host\DalaMock.Host.csproj", "{D745F800-2715-4C02-9AAC-1FD0C3A839C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,13 +14,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F611354F-2A2D-4F80-9093-6E321A9699C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F611354F-2A2D-4F80-9093-6E321A9699C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F611354F-2A2D-4F80-9093-6E321A9699C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F611354F-2A2D-4F80-9093-6E321A9699C9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4F8F692B-2DA7-4C64-86A9-30DB09B08ED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4F8F692B-2DA7-4C64-86A9-30DB09B08ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4F8F692B-2DA7-4C64-86A9-30DB09B08ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4F8F692B-2DA7-4C64-86A9-30DB09B08ED1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36A4BFAA-54F7-4B6C-88E6-546F183BE266}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36A4BFAA-54F7-4B6C-88E6-546F183BE266}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36A4BFAA-54F7-4B6C-88E6-546F183BE266}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36A4BFAA-54F7-4B6C-88E6-546F183BE266}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26073B40-20E1-4928-AB14-C5622C12517C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26073B40-20E1-4928-AB14-C5622C12517C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26073B40-20E1-4928-AB14-C5622C12517C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26073B40-20E1-4928-AB14-C5622C12517C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75B6A19E-EF6A-4535-B616-F660CD08AB4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75B6A19E-EF6A-4535-B616-F660CD08AB4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75B6A19E-EF6A-4535-B616-F660CD08AB4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75B6A19E-EF6A-4535-B616-F660CD08AB4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D745F800-2715-4C02-9AAC-1FD0C3A839C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D745F800-2715-4C02-9AAC-1FD0C3A839C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D745F800-2715-4C02-9AAC-1FD0C3A839C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D745F800-2715-4C02-9AAC-1FD0C3A839C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal

@@ -83,6 +83,8 @@ public class MockSettingsWindow : Window
                                     new PluginLoadSettings(
                                         new DirectoryInfo("C:\\Users\\Blair\\RiderProjects\\FookOff"),
                                         new FileInfo("C:\\Users\\Blair\\RiderProjects\\FookOff\\FookOff.json")));
+
+                                // TODO: Need to make this configurable.
                             }
                         }
 

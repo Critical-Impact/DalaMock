@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using DalaMock.Host.Factories;
+using DalaMock.Shared.Classes;
+using DalaMock.Shared.Interfaces;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
@@ -97,7 +99,7 @@ public abstract class HostedPlugin : IDalamudPlugin
                 {
                     collection.RegisterInstance(this.pluginInterface).As<IDalamudPluginInterface>().AsSelf();
                     collection.RegisterInstance(this.pluginLog).As<IPluginLog>().AsSelf();
-                    collection.RegisterType<WindowSystem>();
+                    collection.RegisterType<DalamudWindowSystem>().As<IWindowSystem>();
                     collection.RegisterType<WindowSystemFactory>().As<IWindowSystemFactory>().AsSelf();
                     foreach (var potentialInterface in this.interfaces)
                     {

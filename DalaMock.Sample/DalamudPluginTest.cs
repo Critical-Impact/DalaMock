@@ -1,6 +1,7 @@
 ﻿namespace DalaMock.Sample;
 
 using Autofac;
+using DalaMock.Host.Factories;
 using DalaMock.Host.Hosting;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;

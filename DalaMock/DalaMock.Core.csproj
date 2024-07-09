@@ -101,4 +101,7 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\DalaMock.Shared\DalaMock.Shared.csproj" />
+    </ItemGroup>
 </Project>

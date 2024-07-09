@@ -71,7 +71,7 @@ public class MockContainer
         builder.RegisterType<MockDalamudUi>().SingleInstance();
         builder.RegisterType<PluginLoader>().SingleInstance();
         builder.RegisterInstance(this).SingleInstance();
-        builder.RegisterInstance(new MockWindowSystem());
+        builder.RegisterInstance(new MockWindowSystem("DalaMock"));
         builder.RegisterType<MockMockWindow>().As<Window>().SingleInstance();
         builder.RegisterType<MockSettingsWindow>().As<Window>().SingleInstance();
         builder.Register<ImGuiScene>(_ => ImGuiScene.CreateWindow()).SingleInstance();

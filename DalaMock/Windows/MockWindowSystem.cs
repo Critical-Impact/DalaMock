@@ -1,16 +1,16 @@
 ﻿namespace DalaMock.Core.Windows;
 
-using Dalamud.Interface.Windowing;
+using DalaMock.Shared.Classes;
 
-public class MockWindowSystem : WindowSystem
+public class MockWindowSystem : DalamudWindowSystem
 {
-    public MockWindowSystem(string imNamespace = "DalaMock")
+    public MockWindowSystem(string? imNamespace = null)
         : base(imNamespace)
     {
     }
 
-    /// <inheritdoc cref="WindowSystem.Draw" />
-    public new void Draw()
+    /// <inheritdoc/>
+    public override void Draw()
     {
         foreach (var window in this.Windows)
         {

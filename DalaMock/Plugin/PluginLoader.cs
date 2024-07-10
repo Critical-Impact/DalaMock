@@ -106,12 +106,13 @@ public class PluginLoader : IPluginLoader
 
         var uiBuilder = new MockUiBuilder();
         builder.RegisterInstance(uiBuilder);
-        builder.RegisterInstance(
+        builder.Register<MockDalamudPluginInterface>(c =>
             new MockDalamudPluginInterface(
                 uiBuilder,
                 pluginLoadSettings.ConfigFile,
                 pluginLoadSettings.ConfigDir,
-                plugin.PluginType.FullName ?? plugin.PluginType.Name)).As<IDalamudPluginInterface>();
+                plugin.PluginType.FullName ?? plugin.PluginType.Name,
+                c.Resolve<IComponentContext>())).As<IDalamudPluginInterface>();
 
         builder.RegisterInstance(this.mockContainer.GetLogger());
 

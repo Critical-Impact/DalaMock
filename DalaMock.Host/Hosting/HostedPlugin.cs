@@ -97,10 +97,10 @@ public abstract class HostedPlugin : IDalamudPlugin
             .ConfigureContainer<ContainerBuilder>(
                 collection =>
                 {
+                    this.interfaces.Add(this.pluginLog);
                     collection.RegisterInstance(this.pluginInterface).As<IDalamudPluginInterface>().AsSelf();
-                    collection.RegisterInstance(this.pluginLog).As<IPluginLog>().AsSelf();
                     collection.RegisterType<DalamudWindowSystem>().As<IWindowSystem>();
-                    collection.RegisterType<WindowSystemFactory>().As<IWindowSystemFactory>().AsSelf();
+                    collection.RegisterType<WindowSystemFactory>().As<IWindowSystemFactory>().AsSelf().SingleInstance();
                     foreach (var potentialInterface in this.interfaces)
                     {
                         var registrationBuilder = collection.RegisterInstance(potentialInterface).AsSelf();

@@ -3,7 +3,10 @@ namespace DalaMock.Core.Mocks;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using Autofac;
+using Autofac.Core;
 using Dalamud.Configuration;
 using Dalamud.Game;
 using Dalamud.Game.Text;
@@ -11,10 +14,13 @@ using Dalamud.Game.Text.Sanitizer;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface;
+using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Internal.Types.Manifest;
 using Dalamud.Plugin.Ipc;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Serilog;
 
 public abstract class MockCallGatePubSubBase
 {
@@ -294,6 +300,7 @@ public class MockCallGateProvider<T1, T2, T3, T4, T5, T6, T7, T8, TRet> : MockCa
 public class MockDalamudPluginInterface : IDalamudPluginInterface
 {
     private readonly string internalName;
+    private readonly IComponentContext componentContext;
 
     // private readonly MockProgram _mockProgram;
     private MockUiBuilder mockUiBuilder;
@@ -303,10 +310,12 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface
         MockUiBuilder mockUiBuilder,
         FileInfo configFile,
         DirectoryInfo configDirectory,
-        string internalName)
+        string internalName,
+        IComponentContext componentContext)
     {
         // _mockProgram = mockProgram;
         this.internalName = internalName;
+        this.componentContext = componentContext;
         this.ConfigFile = configFile;
         this.ConfigDirectory = configDirectory;
         this.pluginConfiguration = new PluginConfiguration(configDirectory.FullName);
@@ -540,14 +549,138 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface
     {
     }
 
+    /// <inheritdoc/>
     public T? Create<T>(params object[] scopedObjects) where T : class
     {
-        return null!;
+        var logger = this.componentContext.Resolve<ILogger>();
+        var mockServices = this.componentContext.Resolve<IEnumerable<IMockService>>();
+        Dictionary<Type, object> mockServicesDict = new();
+        foreach (var mockService in mockServices)
+        {
+            foreach (var interfaceType in mockService.GetType().GetInterfaces())
+            {
+                mockServicesDict.TryAdd(interfaceType, mockService);
+            }
+        }
+
+        foreach (var scopedObject in scopedObjects)
+        {
+            foreach (var interfaceType in scopedObject.GetType().GetInterfaces())
+            {
+                mockServicesDict.TryAdd(interfaceType, scopedObject);
+            }
+        }
+
+        // Get the type of the class to instantiate
+        var typeToCreate = typeof(T);
+
+        // Get all constructors of the class
+        var constructors = typeToCreate.GetConstructors();
+        T? newInstance = null;
+
+        // Try to find a suitable constructor
+        foreach (var constructor in constructors)
+        {
+            var parameters = constructor.GetParameters();
+            var parameterValues = new List<object>();
+
+            foreach (var parameter in parameters)
+            {
+                // Try to resolve each parameter from the mock services
+                if (mockServicesDict.TryGetValue(parameter.ParameterType, out var mockService))
+                {
+                    parameterValues.Add(mockService);
+                }
+                else
+                {
+                    parameterValues = null;
+                    break;
+                }
+            }
+
+            // If all parameters are resolved, create an instance and return it
+            if (parameterValues != null)
+            {
+                newInstance = (T)constructor.Invoke(parameterValues.ToArray());
+            }
+        }
+
+        // If no suitable constructor is found, try to use a parameterless constructor
+        var parameterlessConstructor = constructors.FirstOrDefault(c => c.GetParameters().Length == 0);
+        if (parameterlessConstructor != null)
+        {
+            newInstance = (T)parameterlessConstructor.Invoke(null);
+        }
+
+        if (newInstance == null)
+        {
+            // If no suitable constructor is found, return null
+            logger.Error($"No suitable constructor found for type '{typeToCreate.FullName}' that can be resolved with the provided mock services.");
+            return null;
+        }
+
+        var properties = newInstance.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(prop => Attribute.IsDefined(prop, typeof(PluginServiceAttribute)) && prop.CanWrite && prop.CanRead);
+
+        foreach (var property in properties)
+        {
+            var propertyType = property.PropertyType;
+
+            if (mockServicesDict.TryGetValue(propertyType, out var mockService))
+            {
+                property.SetValue(newInstance, mockService);
+            }
+            else
+            {
+                logger.Error($"No matching mock service found for property '{property.Name}' of type '{propertyType.FullName}' in object of type '{newInstance.GetType().FullName}'.");
+            }
+        }
+
+        return newInstance;
     }
 
+
+
+    /// <inheritdoc/>
     public bool Inject(object instance, params object[] scopedObjects)
     {
-        return false;
+        var logger = this.componentContext.Resolve<ILogger>();
+        var mockServices = this.componentContext.Resolve<IEnumerable<IMockService>>();
+        Dictionary<Type, object> mockServicesDict = new();
+        foreach (var mockService in mockServices)
+        {
+            foreach (var interfaceType in mockService.GetType().GetInterfaces())
+            {
+                mockServicesDict.TryAdd(interfaceType, mockService);
+            }
+        }
+
+        foreach (var scopedObject in scopedObjects)
+        {
+            foreach (var interfaceType in scopedObject.GetType().GetInterfaces())
+            {
+                mockServicesDict.TryAdd(interfaceType, scopedObject);
+            }
+        }
+
+        var properties = instance.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(prop => Attribute.IsDefined(prop, typeof(PluginServiceAttribute)) && prop.CanWrite && prop.CanRead);
+
+        foreach (var property in properties)
+        {
+            var propertyType = property.PropertyType;
+
+            if (mockServicesDict.TryGetValue(propertyType, out var mockService))
+            {
+                property.SetValue(instance, mockService);
+            }
+            else
+            {
+                logger.Error($"No matching mock service found for property '{property.Name}' of type '{propertyType.FullName}' in object of type '{instance.GetType().FullName}'.");
+            }
+        }
+
+        return true;
     }
 
     internal static string SerializeConfig(object? config)

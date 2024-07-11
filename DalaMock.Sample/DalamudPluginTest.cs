@@ -22,11 +22,11 @@ public class DalamudPluginTest : HostedPlugin
 
     public override void ConfigureContainer(ContainerBuilder containerBuilder)
     {
-        // Replace your interfaces/implementations here
+        containerBuilder.RegisterType<TestService>();
     }
 
     public override void ConfigureServices(IServiceCollection serviceCollection)
     {
-        // Register any services here
+        serviceCollection.AddHostedService(c => c.GetRequiredService<TestService>());
     }
 }

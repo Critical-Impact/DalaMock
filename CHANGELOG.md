@@ -17,12 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-Added IFileDialogManager, a wrapper for dalamud's file dialog manager, made to avoid font crashes
-DalaMock will now save and load a global game path and plugin config path
+- Added IFileDialogManager, a wrapper for dalamud's file dialog manager, made to avoid font crashes
+- DalaMock will now save and load a global game path and plugin config path
 
 ### Fixed
 
-Block plugin loading when paths are invalid and stop paths being edit if plugin is running
+- Block plugin loading when paths are invalid and stop paths being edit if plugin is running
 
 ### Changed
 

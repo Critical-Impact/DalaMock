@@ -3,6 +3,17 @@ on:
   push:
     tags:
       - '*.*.*'
+      - 
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: true
+  NuGetDirectory: ${{ github.workspace}}/nuget
+  DALAMUD_HOME: ${{ github.workspace }}/dalamud
+
+defaults:
+  run:
+    shell: pwsh
+    
 jobs:
   create_nuget:
     runs-on: ubuntu-latest

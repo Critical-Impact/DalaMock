@@ -118,7 +118,7 @@
       <ProjectReference Include="..\DalaMock.Shared\DalaMock.Shared.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="..\CHANGELOG">
+      <Content Include="..\CHANGELOG.md">
         <Link>CHANGELOG</Link>
       </Content>
     </ItemGroup>

@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Autofac;
+using DalaMock.Core.Configuration;
 using DalaMock.Core.Imgui;
 using DalaMock.Core.Interface;
 using DalaMock.Core.Mocks;
 using DalaMock.Core.Plugin;
 using DalaMock.Core.Windows;
+using DalaMock.Shared.Interfaces;
 using Dalamud.Interface.Windowing;
 using Lumina;
 using Serilog;
@@ -26,15 +28,17 @@ public class MockContainer
     private readonly LoggingLevelSwitch levelSwitch;
     private readonly IContainer container;
     private readonly Logger seriLog;
+    private readonly ConfigurationManager configurationManager;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MockContainer"/> class.
     /// Creates a new mock container with the given configuration.
     /// </summary>
     /// <param name="dalamudConfiguration">The configuration to use.</param>
-    public MockContainer(MockDalamudConfiguration dalamudConfiguration)
+    public MockContainer()
     {
-        this.dalamudConfiguration = dalamudConfiguration;
+        this.configurationManager = new ConfigurationManager();
+        this.dalamudConfiguration = this.configurationManager.LoadConfiguration();
         this.levelSwitch = new LoggingLevelSwitch
         {
             MinimumLevel = LogEventLevel.Verbose,
@@ -60,6 +64,7 @@ public class MockContainer
 
         builder.RegisterInstance(this.seriLog).As<Serilog.ILogger>();
         builder.RegisterInstance(this.levelSwitch);
+        builder.RegisterInstance(this.configurationManager);
         builder.Register<GameData>(
             c => new GameData(
                 this.dalamudConfiguration.GamePath!.FullName,
@@ -70,6 +75,7 @@ public class MockContainer
         builder.RegisterInstance(this.dalamudConfiguration);
         builder.RegisterType<MockDalamudUi>().SingleInstance();
         builder.RegisterType<PluginLoader>().SingleInstance();
+        builder.RegisterType<MockFileDialogManager>().As<IFileDialogManager>().SingleInstance();
         builder.RegisterInstance(this).SingleInstance();
         builder.RegisterInstance(new MockWindowSystem("DalaMock"));
         builder.RegisterType<MockMockWindow>().As<Window>().SingleInstance();

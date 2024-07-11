@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using Autofac;
 using Autofac.Core;
+using DalaMock.Core.Plugin;
 using Dalamud.Configuration;
 using Dalamud.Game;
 using Dalamud.Game.Text;
@@ -22,282 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Serilog;
 
-public abstract class MockCallGatePubSubBase
-{
-    protected MockCallGatePubSubBase(string name)
-    {
-        this.Name = name;
-    }
-
-    public Delegate? Func { get; set; }
-
-    public Delegate? Action { get; set; }
-
-    public string Name { get; }
-
-    /// <summary>
-    /// Removes a registered Action from inter-plugin communication.
-    /// </summary>
-    public void UnregisterAction()
-    {
-        this.Action = null;
-    }
-
-    /// <summary>
-    /// Removes a registered Func from inter-plugin communication.
-    /// </summary>
-    public void UnregisterFunc()
-    {
-        this.Func = null;
-    }
-
-    /// <summary>
-    /// Registers an Action for inter-plugin communication.
-    /// </summary>
-    /// <param name="action">Action to register.</param>
-    private protected void RegisterAction(Delegate action)
-    {
-        this.Action = action;
-    }
-
-    /// <summary>
-    /// Registers a Func for inter-plugin communication.
-    /// </summary>
-    /// <param name="func">Func to register.</param>
-    private protected void RegisterFunc(Delegate func)
-    {
-        this.Func = func;
-    }
-
-    /// <summary>
-    /// Subscribe an expression to this registration.
-    /// </summary>
-    /// <param name="action">Action to subscribe.</param>
-    private protected void Subscribe(Delegate action)
-    {
-    }
-
-    /// <summary>
-    /// Unsubscribe an expression from this registration.
-    /// </summary>
-    /// <param name="action">Action to unsubscribe.</param>
-    private protected void Unsubscribe(Delegate action)
-    {
-    }
-
-    /// <summary>
-    /// Invoke an action registered for inter-plugin communication.
-    /// </summary>
-    /// <param name="args">Action arguments.</param>
-    /// <exception cref="Dalamud.Plugin.Ipc.Exceptions.IpcNotReadyError">This is thrown when the IPC publisher has not registered an action for calling yet.</exception>
-    private protected void InvokeAction(params object?[]? args)
-    {
-    }
-
-    /// <summary>
-    /// Invoke all actions that have subscribed to this IPC.
-    /// </summary>
-    /// <param name="args">Delegate arguments.</param>
-    private protected void SendMessage(params object?[]? args)
-    {
-    }
-}
-
-public class MockCallGateProvider<TRet> : MockCallGatePubSubBase, ICallGateProvider<TRet>
-{
-    public MockCallGateProvider(string name) : base(name)
-    {
-    }
-
-    public void RegisterAction(Action action)
-    {
-        base.RegisterAction(action);
-    }
-
-    public void RegisterFunc(Func<TRet> func)
-    {
-        base.RegisterFunc(func);
-    }
-
-    public void SendMessage()
-    {
-    }
-}
-
-public class MockCallGateProvider<T1, TRet> : MockCallGatePubSubBase, ICallGateProvider<T1, TRet>
-{
-    public MockCallGateProvider(string name) : base(name)
-    {
-    }
-
-    public void RegisterAction(Action<T1> action)
-    {
-        base.RegisterAction(action);
-    }
-
-    public void RegisterFunc(Func<T1, TRet> func)
-    {
-        base.RegisterFunc(func);
-    }
-
-    public void SendMessage(T1 arg1)
-    {
-    }
-}
-
-public class MockCallGateProvider<T1, T2, TRet> : MockCallGatePubSubBase, ICallGateProvider<T1, T2, TRet>
-{
-    public MockCallGateProvider(string name) : base(name)
-    {
-    }
-
-    public void RegisterAction(Action<T1, T2> action)
-    {
-        base.RegisterAction(action);
-    }
-
-    public void RegisterFunc(Func<T1, T2, TRet> func)
-    {
-        base.RegisterFunc(func);
-    }
-
-    public void SendMessage(T1 arg1, T2 arg2)
-    {
-    }
-}
-
-public class MockCallGateProvider<T1, T2, T3, TRet> : MockCallGatePubSubBase, ICallGateProvider<T1, T2, T3, TRet>
-{
-    public MockCallGateProvider(string name) : base(name)
-    {
-    }
-
-    public void RegisterAction(Action<T1, T2, T3> action)
-    {
-        base.RegisterAction(action);
-    }
-
-    public void RegisterFunc(Func<T1, T2, T3, TRet> func)
-    {
-        base.RegisterFunc(func);
-    }
-
-    public void SendMessage(T1 arg1, T2 arg2, T3 arg3)
-    {
-    }
-}
-
-public class MockCallGateProvider<T1, T2, T3, T4, TRet> : MockCallGatePubSubBase,
-    ICallGateProvider<T1, T2, T3, T4, TRet>
-{
-    public MockCallGateProvider(string name) : base(name)
-    {
-    }
-
-    public void RegisterAction(Action<T1, T2, T3, T4> action)
-    {
-        base.RegisterAction(action);
-    }
-
-    public void RegisterFunc(Func<T1, T2, T3, T4, TRet> func)
-    {
-        base.RegisterFunc(func);
-    }
-
-    public void SendMessage(T1 arg1, T2 arg2, T3 arg3, T4 arg4)
-    {
-    }
-}
-
-public class MockCallGateProvider<T1, T2, T3, T4, T5, TRet> : MockCallGatePubSubBase,
-    ICallGateProvider<T1, T2, T3, T4, T5, TRet>
-{
-    public MockCallGateProvider(string name) : base(name)
-    {
-    }
-
-    public void RegisterAction(Action<T1, T2, T3, T4, T5> action)
-    {
-        base.RegisterAction(action);
-    }
-
-    public void RegisterFunc(Func<T1, T2, T3, T4, T5, TRet> func)
-    {
-        base.RegisterFunc(func);
-    }
-
-    public void SendMessage(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
-    {
-    }
-}
-
-public class MockCallGateProvider<T1, T2, T3, T4, T5, T6, TRet> : MockCallGatePubSubBase,
-    ICallGateProvider<T1, T2, T3, T4, T5, T6, TRet>
-{
-    public MockCallGateProvider(string name) : base(name)
-    {
-    }
-
-    public void RegisterAction(Action<T1, T2, T3, T4, T5, T6> action)
-    {
-        base.RegisterAction(action);
-    }
-
-    public void RegisterFunc(Func<T1, T2, T3, T4, T5, T6, TRet> func)
-    {
-        base.RegisterFunc(func);
-    }
-
-    public void SendMessage(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
-    {
-    }
-}
-
-public class MockCallGateProvider<T1, T2, T3, T4, T5, T6, T7, TRet> : MockCallGatePubSubBase,
-    ICallGateProvider<T1, T2, T3, T4, T5, T6, T7, TRet>
-{
-    public MockCallGateProvider(string name) : base(name)
-    {
-    }
-
-    public void RegisterAction(Action<T1, T2, T3, T4, T5, T6, T7> action)
-    {
-        base.RegisterAction(action);
-    }
-
-    public void RegisterFunc(Func<T1, T2, T3, T4, T5, T6, T7, TRet> func)
-    {
-        base.RegisterFunc(func);
-    }
-
-    public void SendMessage(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
-    {
-    }
-}
-
-public class MockCallGateProvider<T1, T2, T3, T4, T5, T6, T7, T8, TRet> : MockCallGatePubSubBase,
-    ICallGateProvider<T1, T2, T3, T4, T5, T6, T7, T8, TRet>
-{
-    public MockCallGateProvider(string name) : base(name)
-    {
-    }
-
-    public void RegisterAction(Action<T1, T2, T3, T4, T5, T6, T7, T8> action)
-    {
-        base.RegisterAction(action);
-    }
-
-    public void RegisterFunc(Func<T1, T2, T3, T4, T5, T6, T7, T8, TRet> func)
-    {
-        base.RegisterFunc(func);
-    }
-
-    public void SendMessage(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
-    {
-    }
-}
-
-public class MockDalamudPluginInterface : IDalamudPluginInterface
+public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
 {
     private readonly string internalName;
     private readonly IComponentContext componentContext;
@@ -305,34 +31,39 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface
     // private readonly MockProgram _mockProgram;
     private MockUiBuilder mockUiBuilder;
     private PluginConfiguration pluginConfiguration;
+    private PluginLoadReason pluginLoadReason;
 
     public MockDalamudPluginInterface(
         MockUiBuilder mockUiBuilder,
-        FileInfo configFile,
-        DirectoryInfo configDirectory,
+        PluginLoadSettings pluginLoadSettings,
         string internalName,
         IComponentContext componentContext)
     {
         // _mockProgram = mockProgram;
         this.internalName = internalName;
         this.componentContext = componentContext;
-        this.ConfigFile = configFile;
-        this.ConfigDirectory = configDirectory;
-        this.pluginConfiguration = new PluginConfiguration(configDirectory.FullName);
+        this.ConfigFile = pluginLoadSettings.ConfigFile;
+        this.ConfigDirectory = pluginLoadSettings.ConfigDir;
+        this.pluginLoadReason = pluginLoadSettings.PluginLoadReason;
+        this.pluginConfiguration = new PluginConfiguration(pluginLoadSettings.ConfigDir.FullName);
         this.mockUiBuilder = mockUiBuilder;
     }
 
+    /// <summary>
+    /// Provides access the mock ui builder.
+    /// </summary>
     public MockUiBuilder MockUiBuilder => this.mockUiBuilder;
 
     public event IDalamudPluginInterface.LanguageChangedDelegate? LanguageChanged;
 
     public event IDalamudPluginInterface.ActivePluginsChangedDelegate? ActivePluginsChanged;
 
-    public PluginLoadReason Reason => PluginLoadReason.Boot;
+    /// <inheritdoc/>
+    public PluginLoadReason Reason => this.pluginLoadReason;
 
     public bool IsAutoUpdateComplete => true;
 
-    public string SourceRepository => "";
+    public string SourceRepository => "DevPlugin";
 
     public string InternalName => this.internalName;
 
@@ -528,12 +259,12 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface
 
     public string GetPluginConfigDirectory()
     {
-        return null!;
+        return Path.Combine(this.ConfigDirectory.FullName, this.InternalName);
     }
 
     public string GetPluginLocDirectory()
     {
-        return null!;
+        return Path.Combine(Path.Combine(this.ConfigDirectory.FullName, this.InternalName), "loc");
     }
 
     public DalamudLinkPayload AddChatLinkHandler(uint commandId, Action<uint, SeString> commandAction)
@@ -619,8 +350,8 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface
             return null;
         }
 
-        var properties = newInstance.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .Where(prop => Attribute.IsDefined(prop, typeof(PluginServiceAttribute)) && prop.CanWrite && prop.CanRead);
+        var properties = newInstance.GetType().GetProperties()
+            .Where(prop => prop.PropertyType.IsPublic && Attribute.IsDefined(prop, typeof(PluginServiceAttribute)) && prop.CanWrite && prop.CanRead);
 
         foreach (var property in properties)
         {

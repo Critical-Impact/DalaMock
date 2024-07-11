@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 using DalaMock.Core.DI;
 using DalaMock.Core.Mocks;
@@ -151,6 +152,9 @@ public class PluginLoader : IPluginLoader
         this.OnPluginStopped(plugin);
         return true;
     }
+
+    public bool HasPluginsLoaded => this.LoadedPlugins.Count != 0;
+    public bool HasPluginsStarted => this.LoadedPlugins.Count(c => c.Value.IsLoaded) != 0;
 
     /// <summary>
     /// Invokes the plugin started event.

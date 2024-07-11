@@ -15,4 +15,7 @@ public interface IPluginLoader
     bool StartPlugin(MockPlugin plugin, PluginLoadSettings pluginLoadSettings);
 
     bool StopPlugin(MockPlugin plugin);
+
+    bool HasPluginsLoaded { get; }
+    bool HasPluginsStarted { get; }
 }

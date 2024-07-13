@@ -23,4 +23,6 @@ public interface IMockWindow
     public IMockService MockService { get; }
 
     public void Toggle();
+
+    public void Draw();
 }

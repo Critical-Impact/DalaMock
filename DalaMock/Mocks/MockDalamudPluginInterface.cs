@@ -49,14 +49,14 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         this.mockUiBuilder = mockUiBuilder;
     }
 
+    public event IDalamudPluginInterface.LanguageChangedDelegate? LanguageChanged;
+
+    public event IDalamudPluginInterface.ActivePluginsChangedDelegate? ActivePluginsChanged;
+
     /// <summary>
     /// Provides access the mock ui builder.
     /// </summary>
     public MockUiBuilder MockUiBuilder => this.mockUiBuilder;
-
-    public event IDalamudPluginInterface.LanguageChangedDelegate? LanguageChanged;
-
-    public event IDalamudPluginInterface.ActivePluginsChangedDelegate? ActivePluginsChanged;
 
     /// <inheritdoc/>
     public PluginLoadReason Reason => this.pluginLoadReason;
@@ -432,5 +432,15 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
 
     public void Dispose()
     {
+    }
+
+    public virtual void OnLanguageChanged(string langcode)
+    {
+        this.LanguageChanged?.Invoke(langcode);
+    }
+
+    public virtual void OnActivePluginsChanged(PluginListInvalidationKind kind, bool affectedthisplugin)
+    {
+        this.ActivePluginsChanged?.Invoke(kind, affectedthisplugin);
     }
 }

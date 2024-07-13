@@ -143,7 +143,13 @@ public abstract class HostedPlugin : IDalamudPlugin
             return;
         }
 
-        _ = this.host.StartAsync();
+        var startTask = this.host.StartAsync();
+        if (startTask.IsFaulted)
+        {
+            this.pluginLog.Error(startTask.Exception, "Plugin startup faulted.");
+            throw startTask.Exception;
+        }
+
         this.IsStarted = true;
     }
 

@@ -32,6 +32,7 @@ public class MockSettingsWindow : Window
         this.dalamudConfiguration = dalamudConfiguration;
         this.fileDialogManager = fileDialogManager;
         this.configurationManager = configurationManager;
+        this.IsOpen = true;
     }
 
     public override void Draw()

@@ -9,7 +9,7 @@ using Lumina.Excel.GeneratedSheets;
 
 public class MockClientState : IClientState, IMockService
 {
-    private ClientLanguage clientLanguage;
+    private ClientLanguage clientLanguage = ClientLanguage.English;
     private bool isGPosing;
     private bool isLoggedIn;
     private bool isPvP;

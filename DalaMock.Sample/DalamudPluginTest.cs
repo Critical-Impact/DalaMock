@@ -13,8 +13,9 @@ public class DalamudPluginTest : HostedPlugin
     public DalamudPluginTest(
         IDalamudPluginInterface pluginInterface,
         IPluginLog pluginLog,
-        ICommandManager commandManager,
-        ITextureProvider textureProvider) : base(pluginInterface, pluginLog)
+        IDataManager dataManager,
+        ITextureProvider textureProvider)
+        : base(pluginInterface, pluginLog, dataManager, textureProvider)
     {
         this.CreateHost();
         this.Start();
@@ -22,11 +23,12 @@ public class DalamudPluginTest : HostedPlugin
 
     public override void ConfigureContainer(ContainerBuilder containerBuilder)
     {
-        containerBuilder.RegisterType<TestService>();
+        containerBuilder.RegisterType<WindowService>().SingleInstance();
+        containerBuilder.RegisterType<SampleWindow>().SingleInstance();
     }
 
     public override void ConfigureServices(IServiceCollection serviceCollection)
     {
-        serviceCollection.AddHostedService(c => c.GetRequiredService<TestService>());
+        serviceCollection.AddHostedService(c => c.GetRequiredService<WindowService>());
     }
 }

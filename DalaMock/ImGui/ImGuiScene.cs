@@ -45,7 +45,7 @@ public partial class ImGuiScene : IDisposable
         Sdl2Window window;
         VeldridStartup.CreateWindowAndGraphicsDevice(
             createInfo,
-            new GraphicsDeviceOptions(true, null, true, ResourceBindingModel.Improved, true, true),
+            new GraphicsDeviceOptions(false, null, false, ResourceBindingModel.Improved, true, true),
             out window,
             out graphicsDevice);
         this.Window = window;
@@ -111,7 +111,9 @@ public partial class ImGuiScene : IDisposable
             new WindowCreateInfo
             {
                 WindowTitle = "DalaMock",
-                WindowInitialState = WindowState.Maximized
+                WindowInitialState = WindowState.Maximized,
+                WindowWidth = 500,
+                WindowHeight = 500,
             });
         scene.Window.Opacity = 1;
 

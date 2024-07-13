@@ -1,4 +1,6 @@
-﻿namespace DalaMock.Core.Windows;
+﻿using DalaMock.Core.Imgui.Auto;
+
+namespace DalaMock.Core.Windows;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -13,26 +15,20 @@ using Lumina.Excel.GeneratedSheets;
 public class MockClientStateWindow : MockWindow<MockClientState>
 {
     private readonly MockClientState mockClientState;
+    private readonly LocalPlayersWindow localPlayersWindow;
     private readonly ExcelSheet<TerritoryType> territoryTypeSheet;
     private Dictionary<uint, string>? territoryTypes;
+    private MockCharacter character;
 
-    public MockClientStateWindow(
-        MockClientState mockClientState,
-        IDataManager dataManager,
-        string name,
-        ImGuiWindowFlags flags = ImGuiWindowFlags.None,
-        bool forceMainWindow = false) : base(mockClientState, name, flags, forceMainWindow)
-    {
-        this.mockClientState = mockClientState;
-        this.territoryTypeSheet = dataManager.GetExcelSheet<TerritoryType>()!;
-    }
-
-    public MockClientStateWindow(MockClientState mockClientState, IDataManager dataManager) : base(
+    public MockClientStateWindow(MockClientState mockClientState, IDataManager dataManager, LocalPlayersWindow localPlayersWindow)
+        : base(
         mockClientState,
         "Mock Client State")
     {
         this.mockClientState = mockClientState;
+        this.localPlayersWindow = localPlayersWindow;
         this.territoryTypeSheet = dataManager.GetExcelSheet<TerritoryType>()!;
+        this.character = new MockCharacter(mockClientState);//make factory later
     }
 
     public Dictionary<uint, string> TerritoryTypes => this.territoryTypes ??= this.territoryTypeSheet
@@ -109,10 +105,9 @@ public class MockClientStateWindow : MockWindow<MockClientState>
         // LocalPlayer
         ImGui.Text($"Local Player: {this.mockClientState.LocalPlayer?.Name ?? "None"}");
         ImGui.SameLine();
-        if (ImGui.Button("Change##LocalPlayer"))
+        if (ImGui.Button("Manage##LocalPlayer"))
         {
-            // Implement the logic to change LocalPlayer
-            // e.g., _mockClientState.LocalPlayer = newPlayerCharacter;
+            this.localPlayersWindow.IsOpen = true;
         }
 
         // LocalContentId

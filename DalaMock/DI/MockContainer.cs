@@ -1,4 +1,6 @@
-﻿namespace DalaMock.Core.DI;
+﻿using DalaMock.Core.Imgui.Auto;
+
+namespace DalaMock.Core.DI;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -62,6 +64,19 @@ public class MockContainer
         var mockServiceTypes = assembly.GetTypes()
             .Where(t => typeof(IMockService).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
 
+        var mockWindows = assembly.GetTypes()
+            .Where(t => typeof(IMockWindow).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
+
+        // ImGui.Auto
+        builder.RegisterType<ImGuiElementGenerator>();
+        var imGuiElements = assembly.GetTypes()
+            .Where(t => typeof(ImGuiBaseElement).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
+
+        foreach (var imGuiElement in imGuiElements)
+        {
+            builder.RegisterType(imGuiElement).AsSelf().As<IImGuiElement>();
+        }
+
         builder.RegisterInstance(this.seriLog).As<Serilog.ILogger>();
         builder.RegisterInstance(this.levelSwitch);
         builder.RegisterInstance(this.configurationManager);
@@ -78,8 +93,10 @@ public class MockContainer
         builder.RegisterType<MockFileDialogManager>().As<IFileDialogManager>().SingleInstance();
         builder.RegisterInstance(this).SingleInstance();
         builder.RegisterInstance(new MockWindowSystem("DalaMock"));
-        builder.RegisterType<MockMockWindow>().As<Window>().SingleInstance();
-        builder.RegisterType<MockSettingsWindow>().As<Window>().SingleInstance();
+        builder.RegisterType<MockMockWindow>().AsSelf().As<Window>().SingleInstance();
+        builder.RegisterType<MockSettingsWindow>().AsSelf().As<Window>().SingleInstance();
+        builder.RegisterType<LocalPlayersWindow>().AsSelf().As<Window>().SingleInstance();
+        builder.RegisterType<LocalPlayerEditWindow>().AsSelf().As<Window>().SingleInstance();
         builder.Register<ImGuiScene>(_ => ImGuiScene.CreateWindow()).SingleInstance();
 
         builder.Register<GraphicsDevice>(
@@ -107,6 +124,12 @@ public class MockContainer
         foreach (var type in mockServiceTypes)
         {
             builder.RegisterType(type).AsSelf().As(type.GetInterfaces()).SingleInstance();
+        }
+
+        // Register each type as implementing IMockService
+        foreach (var type in mockWindows)
+        {
+            builder.RegisterType(type).AsSelf().As<IMockWindow>().SingleInstance();
         }
     }
 

@@ -38,7 +38,6 @@ public class MockDalamudUi : IDisposable
 
         foreach (var window in windows)
         {
-            window.IsOpen = true;
             this.windowSystem.AddWindow(window);
         }
 

@@ -13,6 +13,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.0.11] - 2024-07-13
+
+### Added
+
+- Sample plugin updated, showing how to inject a dalamud mock service
+
+### Fixed
+
+- Plugin startup failure will be logged.
+
 ## [2.0.10] - 2024-07-11
 
 ### Added

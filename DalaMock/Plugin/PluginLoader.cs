@@ -120,13 +120,21 @@ public class PluginLoader : IPluginLoader
 
         var container = builder.Build();
 
-        var builtPlugin = (IDalamudPlugin)container.Resolve(plugin.PluginType);
 
-        plugin.Startup(builtPlugin, pluginLoadSettings, container);
+        if (container.TryResolve(plugin.PluginType, out object? builtPlugin))
+        {
+            var dalamudPlugin = (IDalamudPlugin)builtPlugin;
+            plugin.Startup(dalamudPlugin, pluginLoadSettings, container);
 
-        this.logger.Information($"Started plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}");
-        this.OnPluginStarted(plugin);
-        return true;
+            this.logger.Information($"Started plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}");
+            this.OnPluginStarted(plugin);
+            return true;
+        }
+
+        this.logger.Information($"Failed to start plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}");
+        return false;
+
+
     }
 
     /// <summary>

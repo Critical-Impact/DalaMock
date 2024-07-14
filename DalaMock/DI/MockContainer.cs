@@ -27,6 +27,7 @@ using Veldrid.Sdl2;
 /// </summary>
 public class MockContainer
 {
+    private readonly Dictionary<Type, Type>? serviceReplacements;
     private readonly MockDalamudConfiguration dalamudConfiguration;
     private readonly LoggingLevelSwitch levelSwitch;
     private readonly IContainer container;
@@ -39,8 +40,10 @@ public class MockContainer
     /// </summary>
     /// <param name="dalamudConfiguration">The configuration to use.</param>
     /// <param name="containerBuildHook">Allows you to alter the services registered by the container.</param>
-    public MockContainer(MockDalamudConfiguration? dalamudConfiguration = null, Action<ContainerBuilder>? containerBuildHook = null)
+    /// <param name="serviceReplacements">A dictionary of dalamud mocks service types and what they should be replaced with.</param>
+    public MockContainer(MockDalamudConfiguration? dalamudConfiguration = null, Action<ContainerBuilder>? containerBuildHook = null, Dictionary<Type, Type>? serviceReplacements = null)
     {
+        this.serviceReplacements = serviceReplacements;
         this.configurationManager = new ConfigurationManager();
         this.dalamudConfiguration = dalamudConfiguration ?? this.configurationManager.LoadConfiguration();
         this.levelSwitch = new LoggingLevelSwitch
@@ -123,10 +126,17 @@ public class MockContainer
                 return context.Window;
             }).SingleInstance();
 
-        // Register each type as implementing IMockService
+        // Register each type as implementing IMockService or as the replacement type if specified
         foreach (var type in mockServiceTypes)
         {
-            builder.RegisterType(type).AsSelf().As(type.GetInterfaces()).SingleInstance();
+            if (this.serviceReplacements != null && this.serviceReplacements.TryGetValue(type, out var replacementType))
+            {
+                builder.RegisterType(replacementType).AsSelf().As(replacementType.GetInterfaces()).SingleInstance();
+            }
+            else
+            {
+                builder.RegisterType(type).AsSelf().As(type.GetInterfaces()).SingleInstance();
+            }
         }
 
         // Register each type as implementing IMockService

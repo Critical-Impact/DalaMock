@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.0.14] - 2024-07-14
+
+### Added
+
+- MockContainer can accept a list of replacement dalamud services
+
 ## [2.0.13] - 2024-07-14
 
 ### Added

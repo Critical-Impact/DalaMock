@@ -13,6 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.0.13] - 2024-07-14
+
+### Added
+
+- MockContainer can have it's services overriden before being built
+
+## [2.0.12] - 2024-07-14
+
+### Added
+
+- Dalamud configuration can be overridden
+
 ## [2.0.11] - 2024-07-13
 
 ### Added
@@ -22,12 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Plugin startup failure will be logged.
-
-## [2.0.12] - 2024-07-14
-
-### Added
-
-- Dalamud configuration can be overridden
 
 ## [2.0.10] - 2024-07-11
 

@@ -1,4 +1,5 @@
-﻿using DalaMock.Core.Imgui.Auto;
+﻿using System;
+using DalaMock.Core.Imgui.Auto;
 
 namespace DalaMock.Core.DI;
 
@@ -37,7 +38,8 @@ public class MockContainer
     /// Creates a new mock container with the given configuration.
     /// </summary>
     /// <param name="dalamudConfiguration">The configuration to use.</param>
-    public MockContainer(MockDalamudConfiguration? dalamudConfiguration = null)
+    /// <param name="containerBuildHook">Allows you to alter the services registered by the container.</param>
+    public MockContainer(MockDalamudConfiguration? dalamudConfiguration = null, Action<ContainerBuilder>? containerBuildHook = null)
     {
         this.configurationManager = new ConfigurationManager();
         this.dalamudConfiguration = dalamudConfiguration ?? this.configurationManager.LoadConfiguration();
@@ -52,6 +54,7 @@ public class MockContainer
 
         var builder = new ContainerBuilder();
         this.RegisterMockServices(builder);
+        containerBuildHook?.Invoke(builder);
         this.container = builder.Build();
     }
 

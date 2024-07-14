@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- MockContainer can have it's services overriden before being built
+- MockContainer can have its services overriden before being built
 
 ## [2.0.12] - 2024-07-14
 

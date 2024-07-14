@@ -37,10 +37,10 @@ public class MockContainer
     /// Creates a new mock container with the given configuration.
     /// </summary>
     /// <param name="dalamudConfiguration">The configuration to use.</param>
-    public MockContainer()
+    public MockContainer(MockDalamudConfiguration? dalamudConfiguration = null)
     {
         this.configurationManager = new ConfigurationManager();
-        this.dalamudConfiguration = this.configurationManager.LoadConfiguration();
+        this.dalamudConfiguration = dalamudConfiguration ?? this.configurationManager.LoadConfiguration();
         this.levelSwitch = new LoggingLevelSwitch
         {
             MinimumLevel = LogEventLevel.Verbose,

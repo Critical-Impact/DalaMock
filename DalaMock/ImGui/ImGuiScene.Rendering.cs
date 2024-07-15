@@ -12,8 +12,8 @@ using Veldrid;
 public partial class ImGuiScene
 {
     private readonly IntPtr fontAtlasId = 1;
-    private Texture fontTexture;
-    private ResourceSet fontTextureResourceSet;
+    private Texture? fontTexture;
+    private ResourceSet? fontTextureResourceSet;
     private TextureView fontTextureView;
     private Shader fragmentShader;
     private DeviceBuffer indexBuffer;
@@ -39,7 +39,6 @@ public partial class ImGuiScene
         this.indexBuffer =
             factory.CreateBuffer(new BufferDescription(2000, BufferUsage.IndexBuffer | BufferUsage.Dynamic));
         this.indexBuffer.Name = "ImGui.NET Index Buffer";
-        this.RecreateFontDeviceTexture(gd);
 
         this.projMatrixBuffer =
             factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
@@ -82,6 +81,7 @@ public partial class ImGuiScene
                     "MainTexture",
                     ResourceKind.TextureReadOnly,
                     ShaderStages.Fragment)));
+        this.RecreateFontDeviceTexture(gd);
 
         var pd = new GraphicsPipelineDescription(
             BlendStateDescription.SingleAlphaBlend,
@@ -99,9 +99,6 @@ public partial class ImGuiScene
                 this.layout,
                 this.projMatrixBuffer,
                 gd.LinearSampler));
-
-        this.fontTextureResourceSet =
-            factory.CreateResourceSet(new ResourceSetDescription(this.textureLayout, this.fontTextureView));
     }
 
     /// <summary>
@@ -120,6 +117,7 @@ public partial class ImGuiScene
         // Store our identifier
         io.Fonts.SetTexID(0, this.fontAtlasId);
 
+        this.fontTexture?.Dispose();
         this.fontTexture = gd.ResourceFactory.CreateTexture(
             TextureDescription.Texture2D(
                 (uint)width,
@@ -141,7 +139,10 @@ public partial class ImGuiScene
             1,
             0,
             0);
+        this.fontTextureResourceSet?.Dispose(); 
         this.fontTextureView = gd.ResourceFactory.CreateTextureView(this.fontTexture);
+        this.fontTextureResourceSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(this.textureLayout, this.fontTextureView));
+        this.fontTextureResourceSet.Name = "ImGui.NET Font Texture Resource Set";
 
         io.Fonts.ClearTexData();
     }

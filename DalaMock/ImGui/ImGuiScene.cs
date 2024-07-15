@@ -1,4 +1,6 @@
-﻿namespace DalaMock.Core.Imgui;
+﻿using System.IO;
+
+namespace DalaMock.Core.Imgui;
 
 using System;
 using System.Collections.Generic;
@@ -72,7 +74,9 @@ public partial class ImGuiScene : IDisposable
         this.CreateDeviceResources(
             this.GraphicsDevice,
             this.GraphicsDevice.MainSwapchain.Framebuffer.OutputDescription);
+        this.LoadFont(Path.Combine("Fonts", "FontAwesomeFreeSolid.otf"), 12.0f, 0, new ushort[] { 0xe005, 0xf8ff, 0x00 });
         this.SetKeyMappings();
+        ImGui.NewFrame();
     }
 
     /// <summary>

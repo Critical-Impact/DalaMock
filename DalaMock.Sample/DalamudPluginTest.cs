@@ -1,4 +1,7 @@
-﻿namespace DalaMock.Sample;
+﻿using DalaMock.Shared.Classes;
+using DalaMock.Shared.Interfaces;
+
+namespace DalaMock.Sample;
 
 using Autofac;
 using DalaMock.Host.Factories;
@@ -25,6 +28,7 @@ public class DalamudPluginTest : HostedPlugin
     {
         containerBuilder.RegisterType<WindowService>().SingleInstance();
         containerBuilder.RegisterType<SampleWindow>().SingleInstance();
+        containerBuilder.RegisterType<Font>().As<IFont>().SingleInstance();
     }
 
     public override void ConfigureServices(IServiceCollection serviceCollection)

@@ -24,5 +24,6 @@ public class DalamudMockPluginTest : DalamudPluginTest
         base.ConfigureContainer(containerBuilder);
         containerBuilder.RegisterType<MockWindowSystem>().As<IWindowSystem>();
         containerBuilder.RegisterType<MockFileDialogManager>().As<IFileDialogManager>();
+        containerBuilder.RegisterType<MockFont>().As<IFont>().SingleInstance();
     }
 }

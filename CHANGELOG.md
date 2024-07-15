@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.0.15] - 2024-07-15
+
+### Added
+
+- Add rudimentary font loading to support IFont's FontAwesome font
+
 ## [2.0.14] - 2024-07-14
 
 ### Added

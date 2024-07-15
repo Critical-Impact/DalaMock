@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add rudimentary font loading to support IFont's FontAwesome font
+- Add rudimentary font loading to support IFonts FontAwesome font
 
 ## [2.0.14] - 2024-07-14
 

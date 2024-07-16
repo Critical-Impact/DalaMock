@@ -17,8 +17,9 @@ public class DalamudPluginTest : HostedPlugin
         IDalamudPluginInterface pluginInterface,
         IPluginLog pluginLog,
         IDataManager dataManager,
-        ITextureProvider textureProvider)
-        : base(pluginInterface, pluginLog, dataManager, textureProvider)
+        ITextureProvider textureProvider,
+        IChatGui chatGui)
+        : base(pluginInterface, pluginLog, dataManager, textureProvider, chatGui)
     {
         this.CreateHost();
         this.Start();

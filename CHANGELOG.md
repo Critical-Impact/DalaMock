@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.0.16] - 2024-07-16
+
+### Added
+
+- Implemented most of MockChatGui
+
 ## [2.0.15] - 2024-07-15
 
 ### Added

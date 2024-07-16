@@ -87,8 +87,18 @@ public class PluginLoader : IPluginLoader
         var builder = new ContainerBuilder();
 
         builder.RegisterType(plugin.PluginType).AsSelf().As<IDalamudPlugin>();
-
-        foreach (var mockService in this.mockContainer.GetMockServices())
+        IEnumerable<IMockService> mockServices;
+        try
+        {
+            mockServices = this.mockContainer.GetMockServices();
+        }
+        catch (Exception e)
+        {
+            this.logger.Error(e, "Failed to get mock services.");
+            throw;
+        }
+        
+        foreach (var mockService in mockServices)
         {
             var registrationBuilder = builder.RegisterInstance(mockService).AsSelf();
             var interfaces = mockService.GetType().GetInterfaces();

@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -8,42 +10,89 @@ using Dalamud.Plugin.Services;
 
 public class MockChatGui : IChatGui, IMockService
 {
-    public void Print(XivChatEntry chat)
+    private readonly IPluginLog pluginLog;
+
+    public MockChatGui(IPluginLog pluginLog)
     {
+        this.pluginLog = pluginLog;
+        this.RegisteredLinkHandlers = new ReadOnlyDictionary<(string PluginName, uint CommandId), Action<uint, SeString>>(new Dictionary<(string PluginName, uint CommandId), Action<uint, SeString>>());
     }
 
-    public void Print(string message, string? messageTag = null, ushort? tagColor = null)
-    {
-    }
+    /// <inheritdoc />
+    public event IChatGui.OnMessageDelegate? ChatMessage;
 
-    public void Print(SeString message, string? messageTag = null, ushort? tagColor = null)
-    {
-    }
+    /// <inheritdoc />
+    public event IChatGui.OnCheckMessageHandledDelegate? CheckMessageHandled;
 
-    public void PrintError(string message, string? messageTag = null, ushort? tagColor = null)
-    {
-    }
+    /// <inheritdoc />
+    public event IChatGui.OnMessageHandledDelegate? ChatMessageHandled;
 
-    public void PrintError(SeString message, string? messageTag = null, ushort? tagColor = null)
-    {
-    }
+    /// <inheritdoc />
+    public event IChatGui.OnMessageUnhandledDelegate? ChatMessageUnhandled;
 
+    /// <inheritdoc />
     public IReadOnlyDictionary<(string PluginName, uint CommandId), Action<uint, SeString>> RegisteredLinkHandlers
     {
         get;
+        set;
     }
 
-    public int LastLinkedItemId { get; }
+    /// <inheritdoc />
+    public int LastLinkedItemId { get; set; }
 
-    public byte LastLinkedItemFlags { get; }
+    /// <inheritdoc />
+    public byte LastLinkedItemFlags { get; set; }
 
-    public event IChatGui.OnMessageDelegate? ChatMessage;
-
-    public event IChatGui.OnCheckMessageHandledDelegate? CheckMessageHandled;
-
-    public event IChatGui.OnMessageHandledDelegate? ChatMessageHandled;
-
-    public event IChatGui.OnMessageUnhandledDelegate? ChatMessageUnhandled;
-
+    /// <inheritdoc />
     public string ServiceName => "Chat Gui";
+
+    /// <inheritdoc />
+    public void Print(XivChatEntry chat)
+    {
+        this.pluginLog.Info($"[{chat.Type.ToString()}] [{chat.Timestamp:HH:mm:ss}] {chat.Message}");
+    }
+
+    /// <inheritdoc />
+    public void Print(string message, string? messageTag = null, ushort? tagColor = null)
+    {
+        this.pluginLog.Info($"{(messageTag == null ? "" : $"[{messageTag}] ")}{message}");
+    }
+
+    /// <inheritdoc />
+    public void Print(SeString message, string? messageTag = null, ushort? tagColor = null)
+    {
+        this.pluginLog.Info($"{(messageTag == null ? "" : $"[{messageTag}] ")}{message}");
+    }
+
+    /// <inheritdoc />
+    public void PrintError(string message, string? messageTag = null, ushort? tagColor = null)
+    {
+        this.pluginLog.Info($"ERROR: {(messageTag == null ? "" : $"[{messageTag}] ")}{message}");
+    }
+
+    /// <inheritdoc />
+    public void PrintError(SeString message, string? messageTag = null, ushort? tagColor = null)
+    {
+        this.pluginLog.Info($"ERROR: {(messageTag == null ? "" : $"[{messageTag}] ")}{message}");
+    }
+
+    public virtual void OnChatMessage(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool ishandled)
+    {
+        this.ChatMessage?.Invoke(type, timestamp, ref sender, ref message, ref ishandled);
+    }
+
+    public virtual void OnCheckMessageHandled(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool ishandled)
+    {
+        this.CheckMessageHandled?.Invoke(type, timestamp, ref sender, ref message, ref ishandled);
+    }
+
+    public virtual void OnChatMessageHandled(XivChatType type, int timestamp, SeString sender, SeString message)
+    {
+        this.ChatMessageHandled?.Invoke(type, timestamp, sender, message);
+    }
+
+    public virtual void OnChatMessageUnhandled(XivChatType type, int timestamp, SeString sender, SeString message)
+    {
+        this.ChatMessageUnhandled?.Invoke(type, timestamp, sender, message);
+    }
 }

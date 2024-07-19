@@ -27,6 +27,11 @@ public class MockObjectTable : IObjectTable, IMockService
         throw new NotImplementedException();
     }
 
+    public IGameObject? SearchByEntityId(uint entityId)
+    {
+        throw new NotImplementedException();
+    }
+
     public nint GetObjectAddress(int index)
     {
         throw new NotImplementedException();

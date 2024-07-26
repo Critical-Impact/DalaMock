@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Autofac;
 using Autofac.Core;
 using DalaMock.Core.Plugin;
@@ -45,6 +46,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         this.ConfigFile = pluginLoadSettings.ConfigFile;
         this.ConfigDirectory = pluginLoadSettings.ConfigDir;
         this.pluginLoadReason = pluginLoadSettings.PluginLoadReason;
+        this.AssemblyLocation = new FileInfo((pluginLoadSettings.AssemblyLocation ?? Environment.ProcessPath)!);
         this.pluginConfiguration = new PluginConfiguration(pluginLoadSettings.ConfigDir.FullName);
         this.mockUiBuilder = mockUiBuilder;
     }
@@ -57,6 +59,11 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     /// Provides access the mock ui builder.
     /// </summary>
     public MockUiBuilder MockUiBuilder => this.mockUiBuilder;
+
+    public Task InjectAsync(object instance, params object[] scopedObjects)
+    {
+        throw new NotImplementedException();
+    }
 
     /// <inheritdoc/>
     public PluginLoadReason Reason => this.pluginLoadReason;
@@ -136,7 +143,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
 
     public DirectoryInfo ConfigDirectory { get; }
 
-    public FileInfo AssemblyLocation => new(Environment.ProcessPath);
+    public FileInfo AssemblyLocation { get; }
 
     public ICallGateProvider<TRet> GetIpcProvider<TRet>(string name)
     {
@@ -370,6 +377,10 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         return newInstance;
     }
 
+    public Task<T> CreateAsync<T>(params object[] scopedObjects) where T : class
+    {
+        throw new NotImplementedException();
+    }
 
 
     /// <inheritdoc/>

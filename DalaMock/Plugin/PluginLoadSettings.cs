@@ -18,5 +18,11 @@ public class PluginLoadSettings(DirectoryInfo configDir, FileInfo configFile)
     /// </summary>
     public FileInfo ConfigFile { get; private set; } = configFile;
 
+    /// <summary>
+    /// Gets or sets the location of the assembly that contains the plugin.
+    /// If not provided, the location of the current executable will be used.
+    /// </summary>
+    public string? AssemblyLocation { get; set; }
+    
     public PluginLoadReason PluginLoadReason { get; set; } = PluginLoadReason.Boot;
 }

@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using Dalamud.Interface.Textures.TextureWraps;
 using StbiSharp;
 using Veldrid;
@@ -88,6 +89,32 @@ public partial class ImGuiScene
         }
 
         return rsi.ImGuiBinding;
+    }
+
+    public void CleanupImGuiBinding(IntPtr binding)
+    {
+        if (this.viewsById.Remove(binding, out var rsi))
+        {
+            // try to get the texture view from the resource set
+            var textureView = this.setsByView.FirstOrDefault(x => x.Value.ImGuiBinding == rsi.ImGuiBinding).Key;
+            if (textureView is not null)
+            {
+                var texture = this.autoViewsByTexture.FirstOrDefault(x => x.Value == textureView).Key;
+                if (texture is not null)
+                {
+                    this.autoViewsByTexture.Remove(texture);
+                    texture.Dispose();
+                }
+
+                this.ownedResources.Remove(textureView);
+                textureView.Dispose();
+
+                this.setsByView.Remove(textureView);
+            }
+
+            this.ownedResources.Remove(rsi.ResourceSet);
+            rsi.ResourceSet.Dispose();
+        }
     }
 
     private IntPtr GetNextImGuiBindingId()

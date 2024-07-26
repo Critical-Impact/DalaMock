@@ -77,7 +77,16 @@ public class MockTextureProvider : ITextureProvider, IMockService
         ReadOnlySpan<byte> bytes,
         string? debugName = null)
     {
-        throw new NotImplementedException();
+        var pixelFormat = specs.DxgiFormat switch
+        {
+            // DXGI_FORMAT_R8G8B8A8_UNORM
+            28 => Veldrid.PixelFormat.R8_G8_B8_A8_UNorm,
+
+            // DXGI_FORMAT_B8G8R8A8_UNORM
+            87 => Veldrid.PixelFormat.B8_G8_R8_A8_UNorm,
+            _ => throw new ArgumentOutOfRangeException(),
+        };
+        return this.mockTextureManager.LoadImageRaw(bytes.ToArray(), specs.Width, specs.Height, pixelFormat);
     }
 
     public Task<IDalamudTextureWrap> CreateFromRawAsync(
@@ -178,6 +187,11 @@ public class MockTextureProvider : ITextureProvider, IMockService
         }
 
         return new ForwardingSharedImmediateTexture(textureFile);
+    }
+
+    public ISharedImmediateTexture GetFromFileAbsolute(string fullPath)
+    {
+        throw new NotImplementedException();
     }
 
     public ISharedImmediateTexture GetFromManifestResource(Assembly assembly, string name)

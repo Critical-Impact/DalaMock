@@ -1,4 +1,5 @@
-﻿using IFontAtlas = Dalamud.Interface.ManagedFontAtlas.IFontAtlas;
+﻿using DalaMock.Core.Imgui;
+using IFontAtlas = Dalamud.Interface.ManagedFontAtlas.IFontAtlas;
 using IFontHandle = Dalamud.Interface.ManagedFontAtlas.IFontHandle;
 using UldWrapper = Dalamud.Interface.UldWrapper;
 
@@ -26,6 +27,17 @@ public class MockUiBuilder : IUiBuilder
     public ImFontPtr FontMono { get; }
 
     public GraphicsDevice GraphicsDevice { get; }
+
+    public MockUiBuilder(ImGuiScene scene)
+    {
+        this.GraphicsDevice = scene.GraphicsDevice;
+        if (this.GraphicsDevice.GetD3D11Info(out BackendInfoD3D11 dx11Info))
+        {
+            this.Device = new Device(dx11Info.Device);
+        }
+
+        this.WindowHandlePtr = scene.Window.SdlWindowHandle;
+    }
 
     public UldWrapper LoadUld(string uldPath)
     {

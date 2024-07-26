@@ -115,7 +115,9 @@ public class PluginLoader : IPluginLoader
 
         builder.RegisterInstance(this.mockContainer.GetWindowSystem());
 
-        var uiBuilder = new MockUiBuilder();
+        var scene = this.mockContainer.GetContainer().Resolve<DalaMock.Core.Imgui.ImGuiScene>();
+
+        var uiBuilder = new MockUiBuilder(scene);
         builder.RegisterInstance(uiBuilder);
         builder.RegisterInstance(pluginLoadSettings);
         builder.RegisterInstance(this);

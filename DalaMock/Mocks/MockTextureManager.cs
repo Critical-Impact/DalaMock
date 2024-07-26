@@ -225,7 +225,7 @@ public class MockTextureManager : IMockService
             0,
             0);
         var veldridTextureWrap =
-            new MockTextureMap(cpUframeBufferTextureId, buffer.Width, buffer.Height);
+            new MockTextureMap(cpUframeBufferTextureId, buffer.Width, buffer.Height, this.imGuiScene);
         return veldridTextureWrap;
     }
 
@@ -424,12 +424,12 @@ public class MockTextureManager : IMockService
                 0,
                 0);
             var veldridTextureWrap =
-                new MockTextureMap(cpUframeBufferTextureId, image.Width, image.Height);
+                new MockTextureMap(cpUframeBufferTextureId, image.Width, image.Height, this.imGuiScene);
             return veldridTextureWrap;
         }
     }
 
-    public IDalamudTextureWrap LoadImageRaw(byte[] imageData, int width, int height, int numChannels)
+    public IDalamudTextureWrap LoadImageRaw(byte[] imageData, int width, int height, PixelFormat pixelFormat)
     {
         var texture = this.graphicsDevice.ResourceFactory.CreateTexture(
             TextureDescription.Texture2D(
@@ -437,13 +437,13 @@ public class MockTextureManager : IMockService
                 (uint)height,
                 1,
                 1,
-                PixelFormat.R8_G8_B8_A8_UNorm,
+                pixelFormat,
                 TextureUsage.Sampled));
         var cpUframeBufferTextureId =
             this.imGuiScene.GetOrCreateImGuiBinding(this.graphicsDevice.ResourceFactory, texture);
         this.graphicsDevice.UpdateTexture(texture, imageData, 0, 0, 0, (uint)width, (uint)height, 1, 0, 0);
         var veldridTextureWrap =
-            new MockTextureMap(cpUframeBufferTextureId, width, height);
+            new MockTextureMap(cpUframeBufferTextureId, width, height, this.imGuiScene);
         return veldridTextureWrap;
     }
 
@@ -556,7 +556,7 @@ public class MockTextureManager : IMockService
     private void CreateFallbackTexture()
     {
         var fallbackTexBytes = new byte[] { 0xFF, 0x00, 0xDC, 0xFF };
-        this.fallbackTextureWrap = this.LoadImageRaw(fallbackTexBytes, 1, 1, 4);
+        this.fallbackTextureWrap = this.LoadImageRaw(fallbackTexBytes, 1, 1, PixelFormat.R8_G8_B8_A8_UNorm);
         Debug.Assert(this.fallbackTextureWrap != null, "this.fallbackTextureWrap != null");
     }
 

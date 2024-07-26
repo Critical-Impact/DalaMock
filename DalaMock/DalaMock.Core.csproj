@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net8.0-windows</TargetFramework>
@@ -60,6 +60,14 @@
         <Reference Include="StbiSharp">
             <HintPath>$(DalamudLibPath)StbiSharp.dll</HintPath>
             <Private>False</Private>
+        </Reference>
+        <Reference Include="SharpDX">
+            <HintPath>$(DalamudLibPath)SharpDX.dll</HintPath>
+            <Private>True</Private>
+        </Reference>
+        <Reference Include="SharpDX.DXGI">
+            <HintPath>$(DalamudLibPath)SharpDX.DXGI.dll</HintPath>
+            <Private>True</Private>
         </Reference>
         <Reference Include="SharpDX.Mathematics">
             <HintPath>$(DalamudLibPath)SharpDX.Mathematics.dll</HintPath>

@@ -13,6 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.0.19] - 2024-07-28
+
+### Added
+
+- DalaMock will ask you for a sqpack directory and plugin config directory if none are provided or can be loaded from the DalaMock configuration file
+
+### Fixed
+- Plugin config files/directories should match dalamuds layout
+
 ## [2.0.18] - 2024-07-28
 
 ### Added
@@ -23,8 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Device and WindowHandlePtr access from UiBuilder (Styr1x)
 - CreateFromRaw implementation for TextureProvider (Styr1x)
 - Dispose for MockTextureMap (Styr1x)
-
-
 
 
 ## [2.0.17] - 2024-07-19

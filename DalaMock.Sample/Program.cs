@@ -14,6 +14,7 @@ internal static class Program
         var mockDalamudUi = mockContainer.GetMockUi();
         var pluginLoader = mockContainer.GetPluginLoader();
         var mockPlugin = pluginLoader.AddPlugin(typeof(DalamudMockPluginTest));
+        pluginLoader.StartPlugin(mockPlugin);
         mockDalamudUi.Run();
     }
 }

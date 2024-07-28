@@ -2,13 +2,12 @@
 
 using System.IO;
 using Dalamud.Configuration;
-using Dalamud.Utility;
 using Newtonsoft.Json;
 
 /// <summary>
 /// Configuration to store settings for a dalamud plugin.
 /// </summary>
-public class PluginConfiguration
+public class PluginConfiguration    
 {
     private readonly DirectoryInfo configDirectory;
 
@@ -33,7 +32,7 @@ public class PluginConfiguration
     /// <param name="pluginName">Plugin name.</param>
     public void Save(IPluginConfiguration config, string pluginName)
     {
-        Util.WriteAllTextSafe(this.GetConfigFile(pluginName).FullName, SerializeConfig(config));
+        File.WriteAllText(this.GetConfigFile(pluginName).FullName, SerializeConfig(config));
     }
 
     /// <summary>

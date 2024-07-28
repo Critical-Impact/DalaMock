@@ -1,4 +1,6 @@
-﻿namespace DalaMock.Core.Plugin;
+﻿using System.IO;
+
+namespace DalaMock.Core.Plugin;
 
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,7 @@ public class PluginLoader : IPluginLoader
     private readonly Dictionary<Type, MockPlugin> loadedPlugins;
     private readonly ILogger logger;
     private readonly MockContainer mockContainer;
+    private readonly MockDalamudConfiguration mockDalamudConfiguration;
 
     /// <summary>
     /// Has the plugin's state changed, has it started or stopped?
@@ -45,9 +48,10 @@ public class PluginLoader : IPluginLoader
     /// </summary>
     /// <param name="mockContainer">The global DI container.</param>
     /// <param name="logger">The serilog logger.</param>
-    public PluginLoader(MockContainer mockContainer, ILogger logger)
+    public PluginLoader(MockContainer mockContainer, MockDalamudConfiguration mockDalamudConfiguration, ILogger logger)
     {
         this.mockContainer = mockContainer;
+        this.mockDalamudConfiguration = mockDalamudConfiguration;
         this.logger = logger;
         this.loadedPlugins = new Dictionary<Type, MockPlugin>();
     }
@@ -65,6 +69,20 @@ public class PluginLoader : IPluginLoader
         }
 
         return this.loadedPlugins[dalamudPluginType];
+    }
+
+    public bool StartPlugin(MockPlugin mockPlugin)
+    {
+        if (this.mockDalamudConfiguration.PluginSavePath == null)
+        {
+            this.logger.Warning("Could not automatically start plugin as no plugin save path was provided. If this is your first time running DalaMock, this path will be saved once provided or you can provide one programatically.");
+            return false;
+        }
+
+        var originalPluginType = mockPlugin.PluginType.BaseType ?? mockPlugin.PluginType; // Run under the assumption we aren't dealing with plugin classes that are inherited multiple times
+
+        var pluginDirectory = new DirectoryInfo(Path.Combine(this.mockDalamudConfiguration.PluginSavePath.FullName, originalPluginType.Name));
+        return this.StartPlugin(mockPlugin, new PluginLoadSettings(pluginDirectory, new FileInfo(Path.Combine(this.mockDalamudConfiguration.PluginSavePath.FullName, originalPluginType.Name + ".json"))));
     }
 
     /// <summary>
@@ -97,7 +115,7 @@ public class PluginLoader : IPluginLoader
             this.logger.Error(e, "Failed to get mock services.");
             throw;
         }
-        
+
         foreach (var mockService in mockServices)
         {
             var registrationBuilder = builder.RegisterInstance(mockService).AsSelf();

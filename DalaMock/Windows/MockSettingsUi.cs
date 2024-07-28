@@ -70,11 +70,7 @@ public class MockSettingsWindow : Window
                             {
                                 if (this.dalamudConfiguration.PluginSavePath != null)
                                 {
-                                    this.pluginLoader.StartPlugin(
-                                        plugin.Value,
-                                        new PluginLoadSettings(
-                                            this.dalamudConfiguration.PluginSavePath,
-                                            new FileInfo(Path.Combine(this.dalamudConfiguration.PluginSavePath.FullName, plugin.Value.PluginType.Name))));
+                                    this.pluginLoader.StartPlugin(plugin.Value);
                                 }
 
                                 // TODO: Need to make this configurable.

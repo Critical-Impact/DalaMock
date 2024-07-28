@@ -1,5 +1,9 @@
 ﻿using System;
+using System.IO;
+
 using DalaMock.Core.Imgui.Auto;
+
+using NativeFileDialogSharp;
 
 namespace DalaMock.Core.DI;
 
@@ -41,7 +45,8 @@ public class MockContainer
     /// <param name="dalamudConfiguration">The configuration to use.</param>
     /// <param name="containerBuildHook">Allows you to alter the services registered by the container.</param>
     /// <param name="serviceReplacements">A dictionary of dalamud mocks service types and what they should be replaced with.</param>
-    public MockContainer(MockDalamudConfiguration? dalamudConfiguration = null, Action<ContainerBuilder>? containerBuildHook = null, Dictionary<Type, Type>? serviceReplacements = null)
+    /// <param name="askPath">If set to true and no game path is found, will ask the user to select the ffxiv sqpack folder.</param>
+    public MockContainer(MockDalamudConfiguration? dalamudConfiguration = null, Action<ContainerBuilder>? containerBuildHook = null, Dictionary<Type, Type>? serviceReplacements = null, bool askPath = true)
     {
         this.serviceReplacements = serviceReplacements;
         this.configurationManager = new ConfigurationManager();
@@ -51,9 +56,42 @@ public class MockContainer
             MinimumLevel = LogEventLevel.Verbose,
         };
         this.seriLog = new LoggerConfiguration()
-            .WriteTo.Console(standardErrorFromLevel: LogEventLevel.Verbose)
-            .MinimumLevel.ControlledBy(this.levelSwitch)
-            .CreateLogger();
+                       .WriteTo.Console(standardErrorFromLevel: LogEventLevel.Verbose)
+                       .MinimumLevel.ControlledBy(this.levelSwitch)
+                       .CreateLogger();
+        if (!this.dalamudConfiguration.GamePathValid && askPath)
+        {
+            this.seriLog.Information("Please select your ffxiv sqpack folder.");
+            var dialogResult = Dialog.FolderPicker();
+            if (dialogResult.IsOk)
+            {
+                this.dalamudConfiguration.GamePath = new DirectoryInfo(dialogResult.Path);
+                this.configurationManager.SaveConfiguration(this.dalamudConfiguration);
+            }
+            else
+            {
+                this.seriLog.Error("You must provide your sqpack folder either manually or programmatically.");
+                Environment.Exit(69);
+            }
+        }
+
+        if (!this.dalamudConfiguration.PluginSavePathValid && askPath)
+        {
+            this.seriLog.Information("Please select a plugin save folder.");
+            var dialogResult = Dialog.FolderPicker();
+            if (dialogResult.IsOk)
+            {
+                this.dalamudConfiguration.PluginSavePath = new DirectoryInfo(dialogResult.Path);
+                this.configurationManager.SaveConfiguration(this.dalamudConfiguration);
+            }
+            else
+            {
+                this.seriLog.Error("You must provide your plugin save folder either manually or programmatically.");
+                Environment.Exit(69);
+            }
+        }
+
+
 
         var builder = new ContainerBuilder();
         this.RegisterMockServices(builder);

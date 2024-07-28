@@ -14,6 +14,12 @@ public class MockPlugin(Type pluginType) : IMockPlugin
     private IDalamudPlugin? dalamudPlugin;
     private PluginLoadSettings? pluginLoadSettings;
 
+    public MockPlugin(Type pluginType, PluginLoadSettings pluginLoadSettings)
+        : this(pluginType)
+    {
+        this.pluginLoadSettings = pluginLoadSettings;
+    }
+
     /// <inheritdoc/>
     public bool IsLoaded => this.DalamudPlugin != null && this.PluginLoadSettings != null && this.Container != null;
 

@@ -243,10 +243,6 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     {
         var serializedConfig = SerializeConfig(currentConfig);
         File.WriteAllText(this.ConfigFile.FullName, serializedConfig);
-        if (currentConfig != null)
-        {
-            this.pluginConfiguration.Save(currentConfig, this.InternalName);
-        }
     }
 
     public IPluginConfiguration? GetPluginConfig()

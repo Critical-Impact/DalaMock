@@ -13,6 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.0.20] - 2024-07-28
+
+### Added
+
+- Have sample actually load/save a configuration
+
+### Fixed
+
+- Fix incorrect save path
+
+
 ## [2.0.19] - 2024-07-28
 
 ### Added

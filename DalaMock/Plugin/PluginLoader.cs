@@ -79,10 +79,10 @@ public class PluginLoader : IPluginLoader
             return false;
         }
 
-        var originalPluginType = mockPlugin.PluginType.BaseType ?? mockPlugin.PluginType; // Run under the assumption we aren't dealing with plugin classes that are inherited multiple times
+        var assemblyName = mockPlugin.PluginType.BaseType?.Assembly.GetName().Name ?? mockPlugin.PluginType.Assembly.GetName().Name ?? mockPlugin.PluginType.Name;
 
-        var pluginDirectory = new DirectoryInfo(Path.Combine(this.mockDalamudConfiguration.PluginSavePath.FullName, originalPluginType.Name));
-        return this.StartPlugin(mockPlugin, new PluginLoadSettings(pluginDirectory, new FileInfo(Path.Combine(this.mockDalamudConfiguration.PluginSavePath.FullName, originalPluginType.Name + ".json"))));
+        var pluginDirectory = new DirectoryInfo(Path.Combine(this.mockDalamudConfiguration.PluginSavePath.FullName, assemblyName));
+        return this.StartPlugin(mockPlugin, new PluginLoadSettings(pluginDirectory, new FileInfo(Path.Combine(this.mockDalamudConfiguration.PluginSavePath.FullName, assemblyName + ".json"))));
     }
 
     /// <summary>

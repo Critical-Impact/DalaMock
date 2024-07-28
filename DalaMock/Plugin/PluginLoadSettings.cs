@@ -23,6 +23,6 @@ public class PluginLoadSettings(DirectoryInfo configDir, FileInfo configFile)
     /// If not provided, the location of the current executable will be used.
     /// </summary>
     public string? AssemblyLocation { get; set; }
-    
+
     public PluginLoadReason PluginLoadReason { get; set; } = PluginLoadReason.Boot;
 }

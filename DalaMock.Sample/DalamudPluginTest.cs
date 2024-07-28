@@ -28,6 +28,7 @@ public class DalamudPluginTest : HostedPlugin
     public override void ConfigureContainer(ContainerBuilder containerBuilder)
     {
         containerBuilder.RegisterType<WindowService>().SingleInstance();
+        containerBuilder.RegisterType<ConfigurationSaveService>().SingleInstance();
         containerBuilder.RegisterType<SampleWindow>().SingleInstance();
         containerBuilder.RegisterType<Font>().As<IFont>().SingleInstance();
     }
@@ -35,5 +36,6 @@ public class DalamudPluginTest : HostedPlugin
     public override void ConfigureServices(IServiceCollection serviceCollection)
     {
         serviceCollection.AddHostedService(c => c.GetRequiredService<WindowService>());
+        serviceCollection.AddHostedService(c => c.GetRequiredService<ConfigurationSaveService>());
     }
 }

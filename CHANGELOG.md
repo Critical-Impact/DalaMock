@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.0.18] - 2024-07-28
+
+### Added
+
+- Added missing properties/methods to dalamud mock services
+- Merged MockTextureProvider and MockTextureManager
+- Assembly Location can be set via plugin load settings (Styr1x)
+- Device and WindowHandlePtr access from UiBuilder (Styr1x)
+- CreateFromRaw implementation for TextureProvider (Styr1x)
+- Dispose for MockTextureMap (Styr1x)
+
+
+
+
 ## [2.0.17] - 2024-07-19
 
 ### Added

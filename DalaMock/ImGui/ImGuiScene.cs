@@ -199,7 +199,7 @@ public partial class ImGuiScene : IDisposable
             this.vertexBuffer.Dispose();
             this.indexBuffer.Dispose();
             this.projMatrixBuffer.Dispose();
-            this.fontTexture.Dispose();
+            this.fontTexture?.Dispose();
             this.fontTextureView.Dispose();
             this.vertexShader.Dispose();
             this.fragmentShader.Dispose();

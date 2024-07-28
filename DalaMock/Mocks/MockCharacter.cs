@@ -46,11 +46,14 @@ public class MockCharacter : ICharacter
     private uint nameId;
     private ExcelResolver<OnlineStatus> onlineStatus;
     private StatusFlags statusFlags;
+    private ExcelResolver<Mount>? currentMount;
+    private ExcelResolver<Companion>? currentMinion;
 
     public MockCharacter(MockClientState clientState)
     {
         this.clientState = clientState;
     }
+    
 
     /// <inheritdoc/>
     public bool Equals(IGameObject? other)
@@ -332,5 +335,21 @@ public class MockCharacter : ICharacter
     {
         get => this.statusFlags;
         set => this.statusFlags = value;
+    }
+
+    /// <inheritdoc/>
+    [ImGuiGroup("Basic")]
+    public ExcelResolver<Mount>? CurrentMount
+    {
+        get => this.currentMount;
+        set => this.currentMount = value;
+    }
+
+    /// <inheritdoc/>
+    [ImGuiGroup("Basic")]
+    public ExcelResolver<Companion>? CurrentMinion
+    {
+        get => this.currentMinion;
+        set => this.currentMinion = value;
     }
 }

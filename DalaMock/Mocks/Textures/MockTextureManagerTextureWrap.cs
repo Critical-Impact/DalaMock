@@ -7,7 +7,7 @@ using Dalamud.Interface.Textures.TextureWraps;
 public class MockTextureManagerTextureWrap : IDalamudTextureWrap
 {
     private readonly bool keepAlive;
-    private readonly MockTextureManager manager;
+    private readonly MockTextureProvider textureProvider;
     private readonly string path;
 
     /// <summary>
@@ -21,11 +21,11 @@ public class MockTextureManagerTextureWrap : IDalamudTextureWrap
         string path,
         Vector2 extents,
         bool keepAlive,
-        MockTextureManager manager)
+        MockTextureProvider textureProvider)
     {
         this.path = path;
         this.keepAlive = keepAlive;
-        this.manager = manager;
+        this.textureProvider = textureProvider;
         this.Width = (int)extents.X;
         this.Height = (int)extents.Y;
     }
@@ -46,7 +46,7 @@ public class MockTextureManagerTextureWrap : IDalamudTextureWrap
                 throw new InvalidOperationException("Texture already disposed. You may not render it.");
             }
 
-            return this.manager.GetInfo(this.path).Wrap!.ImGuiHandle;
+            return this.textureProvider.GetInfo(this.path).Wrap!.ImGuiHandle;
         }
     }
 
@@ -63,7 +63,7 @@ public class MockTextureManagerTextureWrap : IDalamudTextureWrap
         {
             if (!this.IsDisposed)
             {
-                this.manager.NotifyTextureDisposed(this.path, this.keepAlive);
+                this.textureProvider.NotifyTextureDisposed(this.path, this.keepAlive);
             }
 
             this.IsDisposed = true;

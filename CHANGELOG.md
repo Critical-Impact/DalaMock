@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.0.22] - 2024-07-28
+
+### Fixed
+
+- Support latest dalamud release
+- Use staging zip for release
+
 ## [2.0.21] - 2024-07-28
 
 ### Fixed

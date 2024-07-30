@@ -115,6 +115,10 @@ public class MockClientState : IClientState, IMockService
 
     public event Action<ushort>? TerritoryChanged;
 
+    public event IClientState.ClassJobChangeDelegate? ClassJobChanged;
+
+    public event IClientState.LevelChangeDelegate? LevelChanged;
+
     public event System.Action? Login;
 
     public event System.Action? Logout;

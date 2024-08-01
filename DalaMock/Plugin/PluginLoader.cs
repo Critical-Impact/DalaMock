@@ -93,14 +93,16 @@ public class PluginLoader : IPluginLoader
     /// <returns>A boolean indicating whether or not the plugin started successfully.</returns>
     public bool StartPlugin(MockPlugin plugin, PluginLoadSettings pluginLoadSettings)
     {
+        var assemblyName = plugin.PluginType.BaseType?.Assembly.GetName().Name ?? plugin.PluginType.Assembly.GetName().Name ?? plugin.PluginType.Name;
+        
         if (plugin.IsLoaded)
         {
             this.logger.Information(
-                $"Could not start plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}, already started.");
+                $"Could not start plugin {assemblyName}, already started.");
             return false;
         }
 
-        this.logger.Information($"Starting plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}");
+        this.logger.Information($"Starting plugin {assemblyName}");
 
         var builder = new ContainerBuilder();
 
@@ -143,7 +145,7 @@ public class PluginLoader : IPluginLoader
             new MockDalamudPluginInterface(
                 uiBuilder,
                 pluginLoadSettings,
-                plugin.PluginType.FullName ?? plugin.PluginType.Name,
+                assemblyName,
                 c.Resolve<IComponentContext>())).As<IDalamudPluginInterface>();
 
         builder.RegisterInstance(this.mockContainer.GetLogger());
@@ -156,12 +158,12 @@ public class PluginLoader : IPluginLoader
             var dalamudPlugin = (IDalamudPlugin)builtPlugin;
             plugin.Startup(dalamudPlugin, pluginLoadSettings, container);
 
-            this.logger.Information($"Started plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}");
+            this.logger.Information($"Started plugin {assemblyName}");
             this.OnPluginStarted(plugin);
             return true;
         }
 
-        this.logger.Information($"Failed to start plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}");
+        this.logger.Information($"Failed to start plugin {assemblyName}");
         return false;
 
 

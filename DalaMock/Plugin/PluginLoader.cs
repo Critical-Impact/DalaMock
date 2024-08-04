@@ -81,7 +81,7 @@ public class PluginLoader : IPluginLoader
 
         var assemblyName = mockPlugin.PluginType.BaseType?.Assembly.GetName().Name ?? mockPlugin.PluginType.Assembly.GetName().Name ?? mockPlugin.PluginType.Name;
 
-        var pluginDirectory = new DirectoryInfo(Path.Combine(this.mockDalamudConfiguration.PluginSavePath.FullName, assemblyName));
+        var pluginDirectory = new DirectoryInfo(this.mockDalamudConfiguration.PluginSavePath.FullName);
         return this.StartPlugin(mockPlugin, new PluginLoadSettings(pluginDirectory, new FileInfo(Path.Combine(this.mockDalamudConfiguration.PluginSavePath.FullName, assemblyName + ".json"))));
     }
 

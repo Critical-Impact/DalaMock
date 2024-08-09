@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <LangVersion>12.0</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>2.0.24</Version>
+        <Version>2.0.25</Version>
         <PackageProjectUrl>https://github.com/Critical-Impact/DalaMock</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Critical-Impact/DalaMock</RepositoryUrl>
         <Authors>Critical-Impact</Authors>
@@ -85,13 +85,14 @@
         <PackageReference Include="Autofac" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
         <PackageReference Include="NativeFileDialogSharp" Version="0.5.0" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
         <PackageReference Include="System.Collections.Immutable" Version="7.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="9.0.0-preview.6.24328.4"/>
-        <PackageReference Include="Serilog" Version="2.11.0"/>
+        <PackageReference Include="Serilog" Version="4.0.1" />
         <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0"/>
-        <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1"/>
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0"/>
         <PackageReference Include="Veldrid" Version="4.9.0"/>
         <PackageReference Include="Veldrid.SDL2" Version="4.9.0"/>

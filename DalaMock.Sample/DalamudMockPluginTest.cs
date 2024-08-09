@@ -14,8 +14,8 @@ using Dalamud.Plugin.Services;
 
 public class DalamudMockPluginTest : DalamudPluginTest
 {
-    public DalamudMockPluginTest(IDalamudPluginInterface pluginInterface, IPluginLog pluginLog, IDataManager dataManager, ITextureProvider textureProvider, IChatGui chatGui)
-        : base(pluginInterface, pluginLog, dataManager, textureProvider, chatGui)
+    public DalamudMockPluginTest(IDalamudPluginInterface pluginInterface, IPluginLog pluginLog, IDataManager dataManager, ITextureProvider textureProvider, IChatGui chatGui, IDtrBar dtrBar)
+        : base(pluginInterface, pluginLog, dataManager, textureProvider, chatGui, dtrBar)
     {
     }
 

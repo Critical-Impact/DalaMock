@@ -1,5 +1,7 @@
 ﻿using System.IO;
 
+using Microsoft.Extensions.Logging;
+
 namespace DalaMock.Core.Plugin;
 
 using System;
@@ -18,9 +20,9 @@ using Serilog;
 public class PluginLoader : IPluginLoader
 {
     private readonly Dictionary<Type, MockPlugin> loadedPlugins;
-    private readonly ILogger logger;
     private readonly MockContainer mockContainer;
     private readonly MockDalamudConfiguration mockDalamudConfiguration;
+    private readonly ILogger<PluginLoader> logger;
 
     /// <summary>
     /// Has the plugin's state changed, has it started or stopped?
@@ -48,7 +50,7 @@ public class PluginLoader : IPluginLoader
     /// </summary>
     /// <param name="mockContainer">The global DI container.</param>
     /// <param name="logger">The serilog logger.</param>
-    public PluginLoader(MockContainer mockContainer, MockDalamudConfiguration mockDalamudConfiguration, ILogger logger)
+    public PluginLoader(MockContainer mockContainer, MockDalamudConfiguration mockDalamudConfiguration, ILogger<PluginLoader> logger)
     {
         this.mockContainer = mockContainer;
         this.mockDalamudConfiguration = mockDalamudConfiguration;
@@ -75,7 +77,7 @@ public class PluginLoader : IPluginLoader
     {
         if (this.mockDalamudConfiguration.PluginSavePath == null)
         {
-            this.logger.Warning("Could not automatically start plugin as no plugin save path was provided. If this is your first time running DalaMock, this path will be saved once provided or you can provide one programatically.");
+            this.logger.LogWarning("Could not automatically start plugin as no plugin save path was provided. If this is your first time running DalaMock, this path will be saved once provided or you can provide one programatically.");
             return false;
         }
 
@@ -97,12 +99,12 @@ public class PluginLoader : IPluginLoader
         
         if (plugin.IsLoaded)
         {
-            this.logger.Information(
+            this.logger.LogInformation(
                 $"Could not start plugin {assemblyName}, already started.");
             return false;
         }
 
-        this.logger.Information($"Starting plugin {assemblyName}");
+        this.logger.LogInformation($"Starting plugin {assemblyName}");
 
         var builder = new ContainerBuilder();
 
@@ -114,7 +116,7 @@ public class PluginLoader : IPluginLoader
         }
         catch (Exception e)
         {
-            this.logger.Error(e, "Failed to get mock services.");
+            this.logger.LogError(e, "Failed to get mock services.");
             throw;
         }
 
@@ -148,8 +150,6 @@ public class PluginLoader : IPluginLoader
                 assemblyName,
                 c.Resolve<IComponentContext>())).As<IDalamudPluginInterface>();
 
-        builder.RegisterInstance(this.mockContainer.GetLogger());
-
         var container = builder.Build();
 
 
@@ -158,12 +158,12 @@ public class PluginLoader : IPluginLoader
             var dalamudPlugin = (IDalamudPlugin)builtPlugin;
             plugin.Startup(dalamudPlugin, pluginLoadSettings, container);
 
-            this.logger.Information($"Started plugin {assemblyName}");
+            this.logger.LogInformation($"Started plugin {assemblyName}");
             this.OnPluginStarted(plugin);
             return true;
         }
 
-        this.logger.Information($"Failed to start plugin {assemblyName}");
+        this.logger.LogInformation($"Failed to start plugin {assemblyName}");
         return false;
 
 
@@ -178,17 +178,17 @@ public class PluginLoader : IPluginLoader
     {
         if (!plugin.IsLoaded || plugin.DalamudPlugin == null || plugin.Container == null)
         {
-            this.logger.Information(
+            this.logger.LogInformation(
                 $"Could not stop plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}, already stopped.");
             return false;
         }
 
-        this.logger.Information($"Stopping plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}");
+        this.logger.LogInformation($"Stopping plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}");
 
         plugin.DalamudPlugin.Dispose();
         plugin.Container.Dispose();
         plugin.Teardown();
-        this.logger.Information($"Stopped plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}");
+        this.logger.LogInformation($"Stopped plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}");
         this.OnPluginStopped(plugin);
         return true;
     }

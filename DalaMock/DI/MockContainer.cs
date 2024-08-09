@@ -3,6 +3,8 @@ using System.IO;
 
 using DalaMock.Core.Imgui.Auto;
 
+using Microsoft.Extensions.Logging;
+
 using NativeFileDialogSharp;
 
 namespace DalaMock.Core.DI;
@@ -55,10 +57,11 @@ public class MockContainer
         {
             MinimumLevel = LogEventLevel.Verbose,
         };
-        this.seriLog = new LoggerConfiguration()
-                       .WriteTo.Console(standardErrorFromLevel: LogEventLevel.Verbose)
-                       .MinimumLevel.ControlledBy(this.levelSwitch)
-                       .CreateLogger();
+        Log.Logger = this.seriLog = new LoggerConfiguration()
+                                    .WriteTo.Console(standardErrorFromLevel: LogEventLevel.Verbose)
+                                    .MinimumLevel.ControlledBy(this.levelSwitch)
+                                    .CreateLogger();
+        
         if (!this.dalamudConfiguration.GamePathValid && askPath)
         {
             this.seriLog.Information("Please select your ffxiv sqpack folder.");
@@ -99,6 +102,12 @@ public class MockContainer
         this.container = builder.Build();
     }
 
+    private void ConfigureLogging(ILoggingBuilder log)
+    {
+        log.AddSerilog();
+        log.AddConsole();
+    }
+
     private void RegisterMockServices(ContainerBuilder builder)
     {
         // Get the current assembly
@@ -121,7 +130,15 @@ public class MockContainer
             builder.RegisterType(imGuiElement).AsSelf().As<IImGuiElement>();
         }
 
-        builder.RegisterInstance(this.seriLog).As<Serilog.ILogger>();
+        builder.Register(handler => LoggerFactory.Create(this.ConfigureLogging))
+               .As<ILoggerFactory>()
+               .SingleInstance()
+               .AutoActivate();
+
+        builder.RegisterGeneric(typeof(Logger<>))
+               .As(typeof(ILogger<>))
+               .SingleInstance();
+
         builder.RegisterInstance(this.levelSwitch);
         builder.RegisterInstance(this.configurationManager);
         builder.Register<GameData>(
@@ -177,6 +194,9 @@ public class MockContainer
             }
         }
 
+        builder.RegisterType<MockDtrBarEntry>().AsSelf();
+        builder.RegisterType<MockReadOnlyDtrEntryBar>().AsSelf();
+
         // Register each type as implementing IMockService
         foreach (var type in mockWindows)
         {
@@ -229,15 +249,6 @@ public class MockContainer
     public MockWindowSystem GetWindowSystem()
     {
         return this.container.Resolve<MockWindowSystem>();
-    }
-
-    /// <summary>
-    /// Returns a serilog logger. Will log to console.
-    /// </summary>
-    /// <returns>Returns a serilog logger.</returns>
-    public Serilog.ILogger GetLogger()
-    {
-        return this.container.Resolve<Serilog.ILogger>();
     }
 
     /// <summary>

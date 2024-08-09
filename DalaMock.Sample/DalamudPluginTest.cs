@@ -18,8 +18,8 @@ public class DalamudPluginTest : HostedPlugin
         IPluginLog pluginLog,
         IDataManager dataManager,
         ITextureProvider textureProvider,
-        IChatGui chatGui)
-        : base(pluginInterface, pluginLog, dataManager, textureProvider, chatGui)
+        IChatGui chatGui, IDtrBar dtrBar)
+        : base(pluginInterface, pluginLog, dataManager, textureProvider, chatGui, dtrBar)
     {
         this.CreateHost();
         this.Start();
@@ -30,6 +30,7 @@ public class DalamudPluginTest : HostedPlugin
         containerBuilder.RegisterType<WindowService>().SingleInstance();
         containerBuilder.RegisterType<ConfigurationSaveService>().SingleInstance();
         containerBuilder.RegisterType<SampleWindow>().SingleInstance();
+        containerBuilder.RegisterType<DtrBarSampleWindow>().SingleInstance();
         containerBuilder.RegisterType<Font>().As<IFont>().SingleInstance();
     }
 

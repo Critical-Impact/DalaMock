@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.0.26] - 2024-08-20
+
+### Added
+
+- Added GetFileAsync to MockDataManager
+
 ## [2.0.25] - 2024-08-04
 
 ### Added

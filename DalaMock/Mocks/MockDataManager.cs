@@ -1,3 +1,7 @@
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -38,8 +42,23 @@ public class MockDataManager : IDataManager, IMockService
 
     public T? GetFile<T>(string path) where T : FileResource
     {
-        return this.gameData.GetFile<T>(path);
+        var filePath = GameData.ParseFilePath(path);
+        if (filePath == null)
+        {
+            return default;
+        }
+
+        return this.GameData.Repositories.TryGetValue(filePath.Repository, out var repository) ? repository.GetFile<T>(filePath.Category, filePath) : default;
     }
+
+    public Task<T> GetFileAsync<T>(string path, CancellationToken cancellationToken) where T : FileResource =>
+        GameData.ParseFilePath(path) is { } filePath &&
+            this.GameData.Repositories.TryGetValue(filePath.Repository, out var repository)
+                ? Task.Run(
+                    () => repository.GetFile<T>(filePath.Category, filePath) ?? throw new FileNotFoundException(
+                              "Failed to load file, most likely because the file could not be found."),
+                    cancellationToken)
+                : Task.FromException<T>(new FileNotFoundException("The file could not be found."));
 
     public bool FileExists(string path)
     {

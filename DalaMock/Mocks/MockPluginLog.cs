@@ -4,7 +4,6 @@ namespace DalaMock.Core.Mocks;
 
 using System;
 using Dalamud.Plugin.Services;
-using Serilog;
 using Serilog.Events;
 
 public class MockPluginLog : IPluginLog, IMockService

@@ -14,7 +14,7 @@ public class MockMockWindow : Window
         : base("Service Mocks")
     {
         this.mockWindows = mockWindows;
-        this.IsOpen = false;
+        this.IsOpen = true;
     }
 
     public override void Draw()

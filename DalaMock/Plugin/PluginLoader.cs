@@ -23,6 +23,7 @@ public class PluginLoader : IPluginLoader
     private readonly MockContainer mockContainer;
     private readonly MockDalamudConfiguration mockDalamudConfiguration;
     private readonly ILogger<PluginLoader> logger;
+    private readonly ILoggerFactory loggerFactory;
 
     /// <summary>
     /// Has the plugin's state changed, has it started or stopped?
@@ -50,11 +51,12 @@ public class PluginLoader : IPluginLoader
     /// </summary>
     /// <param name="mockContainer">The global DI container.</param>
     /// <param name="logger">The serilog logger.</param>
-    public PluginLoader(MockContainer mockContainer, MockDalamudConfiguration mockDalamudConfiguration, ILogger<PluginLoader> logger)
+    public PluginLoader(MockContainer mockContainer, MockDalamudConfiguration mockDalamudConfiguration, ILogger<PluginLoader> logger, ILoggerFactory loggerFactory)
     {
         this.mockContainer = mockContainer;
         this.mockDalamudConfiguration = mockDalamudConfiguration;
         this.logger = logger;
+        this.loggerFactory = loggerFactory;
         this.loadedPlugins = new Dictionary<Type, MockPlugin>();
     }
 
@@ -96,7 +98,7 @@ public class PluginLoader : IPluginLoader
     public bool StartPlugin(MockPlugin plugin, PluginLoadSettings pluginLoadSettings)
     {
         var assemblyName = plugin.PluginType.BaseType?.Assembly.GetName().Name ?? plugin.PluginType.Assembly.GetName().Name ?? plugin.PluginType.Name;
-        
+
         if (plugin.IsLoaded)
         {
             this.logger.LogInformation(
@@ -142,6 +144,10 @@ public class PluginLoader : IPluginLoader
         var uiBuilder = new MockUiBuilder(scene);
         builder.RegisterInstance(uiBuilder);
         builder.RegisterInstance(pluginLoadSettings);
+        builder.RegisterInstance(this.loggerFactory).ExternallyOwned();
+        builder.RegisterGeneric(typeof(Logger<>))
+               .As(typeof(ILogger<>))
+               .SingleInstance();
         builder.RegisterInstance(this);
         builder.Register<MockDalamudPluginInterface>(c =>
             new MockDalamudPluginInterface(

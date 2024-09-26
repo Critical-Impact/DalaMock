@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.0.27] - 2024-09-26
+
+### Added
+
+- Use MS logging for mocks
+
 ## [2.0.26] - 2024-08-20
 
 ### Added

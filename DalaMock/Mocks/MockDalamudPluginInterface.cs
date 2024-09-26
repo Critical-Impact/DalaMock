@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -22,7 +24,6 @@ using Dalamud.Plugin.Internal.Types.Manifest;
 using Dalamud.Plugin.Ipc;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Serilog;
 
 public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
 {
@@ -286,7 +287,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     /// <inheritdoc/>
     public T? Create<T>(params object[] scopedObjects) where T : class
     {
-        var logger = this.componentContext.Resolve<ILogger>();
+        var logger = this.componentContext.Resolve<ILogger<T>>();
         var mockServices = this.componentContext.Resolve<IEnumerable<IMockService>>();
         Dictionary<Type, object> mockServicesDict = new();
         foreach (var mockService in mockServices)
@@ -349,7 +350,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         if (newInstance == null)
         {
             // If no suitable constructor is found, return null
-            logger.Error($"No suitable constructor found for type '{typeToCreate.FullName}' that can be resolved with the provided mock services.");
+            logger.LogError($"No suitable constructor found for type '{typeToCreate.FullName}' that can be resolved with the provided mock services.");
             return null;
         }
 
@@ -366,7 +367,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
             }
             else
             {
-                logger.Error($"No matching mock service found for property '{property.Name}' of type '{propertyType.FullName}' in object of type '{newInstance.GetType().FullName}'.");
+                logger.LogError($"No matching mock service found for property '{property.Name}' of type '{propertyType.FullName}' in object of type '{newInstance.GetType().FullName}'.");
             }
         }
 
@@ -414,7 +415,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
             }
             else
             {
-                logger.Error($"No matching mock service found for property '{property.Name}' of type '{propertyType.FullName}' in object of type '{instance.GetType().FullName}'.");
+                logger.LogError($"No matching mock service found for property '{property.Name}' of type '{propertyType.FullName}' in object of type '{instance.GetType().FullName}'.");
             }
         }
 

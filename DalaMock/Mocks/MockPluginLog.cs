@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+using ILogger = Serilog.ILogger;
 
 namespace DalaMock.Core.Mocks;
 
@@ -8,9 +8,9 @@ using Serilog.Events;
 
 public class MockPluginLog : IPluginLog, IMockService
 {
-    public ILogger<MockPluginLog> Logger { get; }
+    public ILogger Logger { get; }
 
-    public MockPluginLog(ILogger<MockPluginLog> logger)
+    public MockPluginLog(ILogger logger)
     {
         this.Logger = logger;
     }
@@ -24,7 +24,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogCritical(messageTemplate, values);
+        this.Logger.Fatal(messageTemplate, values);
     }
 
     public void Fatal(Exception? exception, string messageTemplate, params object[] values)
@@ -34,7 +34,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogCritical(exception, messageTemplate, values);
+        this.Logger.Fatal(exception, messageTemplate, values);
     }
 
     public void Error(string messageTemplate, params object[] values)
@@ -44,7 +44,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogError(messageTemplate, values);
+        this.Logger.Error(messageTemplate, values);
     }
 
     public void Error(Exception? exception, string messageTemplate, params object[] values)
@@ -54,7 +54,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogError(exception, messageTemplate, values);
+        this.Logger.Error(exception, messageTemplate, values);
     }
 
     public void Warning(string messageTemplate, params object[] values)
@@ -64,7 +64,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogWarning(messageTemplate, values);
+        this.Logger.Warning(messageTemplate, values);
     }
 
     public void Warning(Exception? exception, string messageTemplate, params object[] values)
@@ -74,7 +74,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogWarning(exception, messageTemplate, values);
+        this.Logger.Warning(exception, messageTemplate, values);
     }
 
     public void Information(string messageTemplate, params object[] values)
@@ -84,7 +84,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogInformation(messageTemplate, values);
+        this.Logger.Information(messageTemplate, values);
     }
 
     public void Information(Exception? exception, string messageTemplate, params object[] values)
@@ -94,7 +94,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogInformation(exception, messageTemplate, values);
+        this.Logger.Information(exception, messageTemplate, values);
     }
 
     public void Info(string messageTemplate, params object[] values)
@@ -104,7 +104,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogInformation(messageTemplate, values);
+        this.Logger.Information(messageTemplate, values);
     }
 
     public void Info(Exception? exception, string messageTemplate, params object[] values)
@@ -114,7 +114,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogInformation(exception, messageTemplate, values);
+        this.Logger.Information(exception, messageTemplate, values);
     }
 
     public void Debug(string messageTemplate, params object[] values)
@@ -124,7 +124,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogDebug(messageTemplate, values);
+        this.Logger.Debug(messageTemplate, values);
     }
 
     public void Debug(Exception? exception, string messageTemplate, params object[] values)
@@ -134,7 +134,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogDebug(exception, messageTemplate, values);
+        this.Logger.Debug(exception, messageTemplate, values);
     }
 
     public void Verbose(string messageTemplate, params object[] values)
@@ -144,7 +144,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogTrace(messageTemplate, values);
+        this.Logger.Verbose(messageTemplate, values);
     }
 
     public void Verbose(Exception? exception, string messageTemplate, params object[] values)
@@ -154,7 +154,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        this.Logger.LogTrace(exception, messageTemplate, values);
+        this.Logger.Verbose(exception, messageTemplate, values);
     }
 
     public void Write(LogEventLevel level, Exception? exception, string messageTemplate, params object[] values)
@@ -164,32 +164,7 @@ public class MockPluginLog : IPluginLog, IMockService
             return;
         }
 
-        LogLevel logLevel = LogLevel.Trace;
-
-        switch (level)
-        {
-            case LogEventLevel.Verbose:
-                break;
-            case LogEventLevel.Debug:
-                logLevel = LogLevel.Debug;
-                break;
-            case LogEventLevel.Information:
-                logLevel = LogLevel.Information;
-                break;
-            case LogEventLevel.Warning:
-                logLevel = LogLevel.Warning;
-                break;
-            case LogEventLevel.Error:
-                logLevel = LogLevel.Error;
-                break;
-            case LogEventLevel.Fatal:
-                logLevel = LogLevel.Critical;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(level), level, null);
-        }
-
-        this.Logger.Log(logLevel, exception, messageTemplate, values);
+        this.Logger.Write(level, exception, messageTemplate, values);
     }
 
     public LogEventLevel MinimumLogLevel { get; set; } = LogEventLevel.Verbose;

@@ -4,7 +4,8 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
+
+using Lumina.Excel.Sheets;
 
 namespace DalaMock.Sample;
 
@@ -14,7 +15,7 @@ public class SampleWindow(IDataManager dataManager, IChatGui chatGui, IFont font
     {
         ImGui.Text("A sample window");
         var gilItem = dataManager.GetExcelSheet<Item>()!.GetRow(1)!;
-        ImGui.Text(gilItem.Description);
+        ImGui.Text(gilItem.Description.ExtractText());
         using (var iconFont = ImRaii.PushFont(font.IconFont))
         {
             ImGui.Text(FontAwesomeIcon.Times.ToIconString());

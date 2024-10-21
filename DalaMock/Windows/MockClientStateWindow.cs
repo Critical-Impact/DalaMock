@@ -1,5 +1,7 @@
 ﻿using DalaMock.Core.Imgui.Auto;
 
+using Lumina.Excel.Sheets;
+
 namespace DalaMock.Core.Windows;
 
 using System.Collections.Generic;
@@ -10,7 +12,6 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using ImGuiNET;
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets;
 
 public class MockClientStateWindow : MockWindow<MockClientState>
 {
@@ -32,8 +33,8 @@ public class MockClientStateWindow : MockWindow<MockClientState>
     }
 
     public Dictionary<uint, string> TerritoryTypes => this.territoryTypes ??= this.territoryTypeSheet
-        .Where(c => c.TerritoryIntendedUse is 0 or 1 or 13 or 14)
-        .ToDictionary(c => c.RowId, c => c.Name.AsReadOnly().ToString());
+        .Where(c => c.TerritoryIntendedUse.RowId is 0 or 1 or 13 or 14)
+        .ToDictionary(c => c.RowId, c => c.Name.ToString());
 
     public override void Draw()
     {

@@ -1,3 +1,5 @@
+using Lumina.Excel.Sheets;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -5,7 +7,6 @@ using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Plugin.Services;
-using Lumina.Excel.GeneratedSheets;
 
 public class MockClientState : IClientState, IMockService
 {

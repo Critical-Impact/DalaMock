@@ -3,9 +3,10 @@ using System.Numerics;
 using DalaMock.Core.Imgui.Auto;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Game.ClientState.Resolvers;
 using Dalamud.Game.Text.SeStringHandling;
-using Lumina.Excel.GeneratedSheets;
+
+using Lumina.Excel;
+using Lumina.Excel.Sheets;
 
 namespace DalaMock.Core.Mocks;
 
@@ -39,21 +40,21 @@ public class MockCharacter : ICharacter
     private uint currentCp;
     private uint maxCp;
     private byte shieldPercentage;
-    private ExcelResolver<ClassJob> classJob;
+    private RowRef<ClassJob> classJob;
     private byte level;
     private byte[] customize;
     private SeString companyTag;
     private uint nameId;
-    private ExcelResolver<OnlineStatus> onlineStatus;
+    private RowRef<OnlineStatus> onlineStatus;
     private StatusFlags statusFlags;
-    private ExcelResolver<Mount>? currentMount;
-    private ExcelResolver<Companion>? currentMinion;
+    private RowRef<Mount>? currentMount;
+    private RowRef<Companion>? currentMinion;
 
     public MockCharacter(MockClientState clientState)
     {
         this.clientState = clientState;
     }
-    
+
 
     /// <inheritdoc/>
     public bool Equals(IGameObject? other)
@@ -283,7 +284,7 @@ public class MockCharacter : ICharacter
 
     /// <inheritdoc/>
     [ImGuiGroup("Basic")]
-    public ExcelResolver<ClassJob> ClassJob
+    public RowRef<ClassJob> ClassJob
     {
         get => this.classJob;
         set => this.classJob = value;
@@ -323,7 +324,7 @@ public class MockCharacter : ICharacter
 
     /// <inheritdoc/>
     [ImGuiGroup("Basic")]
-    public ExcelResolver<OnlineStatus> OnlineStatus
+    public RowRef<OnlineStatus> OnlineStatus
     {
         get => this.onlineStatus;
         set => this.onlineStatus = value;
@@ -339,7 +340,7 @@ public class MockCharacter : ICharacter
 
     /// <inheritdoc/>
     [ImGuiGroup("Basic")]
-    public ExcelResolver<Mount>? CurrentMount
+    public RowRef<Mount>? CurrentMount
     {
         get => this.currentMount;
         set => this.currentMount = value;
@@ -347,7 +348,7 @@ public class MockCharacter : ICharacter
 
     /// <inheritdoc/>
     [ImGuiGroup("Basic")]
-    public ExcelResolver<Companion>? CurrentMinion
+    public RowRef<Companion>? CurrentMinion
     {
         get => this.currentMinion;
         set => this.currentMinion = value;

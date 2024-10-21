@@ -61,7 +61,7 @@ public class MockContainer
                                     .WriteTo.Console(standardErrorFromLevel: LogEventLevel.Verbose)
                                     .MinimumLevel.ControlledBy(this.levelSwitch)
                                     .CreateLogger();
-        
+
         if (!this.dalamudConfiguration.GamePathValid && askPath)
         {
             this.seriLog.Information("Please select your ffxiv sqpack folder.");
@@ -138,6 +138,8 @@ public class MockContainer
         builder.RegisterGeneric(typeof(Logger<>))
                .As(typeof(ILogger<>))
                .SingleInstance();
+
+        builder.RegisterInstance(this.seriLog).As<Serilog.ILogger>();
 
         builder.RegisterInstance(this.levelSwitch);
         builder.RegisterInstance(this.configurationManager);

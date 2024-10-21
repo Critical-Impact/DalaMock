@@ -2,6 +2,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
+using FFXIVClientStructs.FFXIV.Component.Excel;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -25,14 +27,27 @@ public class MockDataManager : IDataManager, IMockService
 
     public Type BackingType { get; }
 
-    public ExcelSheet<T>? GetExcelSheet<T>() where T : ExcelRow
+    public ExcelSheet<T>? GetExcelSheet<T>()
+        where T : struct, IExcelRow<T>
     {
         return this.gameData.GetExcelSheet<T>();
     }
 
-    public ExcelSheet<T>? GetExcelSheet<T>(ClientLanguage language) where T : ExcelRow
+    public ExcelSheet<T>? GetExcelSheet<T>(ClientLanguage language) where T : struct, IExcelRow<T>
     {
         return this.gameData.GetExcelSheet<T>(ClientLanguageExtensions.ToLumina(language));
+    }
+
+    public ExcelSheet<T> GetExcelSheet<T>(ClientLanguage? language = null, string? name = null)
+        where T : struct, IExcelRow<T>
+    {
+        return this.gameData.GetExcelSheet<T>(language?.ToLumina(), name)!;
+    }
+
+    public SubrowExcelSheet<T> GetSubrowExcelSheet<T>(ClientLanguage? language = null, string? name = null)
+        where T : struct, IExcelSubrow<T>
+    {
+        return this.gameData.GetSubrowExcelSheet<T>(language?.ToLumina(), name)!;
     }
 
     public FileResource? GetFile(string path)

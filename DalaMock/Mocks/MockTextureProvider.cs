@@ -766,6 +766,11 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
         throw new NotImplementedException();
     }
 
+    public IntPtr ConvertToKernelTexture(IDalamudTextureWrap wrap, bool leaveWrapOpen = false)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     /// Internal representation of a managed texture.
     /// </summary>

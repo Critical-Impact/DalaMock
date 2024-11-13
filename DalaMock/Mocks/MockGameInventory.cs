@@ -1,8 +1,6 @@
-﻿using InventoryItemChangedArgs = Dalamud.Game.Inventory.InventoryEventArgTypes.InventoryItemChangedArgs;
-using InventoryItemMergedArgs = Dalamud.Game.Inventory.InventoryEventArgTypes.InventoryItemMergedArgs;
-using InventoryItemMovedArgs = Dalamud.Game.Inventory.InventoryEventArgTypes.InventoryItemMovedArgs;
-using InventoryItemRemovedArgs = Dalamud.Game.Inventory.InventoryEventArgTypes.InventoryItemRemovedArgs;
-using InventoryItemSplitArgs = Dalamud.Game.Inventory.InventoryEventArgTypes.InventoryItemSplitArgs;
+﻿using System;
+
+using Dalamud.Game.Inventory;
 
 namespace DalaMock.Core.Mocks;
 
@@ -40,4 +38,11 @@ public class MockGameInventory : IGameInventory, IMockService
     public event IGameInventory.InventoryChangedDelegate<InventoryItemMergedArgs>? ItemMergedExplicit;
 
     public string ServiceName => "Game Inventory";
+
+    /// <inheritdoc/>
+    public ReadOnlySpan<GameInventoryItem> GetInventoryItems(GameInventoryType type)
+    {
+        return default;
+    }
+
 }

@@ -76,7 +76,7 @@ public class MockClientState : IClientState, IMockService
                 }
                 else
                 {
-                    this.Logout?.Invoke();
+                    this.Logout?.Invoke(0, 0);
                 }
             }
         }
@@ -122,7 +122,7 @@ public class MockClientState : IClientState, IMockService
 
     public event System.Action? Login;
 
-    public event System.Action? Logout;
+    public event IClientState.LogoutDelegate Logout;
 
     public event System.Action? EnterPvP;
 

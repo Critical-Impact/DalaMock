@@ -38,7 +38,7 @@ public class MockChatGui : IChatGui, IMockService
     }
 
     /// <inheritdoc />
-    public int LastLinkedItemId { get; set; }
+    public uint LastLinkedItemId { get; set; }
 
     /// <inheritdoc />
     public byte LastLinkedItemFlags { get; set; }

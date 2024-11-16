@@ -149,7 +149,7 @@ public class MockContainer
                 new LuminaOptions
                 {
                     PanicOnSheetChecksumMismatch = false,
-                }));
+                })).SingleInstance();
         builder.RegisterInstance(this.dalamudConfiguration);
         builder.RegisterType<MockDalamudUi>().SingleInstance();
         builder.RegisterType<PluginLoader>().SingleInstance();

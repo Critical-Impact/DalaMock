@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.1.5] - 2024-11-23
+
+### Fixed
+
+- Implement missing IChatGui methods
+
 ## [2.1.4] - 2024-11-18
 
 ### Fixed

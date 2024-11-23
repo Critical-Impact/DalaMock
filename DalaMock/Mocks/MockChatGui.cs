@@ -37,6 +37,13 @@ public class MockChatGui : IChatGui, IMockService
         set;
     }
 
+    public void PrintError(ReadOnlySpan<byte> message, string? messageTag = null, ushort? tagColor = null)
+    {
+        var stringBuilder = new Lumina.Text.SeStringBuilder();
+        stringBuilder.Append(message);
+        this.PrintError(stringBuilder.ToSeString(), messageTag, tagColor);
+    }
+
     /// <inheritdoc />
     public uint LastLinkedItemId { get; set; }
 
@@ -73,7 +80,14 @@ public class MockChatGui : IChatGui, IMockService
     /// <inheritdoc />
     public void PrintError(SeString message, string? messageTag = null, ushort? tagColor = null)
     {
-        this.pluginLog.Info($"ERROR: {(messageTag == null ? "" : $"[{messageTag}] ")}{message}");
+        this.pluginLog.Info($"ERROR: {(messageTag == null ? "" : $"[{messageTag}] ")}{message.TextValue}");
+    }
+
+    public void Print(ReadOnlySpan<byte> message, string? messageTag = null, ushort? tagColor = null)
+    {
+        var stringBuilder = new Lumina.Text.SeStringBuilder();
+        stringBuilder.Append(message);
+        this.Print(stringBuilder.ToSeString(), messageTag, tagColor);
     }
 
     public virtual void OnChatMessage(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool ishandled)

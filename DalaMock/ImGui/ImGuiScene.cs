@@ -17,6 +17,8 @@ using static System.Reflection.BindingFlags;
 /// </summary>
 public partial class ImGuiScene : IDisposable
 {
+    private readonly AssertHandler assertHandler;
+
     public delegate void BuildUiDelegate();
 
     private readonly Dictionary<Texture, TextureView> autoViewsByTexture = new();
@@ -41,8 +43,10 @@ public partial class ImGuiScene : IDisposable
     /// Creates a new window and a new renderer of the specified type, and initializes ImGUI.
     /// </summary>
     /// <param name="createInfo">Creation details for the window.</param>
-    public ImGuiScene(WindowCreateInfo createInfo)
+    /// <param name="assertHandler"></param>
+    public ImGuiScene(WindowCreateInfo createInfo, AssertHandler assertHandler)
     {
+        this.assertHandler = assertHandler;
         GraphicsDevice graphicsDevice;
         Sdl2Window window;
         VeldridStartup.CreateWindowAndGraphicsDevice(
@@ -63,6 +67,7 @@ public partial class ImGuiScene : IDisposable
 
         var context = ImGui.CreateContext();
         ImGui.SetCurrentContext(context);
+        assertHandler.Setup();
         ImGui.GetIO().Fonts.AddFontDefault();
         ImGui.GetIO().BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
         ImGui.GetIO().FontGlobalScale = 1;
@@ -76,7 +81,9 @@ public partial class ImGuiScene : IDisposable
             this.GraphicsDevice.MainSwapchain.Framebuffer.OutputDescription);
         this.LoadFont(Path.Combine("Fonts", "FontAwesomeFreeSolid.otf"), 12.0f, 0, new ushort[] { 0xe005, 0xf8ff, 0x00 });
         this.SetKeyMappings();
+        this.SetPerFrameImGuiData(0);
         ImGui.NewFrame();
+        ImGui.EndFrame();
     }
 
     /// <summary>
@@ -106,10 +113,11 @@ public partial class ImGuiScene : IDisposable
     }
 
     /// <summary>
-    /// Helper method to create a fullscreen window
+    /// Helper method to create a fullscreen window.
     /// </summary>
+    /// <param name="assertHandler">The assert handler.</param>
     /// <returns>Returns a imguiscene.</returns>
-    public static ImGuiScene CreateWindow()
+    public static ImGuiScene CreateWindow(AssertHandler assertHandler)
     {
         var scene = new ImGuiScene(
             new WindowCreateInfo
@@ -118,9 +126,9 @@ public partial class ImGuiScene : IDisposable
                 WindowInitialState = WindowState.Maximized,
                 WindowWidth = 500,
                 WindowHeight = 500,
-            });
+            },
+            assertHandler);
         scene.Window.Opacity = 1;
-
         return scene;
     }
 
@@ -189,7 +197,7 @@ public partial class ImGuiScene : IDisposable
             if (disposing)
             {
             }
-
+            this.assertHandler.Dispose();
             this.Window.Closed -= this.WindowOnClosed;
 
             this.Window.Close();

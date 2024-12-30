@@ -157,6 +157,7 @@ public class MockContainer
         builder.RegisterInstance(this.dalamudConfiguration);
         builder.RegisterType<MockDalamudUi>().SingleInstance();
         builder.RegisterType<PluginLoader>().SingleInstance();
+        builder.RegisterType<AssertHandler>().SingleInstance();
         builder.RegisterType<MockFileDialogManager>().As<IFileDialogManager>().SingleInstance();
         builder.RegisterInstance(this).SingleInstance();
         builder.RegisterInstance(new MockWindowSystem("DalaMock"));
@@ -164,7 +165,11 @@ public class MockContainer
         builder.RegisterType<MockSettingsWindow>().AsSelf().As<Window>().SingleInstance();
         builder.RegisterType<LocalPlayersWindow>().AsSelf().As<Window>().SingleInstance();
         builder.RegisterType<LocalPlayerEditWindow>().AsSelf().As<Window>().SingleInstance();
-        builder.Register<ImGuiScene>(_ => ImGuiScene.CreateWindow()).SingleInstance();
+        builder.Register<ImGuiScene>(c =>
+        {
+            var assertHandler = c.Resolve<AssertHandler>();
+            return ImGuiScene.CreateWindow(assertHandler);
+        }).SingleInstance();
 
         builder.Register<GraphicsDevice>(
             c =>

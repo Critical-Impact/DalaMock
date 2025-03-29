@@ -11,20 +11,6 @@ public class MockTitleScreenMenu : ITitleScreenMenu, IMockService
 {
     public string ServiceName => "Title Screen Menu";
 
-    public IReadOnlyTitleScreenMenuEntry AddEntry(string text, IDalamudTextureWrap texture, Action onTriggered)
-    {
-        return null!;
-    }
-
-    public IReadOnlyTitleScreenMenuEntry AddEntry(
-        ulong priority,
-        string text,
-        IDalamudTextureWrap texture,
-        Action onTriggered)
-    {
-        return null!;
-    }
-
     public void RemoveEntry(IReadOnlyTitleScreenMenuEntry entry)
     {
     }

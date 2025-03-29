@@ -7,7 +7,7 @@
         <Nullable>enable</Nullable>
         <LangVersion>12.0</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>2.2.0</Version>
+        <Version>2.2.1</Version>
         <PackageProjectUrl>https://github.com/Critical-Impact/DalaMock</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Critical-Impact/DalaMock</RepositoryUrl>
         <Authors>Critical-Impact</Authors>
@@ -74,8 +74,8 @@
         <ProjectReference Include="..\DalaMock\DalaMock.Core.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="8.0.0"/>
-        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0"/>
+        <PackageReference Include="Autofac" Version="8.2.0" />
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
         <PackageReference Include="System.Collections.Immutable" Version="7.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
         <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">

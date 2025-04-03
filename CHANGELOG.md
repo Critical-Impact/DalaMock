@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.2.2] - 2025-04-03
+
+### Changed
+
+- DalaMock.Host
+  - Use semaphore for MediatorService to make message queue efficient
+
 ## [2.2.1] - 2025-03-29
 
 ### Added

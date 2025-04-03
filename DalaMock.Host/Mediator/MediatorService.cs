@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 using Dalamud.Plugin.Services;
 using Microsoft.Extensions.Hosting;
 
-public class MediatorService : IHostedService
+public class MediatorService : BackgroundService
 {
     private readonly object addRemoveLock = new();
     private readonly Dictionary<object, DateTime> lastErrorTime = new();
-    private readonly CancellationTokenSource loopCts = new();
     private readonly ConcurrentQueue<MessageBase> messageQueue = new();
     private readonly Dictionary<Type, HashSet<SubscriberAction>> subscriberDict = new();
+    private readonly SemaphoreSlim signal = new(0);
 
     public MediatorService(IPluginLog logger)
     {
@@ -26,43 +26,40 @@ public class MediatorService : IHostedService
 
     public IPluginLog Logger { get; }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public override Task StartAsync(CancellationToken cancellationToken)
     {
         this.Logger.Verbose("Starting service {type} ({this})", this.GetType().Name, this);
-
-        _ = Task.Run(
-            async () =>
-            {
-                while (!this.loopCts.Token.IsCancellationRequested)
-                {
-                    await Task.Delay(100, this.loopCts.Token).ConfigureAwait(false);
-
-                    HashSet<MessageBase> processedMessages = new();
-                    while (this.messageQueue.TryDequeue(out var message))
-                    {
-                        if (processedMessages.Contains(message))
-                        {
-                            continue;
-                        }
-
-                        processedMessages.Add(message);
-
-                        this.ExecuteMessage(message);
-                    }
-                }
-            });
-        this.Logger.Verbose("Started service {type} ({this})", this.GetType().Name, this);
-
-        return Task.CompletedTask;
+        return base.StartAsync(cancellationToken);
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        this.Logger.Verbose("Stopping service {type} ({this})", this.GetType().Name, this);
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            await this.signal.WaitAsync(stoppingToken);
 
+            HashSet<MessageBase> processedMessages = [];
+            while (this.messageQueue.TryDequeue(out var message))
+            {
+                if (stoppingToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                if (!processedMessages.Add(message)) { continue; }
+
+                this.ExecuteMessage(message);
+            }
+        }
+    }
+
+    public override Task StopAsync(CancellationToken cancellationToken)
+    {
+        var stopResult = base.StopAsync(cancellationToken);
+        this.Logger.Verbose("Stopping service {type} ({this})", this.GetType().Name, this);
         this.messageQueue.Clear();
-        this.loopCts.Cancel();
-        return Task.CompletedTask;
+        this.signal.Dispose();
+        return stopResult;
     }
 
     public void PrintSubscriberInfo()
@@ -101,6 +98,7 @@ public class MediatorService : IHostedService
         else
         {
             this.messageQueue.Enqueue(message);
+            this.signal.Release();
         }
     }
 
@@ -119,6 +117,8 @@ public class MediatorService : IHostedService
                     this.messageQueue.Enqueue(message);
                 }
             }
+
+            this.signal.Release();
         }
     }
 

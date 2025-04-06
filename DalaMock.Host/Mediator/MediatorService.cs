@@ -50,6 +50,8 @@ public class MediatorService : BackgroundService
 
                 this.ExecuteMessage(message);
             }
+
+            await Task.Delay(50, stoppingToken);
         }
     }
 
@@ -104,7 +106,7 @@ public class MediatorService : BackgroundService
 
     public void Publish(List<MessageBase>? messages)
     {
-        if (messages != null)
+        if (messages != null && messages.Count != 0)
         {
             foreach (var message in messages)
             {

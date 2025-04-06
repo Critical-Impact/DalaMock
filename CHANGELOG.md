@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.2.3] - 2025-04-06
+
+### Changed
+
+- DalaMock.Host
+    - Stop MediatorService from accepting empty message lists
+
 ## [2.2.2] - 2025-04-03
 
 ### Changed

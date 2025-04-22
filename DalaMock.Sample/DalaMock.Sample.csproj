@@ -89,9 +89,6 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="cimgui.pdb" />
-      <Content Include="cimgui.pdb">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="cimgui.so" />
       <Content Include="cimgui.so">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -101,9 +98,6 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="cimguizmo.pdb" />
-      <Content Include="cimguizmo.pdb">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="cimguizmo.so" />
       <Content Include="cimguizmo.so">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -113,9 +107,6 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="cimplot.pdb" />
-      <Content Include="cimplot.pdb">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="cimplot.so" />
       <Content Include="cimplot.so">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>

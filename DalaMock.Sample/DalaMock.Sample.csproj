@@ -7,7 +7,7 @@
         <Nullable>enable</Nullable>
         <LangVersion>12.0</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>2.2.1</Version>
+        <Version>2.2.4</Version>
         <PackageProjectUrl>https://github.com/Critical-Impact/DalaMock</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Critical-Impact/DalaMock</RepositoryUrl>
         <Authors>Critical-Impact</Authors>
@@ -74,13 +74,51 @@
         <ProjectReference Include="..\DalaMock\DalaMock.Core.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="8.2.0" />
+        <PackageReference Include="Autofac" Version="8.2.1" />
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
-        <PackageReference Include="System.Collections.Immutable" Version="7.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
+        <PackageReference Include="System.Collections.Immutable" Version="9.0.4"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4"/>
         <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="cimgui.dll" />
+      <Content Include="cimgui.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="cimgui.pdb" />
+      <Content Include="cimgui.pdb">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="cimgui.so" />
+      <Content Include="cimgui.so">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="cimguizmo.dll" />
+      <Content Include="cimguizmo.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="cimguizmo.pdb" />
+      <Content Include="cimguizmo.pdb">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="cimguizmo.so" />
+      <Content Include="cimguizmo.so">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="cimplot.dll" />
+      <Content Include="cimplot.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="cimplot.pdb" />
+      <Content Include="cimplot.pdb">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="cimplot.so" />
+      <Content Include="cimplot.so">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 </Project>

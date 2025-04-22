@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.2.4] - 2025-04-22
+
+### Changed
+
+- Updated all nuget packages
+- Updated included cimgui so/dll files
+
 ## [2.2.3] - 2025-04-06
 
 ### Changed

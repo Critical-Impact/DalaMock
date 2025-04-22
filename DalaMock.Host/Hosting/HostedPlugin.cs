@@ -7,7 +7,6 @@ using DalaMock.Host.Factories;
 using DalaMock.Shared.Classes;
 using DalaMock.Shared.Interfaces;
 using Dalamud.Interface;
-using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using Microsoft.Extensions.DependencyInjection;

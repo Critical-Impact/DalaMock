@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.2.5] - 2025-05-01
+
+### Fixed
+
+- Fixed slow dispose on MediatorService
+
 ## [2.2.4] - 2025-04-22
 
 ### Changed

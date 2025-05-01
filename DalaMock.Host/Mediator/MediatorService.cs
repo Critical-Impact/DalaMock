@@ -55,13 +55,13 @@ public class MediatorService : BackgroundService
         }
     }
 
-    public override Task StopAsync(CancellationToken cancellationToken)
+    public override async Task StopAsync(CancellationToken cancellationToken)
     {
-        var stopResult = base.StopAsync(cancellationToken);
         this.Logger.Verbose("Stopping service {type} ({this})", this.GetType().Name, this);
+        await base.StopAsync(cancellationToken);
         this.messageQueue.Clear();
         this.signal.Dispose();
-        return stopResult;
+        this.Logger.Verbose("Stopped service {Type} ({This})", this.GetType().Name, this);
     }
 
     public void PrintSubscriberInfo()

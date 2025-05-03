@@ -1,8 +1,12 @@
 ﻿namespace DalaMock.Shared.Interfaces;
 
 using System.Collections.Generic;
+
 using Dalamud.Interface.Windowing;
 
+/// <summary>
+/// A interface implementing a window system.
+/// </summary>
 public interface IWindowSystem
 {
     /// <summary>

@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.2.6] - 2025-05-03
+
+### Fixed
+
+- MockWindowSystem now implements it's own draw logic instead of inheriting from DalamudWindowSystem allowing it to avoid any breakages occured by changes to that class.
+
 ## [2.2.5] - 2025-05-01
 
 ### Fixed

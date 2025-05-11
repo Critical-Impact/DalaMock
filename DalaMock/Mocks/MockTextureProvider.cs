@@ -584,6 +584,11 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
         return veldridTextureWrap;
     }
 
+    public IDrawListTextureWrap CreateDrawListTexture(string? debugName = null)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<IDalamudTextureWrap> CreateFromExistingTextureAsync(
         IDalamudTextureWrap wrap,
         TextureModificationArgs args,
@@ -668,6 +673,11 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
         throw new NotImplementedException();
     }
 
+    public Task<IDalamudTextureWrap> CreateFromClipboardAsync(string? debugName = null, CancellationToken cancellationToken = new CancellationToken())
+    {
+        throw new NotImplementedException();
+    }
+
     public IEnumerable<IBitmapCodecInfo> GetSupportedImageDecoderInfos()
     {
         throw new NotImplementedException();
@@ -688,6 +698,11 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
         }
 
         return new ForwardingSharedImmediateTexture(textureWrap);
+    }
+
+    public bool HasClipboardImage()
+    {
+        return false;
     }
 
     public bool TryGetFromGameIcon(in GameIconLookup lookup, out ISharedImmediateTexture texture)

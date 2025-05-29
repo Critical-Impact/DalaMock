@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.2.8] - 2025-05-29
+
+### Changed
+
+- DalaMock.Host now injects a dalamud ILogger provider
+- Improvements to how DalaMock handles keyboard input from SDL2
+
+
 ## [2.2.7] - 2025-05-11
 
 ### Changed

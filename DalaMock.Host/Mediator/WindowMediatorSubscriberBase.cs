@@ -3,14 +3,15 @@ namespace DalaMock.Host.Mediator;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Dalamud.Interface.Windowing;
-using Dalamud.Plugin.Services;
 using ImGuiNET;
+using Microsoft.Extensions.Logging;
 
 public abstract class WindowMediatorSubscriberBase : Window, IMediatorSubscriber, IDisposable
 {
     protected WindowMediatorSubscriberBase(
-        IPluginLog logger,
+        ILogger<WindowMediatorSubscriberBase> logger,
         MediatorService mediator,
         string name,
         ImGuiWindowFlags flags = ImGuiWindowFlags.None,
@@ -21,7 +22,7 @@ public abstract class WindowMediatorSubscriberBase : Window, IMediatorSubscriber
         this.MediatorService = mediator;
     }
 
-    public IPluginLog Logger { get; set; }
+    public ILogger Logger { get; set; }
 
     public void Dispose()
     {
@@ -38,7 +39,7 @@ public abstract class WindowMediatorSubscriberBase : Window, IMediatorSubscriber
 
     protected virtual void Dispose(bool disposing)
     {
-        this.Logger.Debug("Disposing {type}", this.GetType());
+        this.Logger.LogDebug("Disposing {type}", this.GetType());
 
         this.MediatorService.UnsubscribeAll(this);
     }

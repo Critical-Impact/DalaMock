@@ -1,4 +1,8 @@
-﻿namespace DalaMock.Host.Hosting;
+﻿using DalaMock.Host.LoggingProviders;
+
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
+namespace DalaMock.Host.Hosting;
 
 using System.Collections.Generic;
 using Autofac;
@@ -87,36 +91,36 @@ public abstract class HostedPlugin : IDalamudPlugin
         var hostBuilder = new HostBuilder()
             .UseContentRoot(this.pluginInterface.ConfigDirectory.FullName)
             .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-            .ConfigureLogging(
-                lb =>
-                {
-                    lb.ClearProviders();
-                    lb.SetMinimumLevel(LogLevel.Trace);
-                })
-            .ConfigureContainer<ContainerBuilder>(
-                collection =>
-                {
-                    this.interfaces.Add(this.pluginLog);
-                    collection.RegisterInstance(this.pluginInterface).As<IDalamudPluginInterface>().AsSelf();
-                    collection.RegisterType<DalamudWindowSystem>().As<IWindowSystem>();
-                    collection.RegisterType<WindowSystemFactory>().As<IWindowSystemFactory>().AsSelf().SingleInstance();
-                    foreach (var potentialInterface in this.interfaces)
-                    {
-                        var registrationBuilder = collection.RegisterInstance(potentialInterface).AsSelf();
-                        var serviceInterfaces = potentialInterface.GetType().GetInterfaces();
-                        if (serviceInterfaces.Length != 0)
-                        {
-                            registrationBuilder.As(serviceInterfaces);
-                        }
-                    }
+            .ConfigureLogging(lb =>
+            {
+                lb.ClearProviders();
+                lb.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ILoggerProvider, DalamudLoggingProvider>(b =>
+                                                 new DalamudLoggingProvider(b.GetRequiredService<IPluginLog>())));
+                lb.SetMinimumLevel(LogLevel.Trace);
+            })
+            .ConfigureContainer<ContainerBuilder>(collection =>
+            {
+                this.interfaces.Add(this.pluginLog);
 
-                    collection.Register<IUiBuilder>(
-                        c =>
-                        {
-                            var pluginInterface = c.Resolve<IDalamudPluginInterface>();
-                            return pluginInterface.UiBuilder;
-                        });
+                collection.RegisterInstance(this.pluginInterface).As<IDalamudPluginInterface>().AsSelf();
+                collection.RegisterType<DalamudWindowSystem>().As<IWindowSystem>();
+                collection.RegisterType<WindowSystemFactory>().As<IWindowSystemFactory>().AsSelf().SingleInstance();
+                foreach (var potentialInterface in this.interfaces)
+                {
+                    var registrationBuilder = collection.RegisterInstance(potentialInterface).AsSelf();
+                    var serviceInterfaces = potentialInterface.GetType().GetInterfaces();
+                    if (serviceInterfaces.Length != 0)
+                    {
+                        registrationBuilder.As(serviceInterfaces);
+                    }
+                }
+
+                collection.Register<IUiBuilder>(c =>
+                {
+                    var pluginInterface = c.Resolve<IDalamudPluginInterface>();
+                    return pluginInterface.UiBuilder;
                 });
+            });
         hostBuilder.ConfigureContainer<ContainerBuilder>(this.ConfigureContainer);
         hostBuilder.ConfigureServices(this.ConfigureServices);
         this.PreBuild(hostBuilder);

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Runtime.InteropServices;
 
 namespace DalaMock.Core.Imgui;
 
@@ -146,6 +147,9 @@ public partial class ImGuiScene : IDisposable
         }
     }
 
+    [DllImport("SDL2", CallingConvention = CallingConvention.Cdecl)]
+    public static extern ulong SDL_GetPerformanceFrequency();
+
     /// <summary>
     /// Performs a single-frame update of ImGui and renders it to the window.
     /// This method does not check any quit conditions.
@@ -156,7 +160,7 @@ public partial class ImGuiScene : IDisposable
 
         if (!this.pauseRendering)
         {
-            var deltaSeconds = 1f / 60f;
+            var deltaSeconds = 1000f / SDL_GetPerformanceFrequency();
             this.SetPerFrameImGuiData(deltaSeconds);
             this.UpdateImGuiInput(snapshot);
 

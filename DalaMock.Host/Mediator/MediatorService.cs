@@ -8,8 +8,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Dalamud.Plugin.Services;
+
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 public class MediatorService : BackgroundService
 {
@@ -19,16 +20,16 @@ public class MediatorService : BackgroundService
     private readonly Dictionary<Type, HashSet<SubscriberAction>> subscriberDict = new();
     private readonly SemaphoreSlim signal = new(0);
 
-    public MediatorService(IPluginLog logger)
+    public MediatorService(ILogger<MediatorService> logger)
     {
         this.Logger = logger;
     }
 
-    public IPluginLog Logger { get; }
+    public ILogger Logger { get; }
 
     public override Task StartAsync(CancellationToken cancellationToken)
     {
-        this.Logger.Verbose("Starting service {type} ({this})", this.GetType().Name, this);
+        this.Logger.LogTrace("Starting service {type} ({this})", this.GetType().Name, this);
         return base.StartAsync(cancellationToken);
     }
 
@@ -57,11 +58,11 @@ public class MediatorService : BackgroundService
 
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
-        this.Logger.Verbose("Stopping service {type} ({this})", this.GetType().Name, this);
+        this.Logger.LogTrace("Stopping service {type} ({this})", this.GetType().Name, this);
         await base.StopAsync(cancellationToken);
         this.messageQueue.Clear();
         this.signal.Dispose();
-        this.Logger.Verbose("Stopped service {Type} ({This})", this.GetType().Name, this);
+        this.Logger.LogTrace("Stopped service {Type} ({This})", this.GetType().Name, this);
     }
 
     public void PrintSubscriberInfo()
@@ -73,7 +74,7 @@ public class MediatorService : BackgroundService
         {
             var type = kvp.Subscriber.GetType().Name;
             var sub = kvp.Subscriber.ToString();
-            this.Logger.Information($"Subscriber {type}: {sub}");
+            this.Logger.LogInformation($"Subscriber {type}: {sub}");
             StringBuilder sb = new();
             sb.Append("=> ");
             foreach (var item in this.subscriberDict.Where(item => item.Value.Any(v => v.Subscriber == kvp.Subscriber))
@@ -84,10 +85,10 @@ public class MediatorService : BackgroundService
 
             if (!string.Equals(sb.ToString(), "=> ", StringComparison.Ordinal))
             {
-                this.Logger.Information("{sb}", sb.ToString());
+                this.Logger.LogInformation("{sb}", sb.ToString());
             }
 
-            this.Logger.Information("---");
+            this.Logger.LogInformation("---");
         }
     }
 
@@ -135,7 +136,7 @@ public class MediatorService : BackgroundService
                 throw new InvalidOperationException("Already subscribed");
             }
 
-            this.Logger.Verbose(
+            this.Logger.LogTrace(
                 "Subscriber added for message {message}: {sub}",
                 typeof(T).Name,
                 subscriber.GetType().Name);
@@ -162,7 +163,7 @@ public class MediatorService : BackgroundService
                 var unSubbed = this.subscriberDict[kvp]?.RemoveWhere(p => p.Subscriber == subscriber) ?? 0;
                 if (unSubbed > 0)
                 {
-                    this.Logger.Verbose("{sub} unsubscribed from {msg}", subscriber.GetType().Name, kvp.Name);
+                    this.Logger.LogTrace("{sub} unsubscribed from {msg}", subscriber.GetType().Name, kvp.Name);
                 }
             }
         }
@@ -200,7 +201,7 @@ public class MediatorService : BackgroundService
                     continue;
                 }
 
-                this.Logger.Error(
+                this.Logger.LogError(
                     ex,
                     "Error executing {type} for subscriber {subscriber}",
                     message.GetType().Name,

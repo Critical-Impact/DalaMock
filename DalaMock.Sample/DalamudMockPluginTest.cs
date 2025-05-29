@@ -2,6 +2,8 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using Microsoft.Extensions.Logging;
+
 namespace DalaMock.Sample;
 
 using Autofac;
@@ -14,9 +16,13 @@ using Dalamud.Plugin.Services;
 
 public class DalamudMockPluginTest : DalamudPluginTest
 {
-    public DalamudMockPluginTest(IDalamudPluginInterface pluginInterface, IPluginLog pluginLog, IDataManager dataManager, ITextureProvider textureProvider, IChatGui chatGui, IDtrBar dtrBar)
+    private readonly ILogger<DalamudMockPluginTest> logger;
+
+    public DalamudMockPluginTest(IDalamudPluginInterface pluginInterface, ILogger<DalamudMockPluginTest> logger,  IPluginLog pluginLog, IDataManager dataManager, ITextureProvider textureProvider, IChatGui chatGui, IDtrBar dtrBar)
         : base(pluginInterface, pluginLog, dataManager, textureProvider, chatGui, dtrBar)
     {
+        this.logger = logger;
+        this.logger.LogInformation("Plugin test started");
     }
 
     public override void ConfigureContainer(ContainerBuilder containerBuilder)

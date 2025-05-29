@@ -1,3 +1,5 @@
+using Dalamud;
+
 namespace DalaMock.Core.Mocks;
 
 using System;

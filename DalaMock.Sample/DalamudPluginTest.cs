@@ -27,16 +27,17 @@ public class DalamudPluginTest : HostedPlugin
 
     public override void ConfigureContainer(ContainerBuilder containerBuilder)
     {
-        containerBuilder.RegisterType<WindowService>().SingleInstance();
-        containerBuilder.RegisterType<ConfigurationSaveService>().SingleInstance();
+        // While you can register services in the service collection, as long as you register a service as IHostedService(the AsImplementedInterfaces call) it will automatically be picked up by the host. This also avoids potential double registrations.
+        containerBuilder.RegisterType<WindowService>().AsSelf().AsImplementedInterfaces().SingleInstance();
+        containerBuilder.RegisterType<ConfigurationSaveService>().AsSelf().AsImplementedInterfaces().SingleInstance();
         containerBuilder.RegisterType<SampleWindow>().SingleInstance();
         containerBuilder.RegisterType<DtrBarSampleWindow>().SingleInstance();
         containerBuilder.RegisterType<Font>().As<IFont>().SingleInstance();
     }
 
+
     public override void ConfigureServices(IServiceCollection serviceCollection)
     {
-        serviceCollection.AddHostedService(c => c.GetRequiredService<WindowService>());
-        serviceCollection.AddHostedService(c => c.GetRequiredService<ConfigurationSaveService>());
+
     }
 }

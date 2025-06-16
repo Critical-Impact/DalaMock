@@ -13,6 +13,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [2.3.0] - 2025-06-16
+
+### Added
+- Improvements to HostedPlugin including
+  - Will now emit events when built, starting, stopping and stopped
+  - Can now be configured to register a MediatorService for you
+  - HostingAwareService added which will provide automatic registration to plugin events
+
+### Changed
+
+- Updated dependencies
+- The game path and plugin path will be automatically resolved if not provided
+- MockDalamudPluginInterface will now return the real manifest if available
+- DalaMock.Sample is now more opinionated
+
 ## [2.2.8] - 2025-05-29
 
 ### Changed

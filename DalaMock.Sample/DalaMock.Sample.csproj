@@ -1,16 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Dalamud.NET.Sdk/12.0.2">
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>net9.0-windows</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <LangVersion>12.0</LangVersion>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>2.2.4</Version>
+        <Version>2.3.0</Version>
         <PackageProjectUrl>https://github.com/Critical-Impact/DalaMock</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Critical-Impact/DalaMock</RepositoryUrl>
         <Authors>Critical-Impact</Authors>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <OutputType>Exe</OutputType>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -18,14 +16,7 @@
         <IncludeSymbols>true</IncludeSymbols>
     </PropertyGroup>
 
-    <PropertyGroup>
-        <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
-        <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('Linux'))">$(HOME)/.xlcore/dalamud/Hooks/dev/</DalamudLibPath>
-        <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(HOME)/Library/Application Support/XIV on Mac/dalamud/Hooks/dev/</DalamudLibPath>
-        <DalamudLibPath Condition="$(DALAMUD_HOME) != ''">$(DALAMUD_HOME)/</DalamudLibPath>
-    </PropertyGroup>
-
-    <ItemGroup>
+    <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
         <Reference Include="Dalamud">
             <HintPath>$(DalamudLibPath)Dalamud.dll</HintPath>
             <Private>True</Private>
@@ -74,42 +65,52 @@
         <ProjectReference Include="..\DalaMock\DalaMock.Core.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="8.2.1" />
-        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
-        <PackageReference Include="System.Collections.Immutable" Version="9.0.4"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4"/>
+        <PackageReference Include="Autofac" Version="8.3.0"/>
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0"/>
+        <PackageReference Include="System.Collections.Immutable" Version="9.0.6"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.6"/>
         <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
     <ItemGroup>
-      <None Remove="cimgui.dll" />
-      <Content Include="cimgui.dll">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <None Remove="cimgui.pdb" />
-      <None Remove="cimgui.so" />
-      <Content Include="cimgui.so">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <None Remove="cimguizmo.dll" />
-      <Content Include="cimguizmo.dll">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <None Remove="cimguizmo.pdb" />
-      <None Remove="cimguizmo.so" />
-      <Content Include="cimguizmo.so">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <None Remove="cimplot.dll" />
-      <Content Include="cimplot.dll">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <None Remove="cimplot.pdb" />
-      <None Remove="cimplot.so" />
-      <Content Include="cimplot.so">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
+        <Content Include="DalaMock.Sample.json"/>
+        <Content Include="Mock\cimgui.dll">
+            <TargetPath>cimgui.dll</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Mock\cimgui.pdb">
+            <TargetPath>cimgui.pdb</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Mock\cimgui.so">
+            <TargetPath>cimgui.so</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Mock\cimguizmo.dll">
+            <TargetPath>cimguizmo.dll</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Mock\cimguizmo.pdb">
+            <TargetPath>cimguizmo.pdb</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Mock\cimguizmo.so">
+            <TargetPath>cimguizmo.so</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Mock\cimplot.dll">
+            <TargetPath>cimplot.dll</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Mock\cimplot.pdb">
+            <TargetPath>cimplot.pdb</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Mock\cimplot.so">
+            <TargetPath>cimplot.so</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 </Project>

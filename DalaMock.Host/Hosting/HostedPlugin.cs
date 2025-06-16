@@ -1,4 +1,8 @@
-﻿using DalaMock.Host.LoggingProviders;
+﻿using System;
+using System.Linq;
+
+using DalaMock.Host.LoggingProviders;
+using DalaMock.Host.Mediator;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -25,6 +29,7 @@ public abstract class HostedPlugin : IDalamudPlugin
     private readonly List<object> interfaces;
     private readonly IDalamudPluginInterface pluginInterface;
     private readonly IPluginLog pluginLog;
+    private readonly HostedEvents hostedEvents;
     private IHost? host;
 
     /// <summary>
@@ -38,6 +43,7 @@ public abstract class HostedPlugin : IDalamudPlugin
         this.pluginInterface = pluginInterface;
         this.pluginLog = pluginLog;
         this.interfaces = new List<object>();
+        this.hostedEvents = new HostedEvents();
         foreach (var potentialInterface in interfaces)
         {
             if (potentialInterface.GetType().GetInterfaces().Length != 0)
@@ -53,9 +59,20 @@ public abstract class HostedPlugin : IDalamudPlugin
     }
 
     /// <summary>
+    /// Allows configuration of plugin-specific options.
+    /// Called before ConfigureServices and ConfigureContainer.
+    /// </summary>
+    public abstract HostedPluginOptions ConfigureOptions();
+
+    /// <summary>
     /// Has the plugin started?
     /// </summary>
     public bool IsStarted { get; private set; }
+
+    /// <summary>
+    /// The options the plugin was started with.
+    /// </summary>
+    public HostedPluginOptions HostedPluginOptions { get; private set; }
 
     /// <summary>
     /// Can the plugin be disposed?
@@ -88,6 +105,7 @@ public abstract class HostedPlugin : IDalamudPlugin
     /// <returns>A built host.</returns>
     public IHost CreateHost()
     {
+        this.HostedPluginOptions = this.ConfigureOptions();
         var hostBuilder = new HostBuilder()
             .UseContentRoot(this.pluginInterface.ConfigDirectory.FullName)
             .UseServiceProviderFactory(new AutofacServiceProviderFactory())
@@ -98,16 +116,17 @@ public abstract class HostedPlugin : IDalamudPlugin
                                                  new DalamudLoggingProvider(b.GetRequiredService<IPluginLog>())));
                 lb.SetMinimumLevel(LogLevel.Trace);
             })
-            .ConfigureContainer<ContainerBuilder>(collection =>
+            .ConfigureContainer<ContainerBuilder>(containerBuilder =>
             {
                 this.interfaces.Add(this.pluginLog);
-
-                collection.RegisterInstance(this.pluginInterface).As<IDalamudPluginInterface>().AsSelf();
-                collection.RegisterType<DalamudWindowSystem>().As<IWindowSystem>();
-                collection.RegisterType<WindowSystemFactory>().As<IWindowSystemFactory>().AsSelf().SingleInstance();
+                containerBuilder.RegisterInstance(this.hostedEvents).AsSelf();
+                containerBuilder.RegisterInstance(this.pluginInterface).As<IDalamudPluginInterface>().AsSelf();
+                containerBuilder.RegisterType<Font>().As<IFont>().AsSelf().SingleInstance();
+                containerBuilder.RegisterType<DalamudWindowSystem>().As<IWindowSystem>();
+                containerBuilder.RegisterType<WindowSystemFactory>().As<IWindowSystemFactory>().AsSelf().SingleInstance();
                 foreach (var potentialInterface in this.interfaces)
                 {
-                    var registrationBuilder = collection.RegisterInstance(potentialInterface).AsSelf();
+                    var registrationBuilder = containerBuilder.RegisterInstance(potentialInterface).AsSelf();
                     var serviceInterfaces = potentialInterface.GetType().GetInterfaces();
                     if (serviceInterfaces.Length != 0)
                     {
@@ -115,7 +134,12 @@ public abstract class HostedPlugin : IDalamudPlugin
                     }
                 }
 
-                collection.Register<IUiBuilder>(c =>
+                if (this.HostedPluginOptions.UseMediatorService)
+                {
+                    containerBuilder.RegisterType<MediatorService>().AsImplementedInterfaces().AsSelf().SingleInstance();
+                }
+
+                containerBuilder.Register<IUiBuilder>(c =>
                 {
                     var pluginInterface = c.Resolve<IDalamudPluginInterface>();
                     return pluginInterface.UiBuilder;
@@ -126,9 +150,12 @@ public abstract class HostedPlugin : IDalamudPlugin
         this.PreBuild(hostBuilder);
 
         this.host = hostBuilder.Build();
+        this.hostedEvents.OnPluginEvent(HostedEventType.PluginBuilt);
+        this.hostedEvents.OnPluginBuilt();
 
         return this.host;
     }
+
 
     /// <summary>
     /// Override this function if you need to access the host builder while it is building.
@@ -153,12 +180,27 @@ public abstract class HostedPlugin : IDalamudPlugin
             throw startTask.Exception;
         }
 
+        if (this.HostedPluginOptions.UseMediatorService)
+        {
+            this.host.Services.GetRequiredService<MediatorService>().Publish(new PluginStartedMessage());
+        }
+
+        this.hostedEvents.OnPluginEvent(HostedEventType.PluginStarted);
+        this.hostedEvents.OnPluginStarted();
+
         this.IsStarted = true;
     }
 
     public void Stop()
     {
+        if (this.HostedPluginOptions.UseMediatorService)
+        {
+            this.host?.Services.GetRequiredService<MediatorService>().Publish(new PluginStoppingMessage());
+        }
+        this.hostedEvents.OnPluginEvent(HostedEventType.PluginStopping);
+        this.hostedEvents.OnPluginStopping();
         this.host?.StopAsync().GetAwaiter().GetResult();
         this.IsStarted = false;
+        this.hostedEvents.OnPluginEvent(HostedEventType.PluginStopped);
     }
 }

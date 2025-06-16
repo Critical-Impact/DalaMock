@@ -1,6 +1,9 @@
 ﻿using System.IO;
+using System.Reflection;
 
 using Microsoft.Extensions.Logging;
+
+using Newtonsoft.Json;
 
 namespace DalaMock.Core.Plugin;
 
@@ -99,6 +102,43 @@ public class PluginLoader : IPluginLoader
     {
         var assemblyName = plugin.PluginType.BaseType?.Assembly.GetName().Name ?? plugin.PluginType.Assembly.GetName().Name ?? plugin.PluginType.Name;
 
+        MockPluginManifest pluginManifest = null;
+
+        var executingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        if (executingDirectory != null)
+        {
+            var jsonFiles = Directory.EnumerateFiles(executingDirectory, "*.json");
+            foreach (var file in jsonFiles)
+            {
+                try
+                {
+                    var fileContents = File.ReadAllText(file);
+                    if (!fileContents.Contains("InternalName") && !fileContents.Contains("DalamudApiLevel"))
+                    {
+                        continue;
+                    }
+                    var mockPluginManifest = JsonConvert.DeserializeObject<MockPluginManifest>(fileContents);
+                    if (mockPluginManifest != null)
+                    {
+                        pluginManifest = mockPluginManifest;
+                        break;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+        }
+
+        if (pluginManifest == null)
+        {
+            pluginManifest = new MockPluginManifest()
+            {
+                InternalName = assemblyName,
+            };
+        }
+
         if (plugin.IsLoaded)
         {
             this.logger.LogInformation(
@@ -153,7 +193,7 @@ public class PluginLoader : IPluginLoader
             new MockDalamudPluginInterface(
                 uiBuilder,
                 pluginLoadSettings,
-                assemblyName,
+                pluginManifest,
                 c.Resolve<IComponentContext>())).As<IDalamudPluginInterface>();
 
         var container = builder.Build();

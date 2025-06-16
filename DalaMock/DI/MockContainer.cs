@@ -66,6 +66,30 @@ public class MockContainer
                                     .MinimumLevel.ControlledBy(this.levelSwitch)
                                     .CreateLogger();
 
+        if (this.dalamudConfiguration.GamePathString is null)
+        {
+            var windowsGamePath = @"C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn\game\sqpack";
+
+            if (Path.Exists(windowsGamePath))
+            {
+                this.dalamudConfiguration.GamePathString = windowsGamePath;
+            }
+        }
+
+        if (this.dalamudConfiguration.GamePathString is null)
+        {
+            var linuxGamePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+            if (linuxGamePath != string.Empty)
+            {
+                linuxGamePath = Path.Join(linuxGamePath, ".xlcore", "ffxiv", "game", "sqpack");
+                if (Path.Exists(linuxGamePath))
+                {
+                    this.dalamudConfiguration.GamePathString = linuxGamePath;
+                }
+            }
+        }
+
         if (!this.dalamudConfiguration.GamePathValid && askPath)
         {
             this.seriLog.Information("Please select your ffxiv sqpack folder.");
@@ -79,6 +103,45 @@ public class MockContainer
             {
                 this.seriLog.Error("You must provide your sqpack folder either manually or programmatically.");
                 Environment.Exit(69);
+            }
+        }
+
+        if (this.dalamudConfiguration.PluginSavePathString is null)
+        {
+            var windowsPluginPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+            if (windowsPluginPath != string.Empty)
+            {
+                windowsPluginPath = Path.Join(windowsPluginPath, "XIVLauncher");
+
+                if (Path.Exists(windowsPluginPath))
+                {
+                    windowsPluginPath = Path.Join(windowsPluginPath, "DalaMock");
+                    if (!Path.Exists(windowsPluginPath))
+                    {
+                        Directory.CreateDirectory(windowsPluginPath);
+                    }
+                    this.dalamudConfiguration.PluginSavePathString = windowsPluginPath;
+                }
+            }
+        }
+
+        if (this.dalamudConfiguration.PluginSavePathString is null)
+        {
+            var linuxPluginPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+            if (linuxPluginPath != string.Empty)
+            {
+                linuxPluginPath = Path.Join(linuxPluginPath, ".xlcore");
+                if (Path.Exists(linuxPluginPath))
+                {
+                    linuxPluginPath = Path.Join(linuxPluginPath, "DalaMock");
+                    if (!Path.Exists(linuxPluginPath))
+                    {
+                        Directory.CreateDirectory(linuxPluginPath);
+                    }
+                    this.dalamudConfiguration.PluginSavePathString = linuxPluginPath;
+                }
             }
         }
 

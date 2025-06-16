@@ -1,10 +1,6 @@
-﻿namespace DalaMock.Core;
+﻿namespace DalaMock.Sample.Mock;
 
-using System.IO;
-using DalaMock.Core.Configuration;
 using DalaMock.Core.DI;
-using Mocks;
-using Sample;
 
 internal static class Program
 {

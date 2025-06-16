@@ -27,22 +27,21 @@ using Newtonsoft.Json;
 
 public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
 {
-    private readonly string internalName;
     private readonly IComponentContext componentContext;
 
     // private readonly MockProgram _mockProgram;
     private MockUiBuilder mockUiBuilder;
+    private readonly IPluginManifest pluginManifest;
     private PluginConfiguration pluginConfiguration;
     private PluginLoadReason pluginLoadReason;
 
     public MockDalamudPluginInterface(
         MockUiBuilder mockUiBuilder,
         PluginLoadSettings pluginLoadSettings,
-        string internalName,
+        IPluginManifest pluginManifest,
         IComponentContext componentContext)
     {
         // _mockProgram = mockProgram;
-        this.internalName = internalName;
         this.componentContext = componentContext;
         this.ConfigFile = pluginLoadSettings.ConfigFile;
         this.ConfigDirectory = pluginLoadSettings.ConfigDir;
@@ -50,10 +49,13 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         this.AssemblyLocation = new FileInfo((pluginLoadSettings.AssemblyLocation ?? Environment.ProcessPath)!);
         this.pluginConfiguration = new PluginConfiguration(pluginLoadSettings.ConfigDir.FullName);
         this.mockUiBuilder = mockUiBuilder;
+        this.pluginManifest = pluginManifest;
     }
 
+    /// <inheritdoc/>
     public event IDalamudPluginInterface.LanguageChangedDelegate? LanguageChanged;
 
+    /// <inheritdoc/>
     public event IDalamudPluginInterface.ActivePluginsChangedDelegate? ActivePluginsChanged;
 
     /// <summary>
@@ -61,6 +63,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     /// </summary>
     public MockUiBuilder MockUiBuilder => this.mockUiBuilder;
 
+    /// <inheritdoc/>
     public Task InjectAsync(object instance, params object[] scopedObjects)
     {
         throw new NotImplementedException();
@@ -69,42 +72,61 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     /// <inheritdoc/>
     public PluginLoadReason Reason => this.pluginLoadReason;
 
+    /// <inheritdoc/>
     public bool IsAutoUpdateComplete => true;
 
+    /// <inheritdoc/>
     public string SourceRepository => "DevPlugin";
 
-    public string InternalName => this.internalName;
+    /// <inheritdoc/>
+    public string InternalName => this.pluginManifest.InternalName;
 
-    public IPluginManifest Manifest { get; }
+    /// <inheritdoc/>
+    public IPluginManifest Manifest => this.pluginManifest;
 
+    /// <inheritdoc/>
     public bool IsDev => true;
 
+    /// <inheritdoc/>
     public bool IsTesting => false;
 
+    /// <inheritdoc/>
     public DateTime LoadTime => DateTime.Now;
 
+    /// <inheritdoc/>
     public DateTime LoadTimeUTC => DateTime.Now;
 
+    /// <inheritdoc/>
     public TimeSpan LoadTimeDelta => TimeSpan.Zero;
 
+    /// <inheritdoc/>
     public DirectoryInfo DalamudAssetDirectory => new("");
 
+    /// <inheritdoc/>
     public FileInfo ConfigFile { get; }
 
+    /// <inheritdoc/>
     public IUiBuilder UiBuilder => this.mockUiBuilder;
 
+    /// <inheritdoc/>
     public bool IsDevMenuOpen => true;
 
+    /// <inheritdoc/>
     public bool IsDebugging => true;
 
+    /// <inheritdoc/>
     public string UiLanguage => "English";
 
+    /// <inheritdoc/>
     public ISanitizer Sanitizer => new Sanitizer(ClientLanguage.English);
 
+    /// <inheritdoc/>
     public XivChatType GeneralChatType => XivChatType.Debug;
 
+    /// <inheritdoc/>
     public IEnumerable<IExposedPlugin> InstalledPlugins => new List<IExposedPlugin>();
 
+    /// <inheritdoc/>
     public bool OpenPluginInstallerTo(
         PluginInstallerOpenKind openTo = PluginInstallerOpenKind.AllPlugins,
         string? searchText = null)
@@ -112,140 +134,168 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         throw new NotImplementedException();
     }
 
+    /// <inheritdoc/>
     public bool OpenDalamudSettingsTo(SettingsOpenKind openTo = SettingsOpenKind.General, string? searchText = null)
     {
         return false;
     }
 
+    /// <inheritdoc/>
     public bool OpenDeveloperMenu()
     {
         return false;
     }
 
+    /// <inheritdoc/>
     public T GetOrCreateData<T>(string tag, Func<T> dataGenerator) where T : class
     {
         return null!;
     }
 
+    /// <inheritdoc/>
     public void RelinquishData(string tag)
     {
     }
 
+    /// <inheritdoc/>
     public bool TryGetData<T>(string tag, out T? data) where T : class
     {
         data = null;
         return false;
     }
 
+    /// <inheritdoc/>
     public T? GetData<T>(string tag) where T : class
     {
         return null!;
     }
 
+    /// <inheritdoc/>
     public DirectoryInfo ConfigDirectory { get; }
 
+    /// <inheritdoc/>
     public FileInfo AssemblyLocation { get; }
 
+    /// <inheritdoc/>
     public ICallGateProvider<TRet> GetIpcProvider<TRet>(string name)
     {
         return new MockCallGateProvider<TRet>(name);
     }
 
+    /// <inheritdoc/>
     public ICallGateProvider<T1, TRet> GetIpcProvider<T1, TRet>(string name)
     {
         return new MockCallGateProvider<T1, TRet>(name);
     }
 
+    /// <inheritdoc/>
     public ICallGateProvider<T1, T2, TRet> GetIpcProvider<T1, T2, TRet>(string name)
     {
         return new MockCallGateProvider<T1, T2, TRet>(name);
     }
 
+    /// <inheritdoc/>
     public ICallGateProvider<T1, T2, T3, TRet> GetIpcProvider<T1, T2, T3, TRet>(string name)
     {
         return new MockCallGateProvider<T1, T2, T3, TRet>(name);
     }
 
+    /// <inheritdoc/>
     public ICallGateProvider<T1, T2, T3, T4, TRet> GetIpcProvider<T1, T2, T3, T4, TRet>(string name)
     {
         return new MockCallGateProvider<T1, T2, T3, T4, TRet>(name);
     }
 
+    /// <inheritdoc/>
     public ICallGateProvider<T1, T2, T3, T4, T5, TRet> GetIpcProvider<T1, T2, T3, T4, T5, TRet>(string name)
     {
         return new MockCallGateProvider<T1, T2, T3, T4, T5, TRet>(name);
     }
 
+    /// <inheritdoc/>
     public ICallGateProvider<T1, T2, T3, T4, T5, T6, TRet> GetIpcProvider<T1, T2, T3, T4, T5, T6, TRet>(string name)
     {
         return new MockCallGateProvider<T1, T2, T3, T4, T5, T6, TRet>(name);
     }
 
+    /// <inheritdoc/>
     public ICallGateProvider<T1, T2, T3, T4, T5, T6, T7, TRet> GetIpcProvider<T1, T2, T3, T4, T5, T6, T7, TRet>(
         string name)
     {
         return new MockCallGateProvider<T1, T2, T3, T4, T5, T6, T7, TRet>(name);
     }
 
+    /// <inheritdoc/>
     public ICallGateProvider<T1, T2, T3, T4, T5, T6, T7, T8, TRet> GetIpcProvider<T1, T2, T3, T4, T5, T6, T7, T8, TRet>(
         string name)
     {
         return new MockCallGateProvider<T1, T2, T3, T4, T5, T6, T7, T8, TRet>(name);
     }
 
+    /// <inheritdoc/>
     public ICallGateSubscriber<TRet> GetIpcSubscriber<TRet>(string name)
     {
         return null!;
     }
 
+    /// <inheritdoc/>
     public ICallGateSubscriber<T1, TRet> GetIpcSubscriber<T1, TRet>(string name)
     {
         return null!;
     }
 
+    /// <inheritdoc/>
     public ICallGateSubscriber<T1, T2, TRet> GetIpcSubscriber<T1, T2, TRet>(string name)
     {
         return null!;
     }
 
+    /// <inheritdoc/>
     public ICallGateSubscriber<T1, T2, T3, TRet> GetIpcSubscriber<T1, T2, T3, TRet>(string name)
     {
         return null!;
     }
 
+    /// <inheritdoc/>
     public ICallGateSubscriber<T1, T2, T3, T4, TRet> GetIpcSubscriber<T1, T2, T3, T4, TRet>(string name)
     {
         return null!;
     }
 
+    /// <inheritdoc/>
     public ICallGateSubscriber<T1, T2, T3, T4, T5, TRet> GetIpcSubscriber<T1, T2, T3, T4, T5, TRet>(string name)
     {
         return null!;
     }
 
+    /// <inheritdoc/>
     public ICallGateSubscriber<T1, T2, T3, T4, T5, T6, TRet> GetIpcSubscriber<T1, T2, T3, T4, T5, T6, TRet>(string name)
     {
         return null!;
     }
 
+    /// <inheritdoc/>
     public ICallGateSubscriber<T1, T2, T3, T4, T5, T6, T7, TRet> GetIpcSubscriber<T1, T2, T3, T4, T5, T6, T7, TRet>(
         string name)
     {
         return null!;
     }
 
+    /// <inheritdoc/>
     public ICallGateSubscriber<T1, T2, T3, T4, T5, T6, T7, T8, TRet> GetIpcSubscriber<T1, T2, T3, T4, T5, T6, T7, T8,
         TRet>(string name)
     {
         return null!;
     }
 
+    /// <inheritdoc/>
     public void SavePluginConfig(IPluginConfiguration? currentConfig)
     {
         var serializedConfig = SerializeConfig(currentConfig);
         File.WriteAllText(this.ConfigFile.FullName, serializedConfig);
     }
 
+    /// <inheritdoc/>
     public IPluginConfiguration? GetPluginConfig()
     {
         foreach (var type in Assembly.GetCallingAssembly().GetTypes())
@@ -261,25 +311,35 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         return null!;
     }
 
+    /// <inheritdoc/>
     public string GetPluginConfigDirectory()
     {
-        return Path.Combine(this.ConfigDirectory.FullName, this.InternalName);
+        var pluginConfigDirectory = Path.Combine(this.ConfigDirectory.FullName, this.InternalName);
+        if (!Path.Exists(pluginConfigDirectory))
+        {
+            Directory.CreateDirectory(pluginConfigDirectory);
+        }
+        return pluginConfigDirectory;
     }
 
+    /// <inheritdoc/>
     public string GetPluginLocDirectory()
     {
         return Path.Combine(Path.Combine(this.ConfigDirectory.FullName, this.InternalName), "loc");
     }
 
+    /// <inheritdoc/>
     public DalamudLinkPayload AddChatLinkHandler(uint commandId, Action<uint, SeString> commandAction)
     {
         return null!;
     }
 
+    /// <inheritdoc/>
     public void RemoveChatLinkHandler(uint commandId)
     {
     }
 
+    /// <inheritdoc/>
     public void RemoveChatLinkHandler()
     {
     }
@@ -374,6 +434,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         return newInstance;
     }
 
+    /// <inheritdoc/>
     public Task<T> CreateAsync<T>(params object[] scopedObjects) where T : class
     {
         throw new NotImplementedException();
@@ -438,6 +499,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         return false;
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
     }

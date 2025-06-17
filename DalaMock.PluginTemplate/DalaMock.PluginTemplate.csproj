@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="LICENSE.md" Pack="true" PackagePath="\" />
     <Content Include="template\**\*" Exclude="template\bin\**;template\obj\**;template\packages.lock.json" />
     <Compile Remove="**\*" />
   </ItemGroup>

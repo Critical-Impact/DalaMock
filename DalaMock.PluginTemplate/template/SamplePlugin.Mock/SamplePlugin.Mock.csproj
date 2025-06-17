@@ -1,0 +1,110 @@
+<Project Sdk="Dalamud.NET.Sdk/12.0.2">
+    <PropertyGroup>
+        <Use_DalamudPackager>false</Use_DalamudPackager>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SamplePlugin\SamplePlugin.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="Dalamud">
+            <HintPath>$(DalamudLibPath)Dalamud.dll</HintPath>
+            <Private>True</Private>
+        </Reference>
+        <Reference Include="ImGui.NET">
+            <HintPath>$(DalamudLibPath)ImGui.NET.dll</HintPath>
+            <Private>True</Private>
+        </Reference>
+        <Reference Include="ImGuiScene">
+            <HintPath>$(DalamudLibPath)ImGuiScene.dll</HintPath>
+            <Private>True</Private>
+        </Reference>
+        <Reference Include="Lumina">
+            <HintPath>$(DalamudLibPath)Lumina.dll</HintPath>
+            <Private>True</Private>
+        </Reference>
+        <Reference Include="Lumina.Excel">
+            <HintPath>$(DalamudLibPath)Lumina.Excel.dll</HintPath>
+            <Private>True</Private>
+        </Reference>
+        <Reference Include="FFXIVClientStructs">
+            <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
+            <Private>True</Private>
+        </Reference>
+        <Reference Include="Newtonsoft.Json" PrivateAssets="All">
+            <HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
+            <Private>True</Private>
+        </Reference>
+        <Reference Include="StbiSharp">
+            <HintPath>$(DalamudLibPath)StbiSharp.dll</HintPath>
+        </Reference>
+        <Reference Include="InteropGenerator.Runtime">
+            <HintPath>$(DalamudLibPath)InteropGenerator.Runtime.dll</HintPath>
+            <Private>True</Private>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Autofac" Version="8.3.0" />
+        <PackageReference Include="DalaMock.Core" Version="2.3.0" />
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+        <PackageReference Include="System.Collections.Immutable" Version="9.0.6" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.6" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Properties" />
+    </ItemGroup>
+    <ItemGroup>
+        <ContentWithTargetPath Include="Lib\cimgui.dll">
+            <TargetPath>cimgui.dll</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </ContentWithTargetPath>
+        <None Include="Lib\cimgui.dll" />
+        <ContentWithTargetPath Include="Lib\cimgui.pdb">
+            <TargetPath>cimgui.pdb</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </ContentWithTargetPath>
+        <None Include="Lib\cimgui.pdb" />
+        <ContentWithTargetPath Include="Lib\cimgui.so">
+            <TargetPath>cimgui.so</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </ContentWithTargetPath>
+        <None Include="Lib\cimgui.so" />
+        <ContentWithTargetPath Include="Lib\cimguizmo.dll">
+            <TargetPath>cimguizmo.dll</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </ContentWithTargetPath>
+        <None Include="Lib\cimguizmo.dll" />
+        <ContentWithTargetPath Include="Lib\cimguizmo.pdb">
+            <TargetPath>cimguizmo.pdb</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </ContentWithTargetPath>
+        <None Include="Lib\cimguizmo.pdb" />
+        <ContentWithTargetPath Include="Lib\cimguizmo.so">
+            <TargetPath>cimguizmo.so</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </ContentWithTargetPath>
+        <None Include="Lib\cimguizmo.so" />
+        <ContentWithTargetPath Include="Lib\cimplot.dll">
+            <TargetPath>cimplot.dll</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </ContentWithTargetPath>
+        <None Include="Lib\cimplot.dll" />
+        <ContentWithTargetPath Include="Lib\cimplot.pdb">
+            <TargetPath>cimplot.pdb</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </ContentWithTargetPath>
+        <None Include="Lib\cimplot.pdb" />
+        <ContentWithTargetPath Include="Lib\cimplot.so">
+            <TargetPath>cimplot.so</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </ContentWithTargetPath>
+        <None Include="Lib\cimplot.so" />
+        <ContentWithTargetPath Include="Fonts\FontAwesomeFreeSolid.otf">
+            <TargetPath>Fonts\FontAwesomeFreeSolid.so</TargetPath>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </ContentWithTargetPath>
+    </ItemGroup>
+</Project>

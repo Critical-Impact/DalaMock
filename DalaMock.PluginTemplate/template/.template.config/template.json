@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "criticalimpact",
+  "classifications": ["Games"],
+  "identity": "DalaMock.PluginTemplate",
+  "name": "DalaMock/Dalamud Plugin",
+  "shortName": "hostedplugin",
+  "sourceName": "SamplePlugin",
+  "defaultName": "MyHostedPlugin",
+  "description": "A dalamud plugin template for the .NET Template Engine that runs via Microsoft.Extensions.Hosting with autofac for DI",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "preferNameDirectory": true,
+  "symbols": {
+    "MoveExtraFiles": {
+      "displayName": "Move Extra Files",
+      "description": "Whether to move extra files (e.g. .gitignore) to the parent directory",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true"
+    }
+  },
+  "primaryOutputs": [
+    {
+      "path": "SamplePlugin/SamplePlugin.csproj"
+    },
+    {
+      "path": "SamplePlugin.Mock/SamplePlugin.Mock.csproj"
+    }
+  ],
+  "sources": [
+    {
+      "include": ["**/*", ".gitignore"],
+      "exclude": [
+        "*.sln",
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        "**/*.filelist",
+        "**/*.user",
+        "**/*.lock.json",
+        "**/.git/**",
+        "**/.vs/**",
+        "**/.idea/**",
+        "**/.template.config/**",
+        "**/README.md",
+        "**/packages.lock.json"
+      ],
+      "modifiers": [
+        {
+          "condition": "MoveExtraFiles",
+          "rename": {
+            ".gitignore": "../.gitignore",
+            "LICENSE": "../LICENSE"
+          }
+        }
+      ]
+    }
+  ]
+}

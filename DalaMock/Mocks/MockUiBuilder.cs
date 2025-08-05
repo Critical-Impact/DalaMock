@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Dalamud.Interface;
 using Dalamud.Interface.FontIdentifier;
 using Dalamud.Interface.ManagedFontAtlas;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using SharpDX.Direct3D11;
 using Veldrid;
 
@@ -78,6 +78,8 @@ public class MockUiBuilder : IUiBuilder
     public IFontSpec DefaultFontSpec { get; }
 
     public Device Device { get; }
+
+    public IntPtr DeviceHandle { get; set; }
 
     public IntPtr WindowHandlePtr { get; }
 

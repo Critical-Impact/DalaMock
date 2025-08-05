@@ -7,7 +7,7 @@ using System.Linq;
 using DalaMock.Shared.Interfaces;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 /// <summary>
 /// A mock window system that simulates Dalamud's window system.

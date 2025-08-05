@@ -3,7 +3,7 @@
 namespace DalaMock.Core.Mocks;
 
 using DalaMock.Shared.Interfaces;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 public class MockFont : IFont, IMockService
 {
@@ -17,7 +17,7 @@ public class MockFont : IFont, IMockService
     {
         get
         {
-            if ((IntPtr)this.iconFont.NativePtr == IntPtr.Zero)
+            if ((IntPtr)this.iconFont.Handle == IntPtr.Zero)
             {
                 this.iconFont = ImGui.GetIO().Fonts.Fonts[1];
             }

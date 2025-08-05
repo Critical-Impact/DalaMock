@@ -1,6 +1,6 @@
 ﻿namespace DalaMock.Core.Imgui;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Veldrid;
 using Veldrid.Sdl2;
 
@@ -135,13 +135,13 @@ public partial class ImGuiScene
                 return SDL_SystemCursor.SizeAll;
             case ImGuiMouseCursor.TextInput:
                 return SDL_SystemCursor.IBeam;
-            case ImGuiMouseCursor.ResizeEW:
+            case ImGuiMouseCursor.ResizeEw:
                 return SDL_SystemCursor.SizeWE;
-            case ImGuiMouseCursor.ResizeNS:
+            case ImGuiMouseCursor.ResizeNs:
                 return SDL_SystemCursor.SizeNS;
-            case ImGuiMouseCursor.ResizeNESW:
+            case ImGuiMouseCursor.ResizeNesw:
                 return SDL_SystemCursor.SizeNESW;
-            case ImGuiMouseCursor.ResizeNWSE:
+            case ImGuiMouseCursor.ResizeNwse:
                 return SDL_SystemCursor.SizeNWSE;
         }
 

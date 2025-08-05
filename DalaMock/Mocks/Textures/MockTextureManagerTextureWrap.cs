@@ -1,4 +1,6 @@
-﻿namespace DalaMock.Core.Mocks.Textures;
+﻿using Dalamud.Bindings.ImGui;
+
+namespace DalaMock.Core.Mocks.Textures;
 
 using System;
 using System.Numerics;
@@ -36,8 +38,7 @@ public class MockTextureManagerTextureWrap : IDalamudTextureWrap
     /// </summary>
     internal bool IsDisposed { get; private set; }
 
-    /// <inheritdoc />
-    public IntPtr ImGuiHandle
+    public ImTextureID Handle
     {
         get
         {
@@ -46,7 +47,7 @@ public class MockTextureManagerTextureWrap : IDalamudTextureWrap
                 throw new InvalidOperationException("Texture already disposed. You may not render it.");
             }
 
-            return this.textureProvider.GetInfo(this.path).Wrap!.ImGuiHandle;
+            return this.textureProvider.GetInfo(this.path).Wrap!.Handle;
         }
     }
 

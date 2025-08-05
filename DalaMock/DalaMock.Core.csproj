@@ -57,8 +57,8 @@
             <HintPath>$(DalamudLibPath)Serilog.Sinks.File.dll</HintPath>
             <Private>True</Private>
         </Reference>
-        <Reference Include="ImGui.NET">
-            <HintPath>$(DalamudLibPath)ImGui.NET.dll</HintPath>
+        <Reference Include="Dalamud.Bindings.ImGui">
+            <HintPath>$(DalamudLibPath)Dalamud.Bindings.ImGui.dll</HintPath>
             <Private>True</Private>
         </Reference>
         <Reference Include="Lumina.Excel">

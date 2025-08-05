@@ -4,7 +4,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace DalaMock.Core.Imgui;
 
@@ -17,17 +17,16 @@ public partial class ImGuiScene
         GCHandle iconRangeHandle = GCHandle.Alloc(iconRanges, GCHandleType.Pinned);
         IntPtr iconRangePtr = iconRangeHandle.AddrOfPinnedObject();
 
-        // Create a new font configuration
-        ImFontConfigPtr fontConfig = ImGuiNative.ImFontConfig_ImFontConfig();
+        ImFontConfigPtr fontConfig = ImGui.ImFontConfig();
         fontConfig.FontNo = fontNo;
-        fontConfig.GlyphRanges = iconRangePtr;
+        fontConfig.GlyphRanges = (ushort*)iconRangePtr;
 
-        ImFontPtr newFont = io.Fonts.AddFontFromFileTTF(fontPath, fontSize, fontConfig, iconRangePtr);
+        ImFontPtr newFont = io.Fonts.AddFontFromFileTTF(fontPath, fontSize, fontConfig.Handle, (ushort*)iconRangePtr);
         ImGui.GetIO().Fonts.Build();
 
         this.RecreateFontDeviceTexture(this.GraphicsDevice);
 
-        ImGuiNative.ImFontConfig_destroy(fontConfig);
+        fontConfig.Destroy();
         if (iconRangeHandle.IsAllocated)
         {
             iconRangeHandle.Free();

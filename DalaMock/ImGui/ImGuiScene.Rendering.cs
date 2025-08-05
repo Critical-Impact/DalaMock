@@ -3,7 +3,7 @@
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Veldrid;
 
 /// <summary>
@@ -11,7 +11,7 @@ using Veldrid;
 /// </summary>
 public partial class ImGuiScene
 {
-    private readonly IntPtr fontAtlasId = 1;
+    private readonly ImTextureID fontAtlasId = 1;
     private Texture? fontTexture;
     private ResourceSet? fontTextureResourceSet;
     private TextureView fontTextureView;
@@ -105,14 +105,14 @@ public partial class ImGuiScene
     /// Recreates the font texture, used when adding a new font.
     /// </summary>
     /// <param name="gd">Veldrid's graphics device.</param>
-    public void RecreateFontDeviceTexture(GraphicsDevice gd)
+    public unsafe void RecreateFontDeviceTexture(GraphicsDevice gd)
     {
         var io = ImGui.GetIO();
 
         // Build
-        IntPtr pixels;
-        int width, height, bytesPerPixel;
-        io.Fonts.GetTexDataAsRGBA32(0, out pixels, out width, out height, out bytesPerPixel);
+        byte* pixels = null;
+        int width = 0, height = 0, bytesPerPixel = 0;
+        io.Fonts.GetTexDataAsRGBA32(0, ref pixels, ref width, ref height, ref bytesPerPixel);
 
         // Store our identifier
         io.Fonts.SetTexID(0, this.fontAtlasId);
@@ -129,7 +129,7 @@ public partial class ImGuiScene
         this.fontTexture.Name = "ImGui.NET Font Texture";
         gd.UpdateTexture(
             this.fontTexture,
-            pixels,
+            (IntPtr)pixels,
             (uint)(bytesPerPixel * width * height),
             0,
             0,
@@ -139,7 +139,7 @@ public partial class ImGuiScene
             1,
             0,
             0);
-        this.fontTextureResourceSet?.Dispose(); 
+        this.fontTextureResourceSet?.Dispose();
         this.fontTextureView = gd.ResourceFactory.CreateTextureView(this.fontTexture);
         this.fontTextureResourceSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(this.textureLayout, this.fontTextureView));
         this.fontTextureResourceSet.Name = "ImGui.NET Font Texture Resource Set";
@@ -162,7 +162,7 @@ public partial class ImGuiScene
         return tvi.ResourceSet;
     }
 
-    private void RenderImDrawData(ImDrawDataPtr drawData, GraphicsDevice gd, CommandList cl)
+    private unsafe void RenderImDrawData(ImDrawDataPtr drawData, GraphicsDevice gd, CommandList cl)
     {
         uint vertexOffsetInVertices = 0;
         uint indexOffsetInElements = 0;
@@ -192,24 +192,25 @@ public partial class ImGuiScene
                     BufferUsage.IndexBuffer | BufferUsage.Dynamic));
         }
 
+
         for (var i = 0; i < drawData.CmdListsCount; i++)
         {
-            var cmdList = drawData.CmdListsRange[i];
+            var cmdList = drawData.CmdLists[i];
 
             cl.UpdateBuffer(
                 this.vertexBuffer,
                 vertexOffsetInVertices * (uint)Unsafe.SizeOf<ImDrawVert>(),
-                cmdList.VtxBuffer.Data,
-                (uint)(cmdList.VtxBuffer.Size * Unsafe.SizeOf<ImDrawVert>()));
+                (IntPtr)cmdList->VtxBuffer.Data,
+                (uint)(cmdList->VtxBuffer.Size * Unsafe.SizeOf<ImDrawVert>()));
 
             cl.UpdateBuffer(
                 this.indexBuffer,
                 indexOffsetInElements * sizeof(ushort),
-                cmdList.IdxBuffer.Data,
-                (uint)(cmdList.IdxBuffer.Size * sizeof(ushort)));
+                (IntPtr)cmdList->IdxBuffer.Data,
+                (uint)(cmdList->IdxBuffer.Size * sizeof(ushort)));
 
-            vertexOffsetInVertices += (uint)cmdList.VtxBuffer.Size;
-            indexOffsetInElements += (uint)cmdList.IdxBuffer.Size;
+            vertexOffsetInVertices += (uint)cmdList->VtxBuffer.Size;
+            indexOffsetInElements += (uint)cmdList->IdxBuffer.Size;
         }
 
         // Setup orthographic projection matrix into our constant buffer
@@ -236,11 +237,11 @@ public partial class ImGuiScene
         var idxOffset = 0;
         for (var n = 0; n < drawData.CmdListsCount; n++)
         {
-            var cmdList = drawData.CmdListsRange[n];
-            for (var cmdI = 0; cmdI < cmdList.CmdBuffer.Size; cmdI++)
+            var cmdList = drawData.CmdLists[n];
+            for (var cmdI = 0; cmdI < cmdList->CmdBuffer.Size; cmdI++)
             {
-                var pcmd = cmdList.CmdBuffer[cmdI];
-                if (pcmd.UserCallback != IntPtr.Zero)
+                var pcmd = cmdList->CmdBuffer[cmdI];
+                if (pcmd.UserCallback != (void*)IntPtr.Zero)
                 {
                     throw new NotImplementedException();
                 }
@@ -253,7 +254,7 @@ public partial class ImGuiScene
                     }
                     else
                     {
-                        cl.SetGraphicsResourceSet(1, this.GetImageResourceSet(pcmd.TextureId));
+                        cl.SetGraphicsResourceSet(1, this.GetImageResourceSet((IntPtr)pcmd.TextureId.Handle));
                     }
                 }
 
@@ -272,8 +273,8 @@ public partial class ImGuiScene
                     0);
             }
 
-            vtxOffset += cmdList.VtxBuffer.Size;
-            idxOffset += cmdList.IdxBuffer.Size;
+            vtxOffset += cmdList->VtxBuffer.Size;
+            idxOffset += cmdList->IdxBuffer.Size;
         }
     }
 

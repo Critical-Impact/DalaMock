@@ -1,6 +1,6 @@
 ﻿namespace DalaMock.Shared.Interfaces;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 /// <summary>
 /// A interface that provides the default fonts plugins can use.

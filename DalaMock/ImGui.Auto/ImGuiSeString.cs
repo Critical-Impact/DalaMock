@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 using Dalamud.Game.Text.SeStringHandling;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace DalaMock.Core.Imgui.Auto;
 

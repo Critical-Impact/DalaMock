@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using DalaMock.Shared.Interfaces;
 using Dalamud.Interface;
 using Dalamud.Interface.ImGuiFileDialog;
-using ImGuiNET;
 
 /// <summary>
 /// The dalamud implementation of file dialog manager, wrapped to avoid font crashes

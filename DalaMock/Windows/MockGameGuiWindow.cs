@@ -1,7 +1,7 @@
 namespace DalaMock.Core.Windows;
 
 using FFXIVClientStructs.FFXIV.Client.Game;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Mocks;
 
 public class MockGameGuiWindow : MockWindow<MockGameGui>

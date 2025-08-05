@@ -1,4 +1,6 @@
-﻿namespace DalaMock.Core.Imgui;
+﻿using Dalamud.Bindings.ImGui;
+
+namespace DalaMock.Core.Imgui;
 
 using Dalamud.Interface.Textures.TextureWraps;
 
@@ -15,6 +17,8 @@ public class RawTextureMap(nint handle, int width, int height) : IDalamudTexture
     }
 
     public nint ImGuiHandle { get; } = handle;
+
+    public ImTextureID Handle { get; set; } = new ImTextureID(handle);
 
     public int Width { get; } = width;
 

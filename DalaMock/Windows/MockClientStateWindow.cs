@@ -10,7 +10,7 @@ using DalaMock.Core.Mocks;
 using Dalamud.Game;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Lumina.Excel;
 
 public class MockClientStateWindow : MockWindow<MockClientState>

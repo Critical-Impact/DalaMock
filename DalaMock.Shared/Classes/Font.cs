@@ -1,8 +1,8 @@
 ﻿namespace DalaMock.Shared.Classes;
 
 using DalaMock.Shared.Interfaces;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
-using ImGuiNET;
 
 /// <summary>
 /// A wrapper around dalamud's default fonts until IUiBuilder provides access to them.

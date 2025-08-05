@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using DalaMock.Core.Imgui.Auto;
 using DalaMock.Core.Mocks;
 using Dalamud.Interface.Windowing;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace DalaMock.Core.Windows;
 

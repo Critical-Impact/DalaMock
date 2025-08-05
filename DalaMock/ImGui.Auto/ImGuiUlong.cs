@@ -1,6 +1,6 @@
 using System;
 using System.Reflection;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace DalaMock.Core.Imgui.Auto;
 

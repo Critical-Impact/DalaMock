@@ -4,7 +4,7 @@ using Dalamud.Interface.Utility.Raii;
 namespace DalaMock.Core.Windows;
 
 using Dalamud.Interface.Windowing;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 public class MockMockWindow : Window
 {

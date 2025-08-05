@@ -8,7 +8,7 @@ using DalaMock.Core.Imgui;
 using DalaMock.Core.Mocks;
 using DalaMock.Core.Plugin;
 using DalaMock.Core.Windows;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 /// <summary>
 /// Provides a mock dalamud UI allowing for plugins to be loaded/unloaded at will.

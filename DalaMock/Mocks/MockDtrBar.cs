@@ -1,3 +1,5 @@
+using Dalamud.Game.Addon.Events.EventDataTypes;
+
 using Microsoft.Extensions.Logging;
 
 namespace DalaMock.Core.Mocks;
@@ -110,6 +112,5 @@ public class MockDtrBarEntry : MockReadOnlyDtrEntryBar, IDtrBarEntry
         this.mockDtrBar.Remove(this.Title);
     }
 
-    /// <inheritdoc/>
-    public Action? OnClick { get; set; }
+    public Action<AddonMouseEventData>? OnClick { get; set; }
 }

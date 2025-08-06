@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 
+using Dalamud.Game.Text.SeStringHandling.Payloads;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -11,13 +13,16 @@ using Dalamud.Plugin.Services;
 public class MockChatGui : IChatGui, IMockService
 {
     private readonly IPluginLog pluginLog;
-
+    private IReadOnlyDictionary<(string PluginName, Guid CommandId), Action<Guid, SeString>> registeredLinkHandlers;
+    
     public MockChatGui(IPluginLog pluginLog)
     {
         this.pluginLog = pluginLog;
         this.RegisteredLinkHandlers = new ReadOnlyDictionary<(string PluginName, uint CommandId), Action<uint, SeString>>(new Dictionary<(string PluginName, uint CommandId), Action<uint, SeString>>());
     }
-
+    
+    IReadOnlyDictionary<(string PluginName, Guid CommandId), Action<Guid, SeString>> IChatGui.RegisteredLinkHandlers => this.registeredLinkHandlers;
+    
     /// <inheritdoc />
     public event IChatGui.OnMessageDelegate? ChatMessage;
 
@@ -52,7 +57,22 @@ public class MockChatGui : IChatGui, IMockService
 
     /// <inheritdoc />
     public string ServiceName => "Chat Gui";
-
+    
+    public DalamudLinkPayload AddChatLinkHandler(Action<Guid, SeString> commandAction)
+    {
+        throw new NotImplementedException();
+    }
+    
+    public void RemoveChatLinkHandler(Guid commandId)
+    {
+        throw new NotImplementedException();
+    }
+    
+    public void RemoveChatLinkHandler()
+    {
+        throw new NotImplementedException();
+    }
+    
     /// <inheritdoc />
     public void Print(XivChatEntry chat)
     {

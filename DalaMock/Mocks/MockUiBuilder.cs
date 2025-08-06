@@ -116,7 +116,13 @@ public class MockUiBuilder : IUiBuilder
     public event Action? ShowUi;
 
     public event Action? HideUi;
-
+    
+    public event Action? DefaultGlobalScaleChanged;
+    
+    public event Action? DefaultFontChanged;
+    
+    public event Action? DefaultStyleChanged;
+    
     public void FireOpenMainUiEvent()
     {
         this.OpenMainUi?.Invoke();

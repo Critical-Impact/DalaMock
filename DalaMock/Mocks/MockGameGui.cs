@@ -1,3 +1,5 @@
+using Dalamud.Game.NativeWrapper;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -30,7 +32,32 @@ public class MockGameGui : IGameGui, IMockService
     {
         throw new NotImplementedException();
     }
-
+    
+    UIModulePtr IGameGui.GetUIModule()
+    {
+        return this.GetUIModule();
+    }
+    
+    AtkUnitBasePtr IGameGui.GetAddonByName(string name, int index)
+    {
+        return this.GetAddonByName(name, index);
+    }
+    
+    public AgentInterfacePtr GetAgentById(int id)
+    {
+        throw new NotImplementedException();
+    }
+    
+    AgentInterfacePtr IGameGui.FindAgentInterface(string addonName)
+    {
+        return this.FindAgentInterface(addonName);
+    }
+    
+    public AgentInterfacePtr FindAgentInterface(AtkUnitBasePtr addon)
+    {
+        throw new NotImplementedException();
+    }
+    
     public nint GetUIModule()
     {
         return 0;

@@ -23,9 +23,9 @@
       },
       "DalamudPackager": {
         "type": "Direct",
-        "requested": "[12.0.0, )",
-        "resolved": "12.0.0",
-        "contentHash": "J5TJLV3f16T/E2H2P17ClWjtfEBPpq3yxvqW46eN36JCm6wR+EaoaYkqG9Rm5sHqs3/nK/vKjWWyvEs/jhKoXw=="
+        "requested": "[13.0.0, )",
+        "resolved": "13.0.0",
+        "contentHash": "Mb3cUDSK/vDPQ8gQIeuCw03EMYrej1B4J44a1AvIJ9C759p9XeqdU9Hg4WgOmlnlPe0G7ILTD32PKSUpkQNa8w=="
       },
       "DotNet.ReproducibleBuilds": {
         "type": "Direct",
@@ -391,6 +391,11 @@
           "SharpGen.Runtime": "2.0.0-beta.13"
         }
       },
+      "StbiSharp": {
+        "type": "Transitive",
+        "resolved": "1.2.1",
+        "contentHash": "jbi94g3UDVAC3vH6jKZmmADH4Z6tGqbcdlyGhT/WZN9UE8OjjvpGFE5zF+UCSmIdya6iJ+Zo5VvxdQywSKN0Uw=="
+      },
       "StyleCop.Analyzers.Unstable": {
         "type": "Transitive",
         "resolved": "1.2.0.556",
@@ -518,7 +523,7 @@
         "type": "Project",
         "dependencies": {
           "Autofac": "[8.3.0, )",
-          "DalaMock.Shared": "[2.2.6, )",
+          "DalaMock.Shared": "[2.3.0, )",
           "Microsoft.Extensions.Configuration": "[9.0.6, )",
           "Microsoft.Extensions.DependencyModel": "[9.0.6, )",
           "Microsoft.Extensions.Hosting": "[9.0.6, )",
@@ -527,6 +532,7 @@
           "NativeFileDialogSharp": "[0.5.0, )",
           "Newtonsoft.Json": "[13.0.3, )",
           "Serilog.Extensions.Logging": "[9.0.2, )",
+          "StbiSharp": "[1.2.1, )",
           "System.Collections.Immutable": "[9.0.6, )",
           "Veldrid": "[4.9.0, )",
           "Veldrid.SDL2": "[4.9.0, )",
@@ -537,7 +543,7 @@
         "type": "Project",
         "dependencies": {
           "Autofac.Extensions.DependencyInjection": "[10.0.0, )",
-          "DalaMock.Shared": "[2.2.6, )",
+          "DalaMock.Shared": "[2.3.0, )",
           "Microsoft.Extensions.Hosting": "[9.0.6, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[9.0.6, )",
           "Microsoft.Extensions.ObjectPool": "[9.0.6, )"

@@ -511,6 +511,6 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
 
     public virtual void OnActivePluginsChanged(PluginListInvalidationKind kind, bool affectedthisplugin)
     {
-        this.ActivePluginsChanged?.Invoke(kind, affectedthisplugin);
+        this.ActivePluginsChanged?.Invoke(new MockActivePluginsChangedEventArgs(kind, []));
     }
 }

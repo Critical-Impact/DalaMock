@@ -1,7 +1,7 @@
 namespace DalaMock.Sample.Windows;
 
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Windowing;
-using ImGuiNET;
 
 public class ConfigWindow(Configuration config) : Window("SamplePlugin Config")
 {

@@ -1,10 +1,10 @@
 namespace DalaMock.Sample.Windows;
 
 using DalaMock.Shared.Interfaces;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using ImGuiNET;
 
 public class MainWindow : Window
 {

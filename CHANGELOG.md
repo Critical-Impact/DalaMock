@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [3.0.1] - 2025-08-09
+
+### Changed
+- Revert ChatLinkHandler updates
+- Add DtrBar OnClick
+- Handle BC/BC7/DXT pixel formats. This currently relies on an unreleased Lumina PR to support BC5/BC7.
+
 ## [3.0.0] - 2025-08-06
 
 ### Changed

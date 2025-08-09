@@ -205,13 +205,20 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
         var buffer = file.TextureBuffer;
         buffer = buffer.Filter(0, 0, TexFile.TextureFormat.B8G8R8A8);
 
+        var pixelFormat = PixelFormat.B8_G8_R8_A8_UNorm;
+
+        if (file.Header.Format is TexFile.TextureFormat.BC5 or TexFile.TextureFormat.BC7 or TexFile.TextureFormat.DXT1 or TexFile.TextureFormat.DXT3 or TexFile.TextureFormat.DXT5)
+        {
+            pixelFormat = PixelFormat.R8_G8_B8_A8_UNorm;
+        }
+
         var texture = this.graphicsDevice.ResourceFactory.CreateTexture(
             TextureDescription.Texture2D(
                 (uint)buffer.Width,
                 (uint)buffer.Height,
                 1,
                 1,
-                PixelFormat.B8_G8_R8_A8_UNorm,
+                pixelFormat,
                 TextureUsage.Sampled));
         var cpUframeBufferTextureId =
             this.imGuiScene.GetOrCreateImGuiBinding(this.graphicsDevice.ResourceFactory, texture);

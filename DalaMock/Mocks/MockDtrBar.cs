@@ -94,6 +94,8 @@ public class MockReadOnlyDtrEntryBar : IReadOnlyDtrBarEntry
 
     /// <inheritdoc/>
     public bool UserHidden { get; set; }
+
+    public Action<DtrInteractionEvent>? OnClick { get; set; }
 }
 
 public class MockDtrBarEntry : MockReadOnlyDtrEntryBar, IDtrBarEntry

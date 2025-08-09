@@ -13,16 +13,16 @@ using Dalamud.Plugin.Services;
 public class MockChatGui : IChatGui, IMockService
 {
     private readonly IPluginLog pluginLog;
-    private IReadOnlyDictionary<(string PluginName, Guid CommandId), Action<Guid, SeString>> registeredLinkHandlers;
-    
+    private IReadOnlyDictionary<(string PluginName, uint CommandId), Action<uint, SeString>> registeredLinkHandlers;
+
     public MockChatGui(IPluginLog pluginLog)
     {
         this.pluginLog = pluginLog;
         this.RegisteredLinkHandlers = new ReadOnlyDictionary<(string PluginName, uint CommandId), Action<uint, SeString>>(new Dictionary<(string PluginName, uint CommandId), Action<uint, SeString>>());
     }
-    
-    IReadOnlyDictionary<(string PluginName, Guid CommandId), Action<Guid, SeString>> IChatGui.RegisteredLinkHandlers => this.registeredLinkHandlers;
-    
+
+    IReadOnlyDictionary<(string PluginName, uint CommandId), Action<uint, SeString>> IChatGui.RegisteredLinkHandlers => this.registeredLinkHandlers;
+
     /// <inheritdoc />
     public event IChatGui.OnMessageDelegate? ChatMessage;
 
@@ -57,22 +57,22 @@ public class MockChatGui : IChatGui, IMockService
 
     /// <inheritdoc />
     public string ServiceName => "Chat Gui";
-    
-    public DalamudLinkPayload AddChatLinkHandler(Action<Guid, SeString> commandAction)
+
+    public DalamudLinkPayload AddChatLinkHandler(uint commandId, Action<uint, SeString> commandAction)
     {
         throw new NotImplementedException();
     }
-    
-    public void RemoveChatLinkHandler(Guid commandId)
+
+    public void RemoveChatLinkHandler(uint commandId)
     {
         throw new NotImplementedException();
     }
-    
+
     public void RemoveChatLinkHandler()
     {
         throw new NotImplementedException();
     }
-    
+
     /// <inheritdoc />
     public void Print(XivChatEntry chat)
     {

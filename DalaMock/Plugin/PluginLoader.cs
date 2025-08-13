@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.Reflection;
 
+using Dalamud.Interface;
+
 using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
@@ -179,10 +181,8 @@ public class PluginLoader : IPluginLoader
 
         builder.RegisterInstance(this.mockContainer.GetWindowSystem());
 
-        var scene = this.mockContainer.GetContainer().Resolve<DalaMock.Core.Imgui.ImGuiScene>();
-
-        var uiBuilder = new MockUiBuilder(scene);
-        builder.RegisterInstance(uiBuilder);
+        var uiBuilder = this.mockContainer.GetContainer().Resolve<IUiBuilder>();
+        builder.RegisterInstance(uiBuilder).AsSelf().AsImplementedInterfaces();
         builder.RegisterInstance(pluginLoadSettings);
         builder.RegisterInstance(this.loggerFactory).ExternallyOwned();
         builder.RegisterGeneric(typeof(Logger<>))

@@ -1,3 +1,5 @@
+using DalaMock.Core.Imgui;
+
 using Dalamud;
 
 namespace DalaMock.Core.Mocks;
@@ -16,14 +18,14 @@ using Veldrid.Sdl2;
 public class MockKeyState : IKeyState, IDisposable, IMockService
 {
     private const int MaxKeyCode = 0xF0;
-    private readonly Sdl2Window window;
+    private readonly ISdl2Window window;
     private readonly HashSet<VirtualKey> activeKeys = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MockKeyState"/> class.
     /// </summary>
     /// <param name="window">The mock SDL2 window.</param>
-    public MockKeyState(Sdl2Window window)
+    public MockKeyState(ISdl2Window window)
     {
         this.window = window;
         this.window.KeyDown += this.WindowOnKeyDown;

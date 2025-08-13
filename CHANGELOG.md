@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [3.0.2] - 2025-08-13
+
+### Added
+- Added EXD_DATA_DIR environment variable, allowing for the exd path to be provided for CI
+- Added DALAMOCK_SAVE_DIR environment variable
+- DalaMock can be configured to not spawn a window and provide a null texture provider and ui builder allowing for use in CI
+
 ## [3.0.1] - 2025-08-09
 
 ### Changed

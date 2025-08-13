@@ -27,28 +27,28 @@ using Newtonsoft.Json;
 
 public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
 {
+    private readonly IUiBuilder uiBuilder;
     private readonly IComponentContext componentContext;
 
     // private readonly MockProgram _mockProgram;
-    private MockUiBuilder mockUiBuilder;
     private readonly IPluginManifest pluginManifest;
     private PluginConfiguration pluginConfiguration;
     private PluginLoadReason pluginLoadReason;
 
     public MockDalamudPluginInterface(
-        MockUiBuilder mockUiBuilder,
+        IUiBuilder uiBuilder,
         PluginLoadSettings pluginLoadSettings,
         IPluginManifest pluginManifest,
         IComponentContext componentContext)
     {
         // _mockProgram = mockProgram;
+        this.uiBuilder = uiBuilder;
         this.componentContext = componentContext;
         this.ConfigFile = pluginLoadSettings.ConfigFile;
         this.ConfigDirectory = pluginLoadSettings.ConfigDir;
         this.pluginLoadReason = pluginLoadSettings.PluginLoadReason;
         this.AssemblyLocation = new FileInfo((pluginLoadSettings.AssemblyLocation ?? Environment.ProcessPath)!);
         this.pluginConfiguration = new PluginConfiguration(pluginLoadSettings.ConfigDir.FullName);
-        this.mockUiBuilder = mockUiBuilder;
         this.pluginManifest = pluginManifest;
     }
 
@@ -57,11 +57,6 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
 
     /// <inheritdoc/>
     public event IDalamudPluginInterface.ActivePluginsChangedDelegate? ActivePluginsChanged;
-
-    /// <summary>
-    /// Provides access the mock ui builder.
-    /// </summary>
-    public MockUiBuilder MockUiBuilder => this.mockUiBuilder;
 
     /// <inheritdoc/>
     public Task InjectAsync(object instance, params object[] scopedObjects)
@@ -106,7 +101,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     public FileInfo ConfigFile { get; }
 
     /// <inheritdoc/>
-    public IUiBuilder UiBuilder => this.mockUiBuilder;
+    public IUiBuilder UiBuilder => this.uiBuilder;
 
     /// <inheritdoc/>
     public bool IsDevMenuOpen => true;

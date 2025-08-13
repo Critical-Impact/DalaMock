@@ -7,6 +7,14 @@ using Newtonsoft.Json;
 
 public class MockDalamudConfiguration
 {
+    /// <summary>
+    /// Should a Veldrid window be created.
+    /// </summary>
+    public bool CreateWindow { get; set; } = true;
+
+    /// <summary>
+    /// What language should be loaded.
+    /// </summary>
     public ClientLanguage ClientLanguage { get; set; } = ClientLanguage.English;
 
     [JsonIgnore]

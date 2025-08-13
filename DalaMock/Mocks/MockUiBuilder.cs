@@ -14,7 +14,7 @@ using Dalamud.Bindings.ImGui;
 using SharpDX.Direct3D11;
 using Veldrid;
 
-public class MockUiBuilder : IUiBuilder
+public class MockUiBuilder : IUiBuilder, IMockService
 {
     public float FontDefaultSizePt { get; }
 
@@ -116,13 +116,13 @@ public class MockUiBuilder : IUiBuilder
     public event Action? ShowUi;
 
     public event Action? HideUi;
-    
+
     public event Action? DefaultGlobalScaleChanged;
-    
+
     public event Action? DefaultFontChanged;
-    
+
     public event Action? DefaultStyleChanged;
-    
+
     public void FireOpenMainUiEvent()
     {
         this.OpenMainUi?.Invoke();
@@ -137,4 +137,6 @@ public class MockUiBuilder : IUiBuilder
     {
         this.Draw?.Invoke();
     }
+
+    public string ServiceName { get; set; } = "Ui Builder";
 }

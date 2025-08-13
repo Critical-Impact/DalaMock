@@ -55,7 +55,7 @@ public partial class ImGuiScene : IDisposable
             new GraphicsDeviceOptions(false, null, false, ResourceBindingModel.Improved, true, true),
             out window,
             out graphicsDevice);
-        this.Window = window;
+        this.Window = new RawSdl2Window(window);
         this.GraphicsDevice = graphicsDevice;
         this.Window.Resized += () =>
         {
@@ -90,7 +90,7 @@ public partial class ImGuiScene : IDisposable
     /// <summary>
     /// Gets the main application container window where we do all our rendering and input processing.
     /// </summary>
-    public Sdl2Window Window { get; init; }
+    public ISdl2Window Window { get; init; }
 
     /// <summary>
     /// Gets the veldrid graphics device.

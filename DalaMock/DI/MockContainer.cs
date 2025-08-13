@@ -1,24 +1,15 @@
-﻿using System;
-using System.IO;
+﻿namespace DalaMock.Core.DI;
 
-using DalaMock.Core.Extensions;
-using DalaMock.Core.Imgui.Auto;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-
-using NativeFileDialogSharp;
-
-using Serilog.Extensions.Logging;
-
-namespace DalaMock.Core.DI;
-
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+
 using Autofac;
 using DalaMock.Core.Configuration;
 using DalaMock.Core.Imgui;
+using DalaMock.Core.Imgui.Auto;
 using DalaMock.Core.Interface;
 using DalaMock.Core.Mocks;
 using DalaMock.Core.Plugin;
@@ -26,11 +17,14 @@ using DalaMock.Core.Windows;
 using DalaMock.Shared.Interfaces;
 using Dalamud.Interface.Windowing;
 using Lumina;
+
+using Microsoft.Extensions.Logging;
+using NativeFileDialogSharp;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+
 using Veldrid;
-using Veldrid.Sdl2;
 
 /// <summary>
 /// The main service container that provides plugin loaders, loggers, and UI if required.
@@ -65,6 +59,18 @@ public class MockContainer
                                     .WriteTo.Console(standardErrorFromLevel: LogEventLevel.Verbose)
                                     .MinimumLevel.ControlledBy(this.levelSwitch)
                                     .CreateLogger();
+
+        if (this.dalamudConfiguration.GamePathString is null)
+        {
+            var exdDataDir = Environment.GetEnvironmentVariable("EXD_DATA_DIR");
+            if (exdDataDir is not null)
+            {
+                if (Path.Exists(exdDataDir))
+                {
+                    this.dalamudConfiguration.GamePathString = exdDataDir;
+                }
+            }
+        }
 
         if (this.dalamudConfiguration.GamePathString is null)
         {
@@ -103,6 +109,25 @@ public class MockContainer
             {
                 this.seriLog.Error("You must provide your sqpack folder either manually or programmatically.");
                 Environment.Exit(69);
+            }
+        }
+
+        if (!this.dalamudConfiguration.GamePathValid)
+        {
+            this.seriLog.Error("The provided path " + this.dalamudConfiguration.GamePathString + " is invalid.");
+            this.seriLog.Error("You must provide your sqpack folder either manually or programmatically.");
+            Environment.Exit(69);
+        }
+
+        if (this.dalamudConfiguration.PluginSavePathString is null)
+        {
+            var dalamockSaveDir = Environment.GetEnvironmentVariable("DALAMOCK_SAVE_DIR");
+            if (dalamockSaveDir is not null)
+            {
+                if (Path.Exists(dalamockSaveDir))
+                {
+                    this.dalamudConfiguration.GamePathString = dalamockSaveDir;
+                }
             }
         }
 
@@ -161,6 +186,13 @@ public class MockContainer
             }
         }
 
+        if (!this.dalamudConfiguration.PluginSavePathValid)
+        {
+            this.seriLog.Error("The provided path " + this.dalamudConfiguration.PluginSavePathValid + " is invalid.");
+            this.seriLog.Error("You must provide your plugin save folder either manually or programmatically.");
+            Environment.Exit(69);
+        }
+
 
 
         var builder = new ContainerBuilder();
@@ -182,7 +214,7 @@ public class MockContainer
 
         // Find all types that implement IMockService and are not abstract
         var mockServiceTypes = assembly.GetTypes()
-            .Where(t => typeof(IMockService).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
+            .Where(t => !t.Name.Contains("Null") && typeof(IMockService).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
 
         var mockWindows = assembly.GetTypes()
             .Where(t => typeof(IMockWindow).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
@@ -228,32 +260,43 @@ public class MockContainer
         builder.RegisterType<MockSettingsWindow>().AsSelf().As<Window>().SingleInstance();
         builder.RegisterType<LocalPlayersWindow>().AsSelf().As<Window>().SingleInstance();
         builder.RegisterType<LocalPlayerEditWindow>().AsSelf().As<Window>().SingleInstance();
-        builder.Register<ImGuiScene>(c =>
-        {
-            var assertHandler = c.Resolve<AssertHandler>();
-            return ImGuiScene.CreateWindow(assertHandler);
-        }).SingleInstance();
 
-        builder.Register<GraphicsDevice>(
-            c =>
+        if (this.dalamudConfiguration.CreateWindow)
+        {
+            builder.Register<ImGuiScene>(c =>
+            {
+                var assertHandler = c.Resolve<AssertHandler>();
+                return ImGuiScene.CreateWindow(assertHandler);
+            }).SingleInstance();
+
+            builder.Register<GraphicsDevice>(c =>
             {
                 var context = c.Resolve<ImGuiScene>();
                 return context.GraphicsDevice;
             }).SingleInstance();
 
-        builder.Register<CommandList>(
-            c =>
+            builder.Register<CommandList>(c =>
             {
                 var context = c.Resolve<ImGuiScene>();
                 return context.CommandList;
             }).SingleInstance();
 
-        builder.Register<Sdl2Window>(
-            c =>
+            builder.Register<ISdl2Window>(c =>
             {
                 var context = c.Resolve<ImGuiScene>();
                 return context.Window;
             }).SingleInstance();
+        }
+        else
+        {
+            builder.RegisterType<NullSdl2Window>().AsSelf().AsImplementedInterfaces();
+            var fixedList = mockServiceTypes.ToList();
+            fixedList.Remove(typeof(MockTextureProvider));
+            fixedList.Add(typeof(NullTextureProvider));
+            fixedList.Remove(typeof(MockUiBuilder));
+            fixedList.Add(typeof(NullUiBuilder));
+            mockServiceTypes = fixedList;
+        }
 
         // Register each type as implementing IMockService or as the replacement type if specified
         foreach (var type in mockServiceTypes)

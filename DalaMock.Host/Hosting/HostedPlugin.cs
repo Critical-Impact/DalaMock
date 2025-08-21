@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 
+using Autofac.Core;
+
 using DalaMock.Host.LoggingProviders;
 using DalaMock.Host.Mediator;
 
@@ -30,6 +32,7 @@ public abstract class HostedPlugin : IDalamudPlugin
     private readonly IDalamudPluginInterface pluginInterface;
     private readonly IPluginLog pluginLog;
     private readonly HostedEvents hostedEvents;
+    private Dictionary<Type, Type> hostedServices;
     private IHost? host;
 
     /// <summary>
@@ -44,6 +47,7 @@ public abstract class HostedPlugin : IDalamudPlugin
         this.pluginLog = pluginLog;
         this.interfaces = new List<object>();
         this.hostedEvents = new HostedEvents();
+        this.hostedServices = new Dictionary<Type, Type>();
         foreach (var potentialInterface in interfaces)
         {
             if (potentialInterface.GetType().GetInterfaces().Length != 0)
@@ -100,6 +104,30 @@ public abstract class HostedPlugin : IDalamudPlugin
     public abstract void ConfigureServices(IServiceCollection serviceCollection);
 
     /// <summary>
+    /// Register a service that implements IHostedService. You can override a given type with a mock type using <see cref="ReplaceHostedService"/>.
+    /// </summary>
+    /// <param name="hostedServiceType">The service you want to register.</param>
+    public void RegisterHostedService(Type hostedServiceType)
+    {
+        if (this.hostedServices.ContainsKey(hostedServiceType))
+        {
+            return;
+        }
+        this.hostedServices[hostedServiceType] = hostedServiceType;
+    }
+
+    /// <summary>
+    /// Replace a service that implements IHostedService with a mock version. If the service was not registered with RegisterHostedService this will have no effect.
+    /// </summary>
+    /// <param name="hostedServiceType">The concrete implementation you want to replace.</param>
+    /// <param name="mockServiceType">The mock implementation you want to use.</param>
+    public void ReplaceHostedService(Type hostedServiceType, Type mockServiceType)
+    {
+        this.hostedServices[hostedServiceType] = mockServiceType;
+    }
+
+
+    /// <summary>
     /// Builds the host and starts the plugin.
     /// </summary>
     /// <returns>A built host.</returns>
@@ -148,6 +176,13 @@ public abstract class HostedPlugin : IDalamudPlugin
         hostBuilder.ConfigureContainer<ContainerBuilder>(this.ConfigureContainer);
         hostBuilder.ConfigureServices(this.ConfigureServices);
         this.PreBuild(hostBuilder);
+        hostBuilder.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+        {
+            foreach (var service in this.hostedServices)
+            {
+                containerBuilder.RegisterType(service.Value).AsImplementedInterfaces().AsSelf().SingleInstance();
+            }
+        });
 
         this.host = hostBuilder.Build();
         this.hostedEvents.OnPluginEvent(HostedEventType.PluginBuilt);

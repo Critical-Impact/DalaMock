@@ -132,7 +132,7 @@ public class MockContainer
             {
                 if (Path.Exists(dalamockSaveDir))
                 {
-                    this.dalamudConfiguration.GamePathString = dalamockSaveDir;
+                    this.dalamudConfiguration.PluginSavePathString = dalamockSaveDir;
                 }
             }
         }

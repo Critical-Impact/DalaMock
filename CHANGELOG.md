@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [3.0.5] - 2025-08-26
+
+### Fixed
+- A very important typo
+
 ## [3.0.4] - 2025-08-26
 
 ### Changed

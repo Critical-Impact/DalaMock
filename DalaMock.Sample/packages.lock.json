@@ -523,7 +523,7 @@
         "type": "Project",
         "dependencies": {
           "Autofac": "[8.4.0, )",
-          "DalaMock.Shared": "[3.0.0, )",
+          "DalaMock.Shared": "[3.0.3, )",
           "Microsoft.Extensions.Configuration": "[9.0.8, )",
           "Microsoft.Extensions.DependencyModel": "[9.0.8, )",
           "Microsoft.Extensions.Hosting": "[9.0.8, )",
@@ -543,7 +543,7 @@
         "type": "Project",
         "dependencies": {
           "Autofac.Extensions.DependencyInjection": "[10.0.0, )",
-          "DalaMock.Shared": "[3.0.0, )",
+          "DalaMock.Shared": "[3.0.3, )",
           "Microsoft.Extensions.Hosting": "[9.0.8, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[9.0.8, )",
           "Microsoft.Extensions.ObjectPool": "[9.0.8, )"

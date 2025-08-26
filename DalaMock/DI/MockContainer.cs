@@ -65,8 +65,10 @@ public class MockContainer
             var exdDataDir = Environment.GetEnvironmentVariable("EXD_DATA_DIR");
             if (exdDataDir is not null)
             {
+                this.seriLog.Information("Attempting to use EXD_DATA_DIR environment variable.");
                 if (Path.Exists(exdDataDir))
                 {
+                    this.seriLog.Information("EXD_DATA_DIR environment variable set to " + exdDataDir);
                     this.dalamudConfiguration.GamePathString = exdDataDir;
                 }
             }
@@ -117,6 +119,10 @@ public class MockContainer
             this.seriLog.Error("The provided path " + this.dalamudConfiguration.GamePathString + " is invalid.");
             this.seriLog.Error("You must provide your sqpack folder either manually or programmatically.");
             Environment.Exit(69);
+        }
+        else
+        {
+            this.seriLog.Information("The provided path for game data " + this.dalamudConfiguration.GamePathString + " is valid.");
         }
 
         if (this.dalamudConfiguration.PluginSavePathString is null)

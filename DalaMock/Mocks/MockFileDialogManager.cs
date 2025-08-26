@@ -52,8 +52,18 @@ public class MockFileDialogManager : IFileDialogManager
         bool isModal = false)
     {
         var result = selectionCountMax == 1 ? Dialog.FileOpen(filters, startPath ?? this.lastPath) : Dialog.FileOpenMultiple();
-        this.lastPath = result.Paths.Count > 0 ? System.IO.Path.GetDirectoryName(result.Paths[0]) : this.lastPath;
-        callback(result.IsOk, result.Paths.ToList());
+        List<string> resultPaths = new();
+        if (result.Paths != null)
+        {
+            this.lastPath = result.Paths.Count > 0 ? System.IO.Path.GetDirectoryName(result.Paths[0]) : this.lastPath;
+            resultPaths = result.Paths.ToList();
+        }
+        else if (result.Path != null)
+        {
+            this.lastPath = result.Path;
+            resultPaths = [result.Path];
+        }
+        callback(result.IsOk, resultPaths);
     }
 
     public void SaveFileDialog(string title, string filters, string defaultFileName, string defaultExtension, Action<bool, string> callback)

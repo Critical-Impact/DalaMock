@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [3.0.4] - 2025-08-26
+
+### Changed
+- The MockContainer now outputs more logging when EXD_DATA_DIR is specified along with outputting the game path when booting
+
+### Fixed
+- Correct BC7 handling as Lumina has now fixed the issue
+
 ## [3.0.3] - 2025-08-21
 
 ### Added

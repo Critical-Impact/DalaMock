@@ -1,9 +1,11 @@
 ﻿namespace DalaMock.Core.Windows;
 
 using System.Collections.Generic;
-using Dalamud.Interface.Windowing;
+
 using Dalamud.Bindings.ImGui;
-using Mocks;
+using Dalamud.Interface.Windowing;
+
+using DalaMock.Core.Mocks;
 
 public class MockWindows : Window
 {
@@ -15,7 +17,8 @@ public class MockWindows : Window
         IEnumerable<IMockWindow> mockWindows,
         string name = "Mock Windows",
         ImGuiWindowFlags flags = ImGuiWindowFlags.None,
-        bool forceMainWindow = false) : base(name, flags, forceMainWindow)
+        bool forceMainWindow = false)
+        : base(name, flags, forceMainWindow)
     {
         this.mockUiBuilder = uiBuilder;
         this.mockWindows = mockWindows;

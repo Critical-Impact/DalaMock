@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
@@ -90,27 +91,27 @@ public class MockFramework : IDisposable, IFramework, IMockService
         throw new NotImplementedException();
     }
 
-    public Task DelayTicks(long numTicks, CancellationToken cancellationToken = new())
+    public Task DelayTicks(long numTicks, CancellationToken cancellationToken = default(CancellationToken))
     {
         return Task.CompletedTask;
     }
 
-    public Task Run(Action action, CancellationToken cancellationToken = new())
+    public Task Run(Action action, CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
 
-    public Task<T> Run<T>(Func<T> action, CancellationToken cancellationToken = new())
+    public Task<T> Run<T>(Func<T> action, CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
 
-    public Task Run(Func<Task> action, CancellationToken cancellationToken = new())
+    public Task Run(Func<Task> action, CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
 
-    public Task<T> Run<T>(Func<Task<T>> action, CancellationToken cancellationToken = new())
+    public Task<T> Run<T>(Func<Task<T>> action, CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
@@ -183,7 +184,7 @@ public class MockFramework : IDisposable, IFramework, IMockService
                     RunAfterTickCount = Environment.TickCount64 + (long)Math.Ceiling(delay.TotalMilliseconds),
                     CancellationToken = cancellationToken,
                     TaskCompletionSource = tcs,
-                    Func = func
+                    Func = func,
                 });
         }
 
@@ -219,7 +220,7 @@ public class MockFramework : IDisposable, IFramework, IMockService
                     RunAfterTickCount = Environment.TickCount64 + (long)Math.Ceiling(delay.TotalMilliseconds),
                     CancellationToken = cancellationToken,
                     TaskCompletionSource = tcs,
-                    Action = action
+                    Action = action,
                 });
         }
 
@@ -255,7 +256,7 @@ public class MockFramework : IDisposable, IFramework, IMockService
                     RunAfterTickCount = Environment.TickCount64 + (long)Math.Ceiling(delay.TotalMilliseconds),
                     CancellationToken = cancellationToken,
                     TaskCompletionSource = tcs,
-                    Func = func
+                    Func = func,
                 });
         }
 
@@ -291,7 +292,7 @@ public class MockFramework : IDisposable, IFramework, IMockService
                     RunAfterTickCount = Environment.TickCount64 + (long)Math.Ceiling(delay.TotalMilliseconds),
                     CancellationToken = cancellationToken,
                     TaskCompletionSource = tcs,
-                    Func = func
+                    Func = func,
                 });
         }
 

@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Logging;
-
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -8,9 +6,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+
 using Autofac;
 using Autofac.Core;
+
 using DalaMock.Core.Plugin;
+
 using Dalamud.Configuration;
 using Dalamud.Game;
 using Dalamud.Game.Text;
@@ -22,7 +23,10 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Internal.Types.Manifest;
 using Dalamud.Plugin.Ipc;
+
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
 using Newtonsoft.Json;
 
 public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
@@ -95,7 +99,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     public TimeSpan LoadTimeDelta => TimeSpan.Zero;
 
     /// <inheritdoc/>
-    public DirectoryInfo DalamudAssetDirectory => new("");
+    public DirectoryInfo DalamudAssetDirectory => new(string.Empty);
 
     /// <inheritdoc/>
     public FileInfo ConfigFile { get; }
@@ -142,7 +146,8 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     }
 
     /// <inheritdoc/>
-    public T GetOrCreateData<T>(string tag, Func<T> dataGenerator) where T : class
+    public T GetOrCreateData<T>(string tag, Func<T> dataGenerator)
+        where T : class
     {
         return null!;
     }
@@ -153,14 +158,16 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     }
 
     /// <inheritdoc/>
-    public bool TryGetData<T>(string tag, out T? data) where T : class
+    public bool TryGetData<T>(string tag, out T? data)
+        where T : class
     {
         data = null;
         return false;
     }
 
     /// <inheritdoc/>
-    public T? GetData<T>(string tag) where T : class
+    public T? GetData<T>(string tag)
+        where T : class
     {
         return null!;
     }
@@ -314,6 +321,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         {
             Directory.CreateDirectory(pluginConfigDirectory);
         }
+
         return pluginConfigDirectory;
     }
 
@@ -340,7 +348,8 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     }
 
     /// <inheritdoc/>
-    public T? Create<T>(params object[] scopedObjects) where T : class
+    public T? Create<T>(params object[] scopedObjects)
+        where T : class
     {
         var logger = this.componentContext.Resolve<ILogger<T>>();
         var mockServices = this.componentContext.Resolve<IEnumerable<IMockService>>();
@@ -430,11 +439,11 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     }
 
     /// <inheritdoc/>
-    public Task<T> CreateAsync<T>(params object[] scopedObjects) where T : class
+    public Task<T> CreateAsync<T>(params object[] scopedObjects)
+        where T : class
     {
         throw new NotImplementedException();
     }
-
 
     /// <inheritdoc/>
     public bool Inject(object instance, params object[] scopedObjects)
@@ -485,7 +494,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
             Formatting.Indented,
             new JsonSerializerSettings
             {
-                TypeNameHandling = TypeNameHandling.Objects
+                TypeNameHandling = TypeNameHandling.Objects,
             });
     }
 

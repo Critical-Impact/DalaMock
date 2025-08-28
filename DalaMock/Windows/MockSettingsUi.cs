@@ -1,19 +1,22 @@
-﻿namespace DalaMock.Core.Windows;
+namespace DalaMock.Core.Windows;
 
 using System.IO;
 using System.Numerics;
+
 using Autofac;
+
 using DalaMock.Core.Configuration;
 using DalaMock.Core.Mocks;
 using DalaMock.Core.Plugin;
 using DalaMock.Shared.Interfaces;
+
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using Dalamud.Bindings.ImGui;
 
 /// <summary>
-/// Provides a window for configuring
+/// Provides a window for configuring.
 /// </summary>
 public class MockSettingsWindow : Window
 {
@@ -121,10 +124,10 @@ public class MockSettingsWindow : Window
             }
         }
 
-
         if (ImGui.Button("Select Folder##gamePathSelector"))
         {
-            this.fileDialogManager.OpenFolderDialog("Select Folder",
+            this.fileDialogManager.OpenFolderDialog(
+                "Select Folder",
                 (b, s) =>
                 {
                     if (b)
@@ -177,10 +180,10 @@ public class MockSettingsWindow : Window
             }
         }
 
-
         if (ImGui.Button("Select Folder##pluginSelectFolder"))
         {
-            this.fileDialogManager.OpenFolderDialog("Select Folder",
+            this.fileDialogManager.OpenFolderDialog(
+                "Select Folder",
                 (b, s) =>
                 {
                     if (b)
@@ -195,7 +198,6 @@ public class MockSettingsWindow : Window
         }
 
         pluginSavePathDisabled.Dispose();
-
 
         if (pluginSavePath != string.Empty && !Directory.Exists(pluginSavePath))
         {

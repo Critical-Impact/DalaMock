@@ -1,9 +1,9 @@
-using IMenuItem = Dalamud.Game.Gui.ContextMenu.IMenuItem;
-
 namespace DalaMock.Core.Mocks;
 
 using Dalamud.Game.Gui.ContextMenu;
 using Dalamud.Plugin.Services;
+
+using IMenuItem = Dalamud.Game.Gui.ContextMenu.IMenuItem;
 
 public class MockContextMenu : IContextMenu, IMockService
 {

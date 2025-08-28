@@ -1,12 +1,11 @@
-using DalaMock.Core.Imgui;
-
-using Dalamud;
-
 namespace DalaMock.Core.Mocks;
 
 using System;
 using System.Collections.Generic;
+
 using DalaMock.Core.Extensions;
+using DalaMock.Core.Imgui;
+using Dalamud;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Plugin.Services;
 using Veldrid;
@@ -89,10 +88,8 @@ public class MockKeyState : IKeyState, IDisposable, IMockService
     public bool IsVirtualKeyValid(VirtualKey vkCode)
         => this.IsVirtualKeyValid((int)vkCode);
 
-
     /// <inheritdoc/>
     public IEnumerable<VirtualKey> GetValidVirtualKeys() => (VirtualKey[])Enum.GetValuesAsUnderlyingType<VirtualKey>();
-
 
     /// <inheritdoc/>
     public void ClearAll()
@@ -156,4 +153,3 @@ public class MockKeyState : IKeyState, IDisposable, IMockService
         }
     }
 }
-

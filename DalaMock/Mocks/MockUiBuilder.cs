@@ -1,18 +1,19 @@
-﻿using DalaMock.Core.Imgui;
-using IFontAtlas = Dalamud.Interface.ManagedFontAtlas.IFontAtlas;
-using IFontHandle = Dalamud.Interface.ManagedFontAtlas.IFontHandle;
-using UldWrapper = Dalamud.Interface.UldWrapper;
-
 namespace DalaMock.Core.Mocks;
 
 using System;
 using System.Threading.Tasks;
+
+using DalaMock.Core.Imgui;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.FontIdentifier;
 using Dalamud.Interface.ManagedFontAtlas;
-using Dalamud.Bindings.ImGui;
 using SharpDX.Direct3D11;
 using Veldrid;
+
+using IFontAtlas = Dalamud.Interface.ManagedFontAtlas.IFontAtlas;
+using IFontHandle = Dalamud.Interface.ManagedFontAtlas.IFontHandle;
+using UldWrapper = Dalamud.Interface.UldWrapper;
 
 public class MockUiBuilder : IUiBuilder, IMockService
 {

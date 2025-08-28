@@ -1,16 +1,13 @@
-// <copyright file="CharacterWindow.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+namespace DalaMock.Core.Windows;
 
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
+
 using DalaMock.Core.Mocks;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
-using Dalamud.Bindings.ImGui;
-
-namespace DalaMock.Core.Windows;
 
 public class LocalPlayersWindow : Window
 {

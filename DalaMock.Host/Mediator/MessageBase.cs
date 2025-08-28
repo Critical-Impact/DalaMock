@@ -1,4 +1,4 @@
-﻿namespace DalaMock.Host.Mediator;
+namespace DalaMock.Host.Mediator;
 
 public abstract record MessageBase
 {

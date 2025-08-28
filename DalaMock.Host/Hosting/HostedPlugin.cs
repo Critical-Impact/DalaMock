@@ -1,25 +1,22 @@
-﻿using System;
-using System.Linq;
-
-using Autofac.Core;
-
-using DalaMock.Host.LoggingProviders;
-using DalaMock.Host.Mediator;
-
-using Microsoft.Extensions.DependencyInjection.Extensions;
-
 namespace DalaMock.Host.Hosting;
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+
 using Autofac;
+using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using DalaMock.Host.Factories;
+using DalaMock.Host.LoggingProviders;
+using DalaMock.Host.Mediator;
 using DalaMock.Shared.Classes;
 using DalaMock.Shared.Interfaces;
 using Dalamud.Interface;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -66,20 +63,21 @@ public abstract class HostedPlugin : IDalamudPlugin
     /// Allows configuration of plugin-specific options.
     /// Called before ConfigureServices and ConfigureContainer.
     /// </summary>
+    /// <returns></returns>
     public abstract HostedPluginOptions ConfigureOptions();
 
     /// <summary>
-    /// Has the plugin started?
+    /// Gets a value indicating whether has the plugin started?.
     /// </summary>
     public bool IsStarted { get; private set; }
 
     /// <summary>
-    /// The options the plugin was started with.
+    /// Gets the options the plugin was started with.
     /// </summary>
     public HostedPluginOptions HostedPluginOptions { get; private set; }
 
     /// <summary>
-    /// Can the plugin be disposed?
+    /// Can the plugin be disposed?.
     /// </summary>
     public void Dispose()
     {
@@ -113,6 +111,7 @@ public abstract class HostedPlugin : IDalamudPlugin
         {
             return;
         }
+
         this.hostedServices[hostedServiceType] = hostedServiceType;
     }
 
@@ -125,7 +124,6 @@ public abstract class HostedPlugin : IDalamudPlugin
     {
         this.hostedServices[hostedServiceType] = mockServiceType;
     }
-
 
     /// <summary>
     /// Builds the host and starts the plugin.
@@ -191,7 +189,6 @@ public abstract class HostedPlugin : IDalamudPlugin
         return this.host;
     }
 
-
     /// <summary>
     /// Override this function if you need to access the host builder while it is building.
     /// </summary>
@@ -232,6 +229,7 @@ public abstract class HostedPlugin : IDalamudPlugin
         {
             this.host?.Services.GetRequiredService<MediatorService>().Publish(new PluginStoppingMessage());
         }
+
         this.hostedEvents.OnPluginEvent(HostedEventType.PluginStopping);
         this.hostedEvents.OnPluginStopping();
         this.host?.StopAsync().GetAwaiter().GetResult();

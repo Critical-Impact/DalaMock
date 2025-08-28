@@ -5,7 +5,9 @@ using System.Collections.Concurrent;
 using System.Linq;
 
 using DalaMock.Host.Loggers;
+
 using Dalamud.Plugin.Services;
+
 using Microsoft.Extensions.Logging;
 
 [ProviderAlias("Dalamud")]
@@ -26,11 +28,11 @@ public sealed class DalamudLoggingProvider : ILoggerProvider
         string catName = categoryName.Split(".", StringSplitOptions.RemoveEmptyEntries).Last();
         if (catName.Length > 15)
         {
-            catName = string.Join("", catName.Take(6)) + "..." + string.Join("", catName.TakeLast(6));
+            catName = string.Join(string.Empty, catName.Take(6)) + "..." + string.Join(string.Empty, catName.TakeLast(6));
         }
         else
         {
-            catName = string.Join("", Enumerable.Range(0, 15 - catName.Length).Select(_ => " ")) + catName;
+            catName = string.Join(string.Empty, Enumerable.Range(0, 15 - catName.Length).Select(_ => " ")) + catName;
         }
 
         return this.loggers.GetOrAdd(catName, name => new DalamudLogger(name, this.pluginLog));

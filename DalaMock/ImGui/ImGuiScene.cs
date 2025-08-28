@@ -1,16 +1,18 @@
-﻿using System.IO;
-using System.Runtime.InteropServices;
-
 namespace DalaMock.Core.Imgui;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Numerics;
-using Dalamud.Interface.Utility;
+using System.Runtime.InteropServices;
+
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
+
 using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
+
 using static System.Reflection.BindingFlags;
 
 /// <summary>
@@ -135,7 +137,7 @@ public partial class ImGuiScene : IDisposable
 
     /// <summary>
     /// Simple method to run the scene in a loop until the window is closed or the application
-    /// requests an exit (via <see cref="ShouldQuit"/>)
+    /// requests an exit (via <see cref="ShouldQuit"/>).
     /// </summary>
     public void Run()
     {
@@ -201,6 +203,7 @@ public partial class ImGuiScene : IDisposable
             if (disposing)
             {
             }
+
             this.assertHandler.Dispose();
             this.Window.Closed -= this.WindowOnClosed;
 

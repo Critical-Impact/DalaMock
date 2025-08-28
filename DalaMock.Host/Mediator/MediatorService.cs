@@ -1,4 +1,4 @@
-﻿namespace DalaMock.Host.Mediator;
+namespace DalaMock.Host.Mediator;
 
 using System;
 using System.Collections.Concurrent;
@@ -47,7 +47,10 @@ public class MediatorService : BackgroundService
                     break;
                 }
 
-                if (!processedMessages.Add(message)) { continue; }
+                if (!processedMessages.Add(message))
+                {
+                    continue;
+                }
 
                 this.ExecuteMessage(message);
             }
@@ -92,7 +95,8 @@ public class MediatorService : BackgroundService
         }
     }
 
-    public void Publish<T>(T message) where T : MessageBase
+    public void Publish<T>(T message)
+        where T : MessageBase
     {
         if (message.KeepThreadContext)
         {
@@ -125,7 +129,8 @@ public class MediatorService : BackgroundService
         }
     }
 
-    public void Subscribe<T>(IMediatorSubscriber subscriber, Action<T> action) where T : MessageBase
+    public void Subscribe<T>(IMediatorSubscriber subscriber, Action<T> action)
+        where T : MessageBase
     {
         lock (this.addRemoveLock)
         {
@@ -143,7 +148,8 @@ public class MediatorService : BackgroundService
         }
     }
 
-    public void Unsubscribe<T>(IMediatorSubscriber subscriber) where T : MessageBase
+    public void Unsubscribe<T>(IMediatorSubscriber subscriber)
+        where T : MessageBase
     {
         lock (this.addRemoveLock)
         {

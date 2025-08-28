@@ -7,6 +7,7 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.FontIdentifier;
 using Dalamud.Interface.ManagedFontAtlas;
+
 using SharpDX.Direct3D11;
 
 public class NullUiBuilder : IUiBuilder, IMockService

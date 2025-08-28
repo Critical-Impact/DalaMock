@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using Dalamud.Interface.Utility.Raii;
-
 namespace DalaMock.Core.Windows;
 
-using Dalamud.Interface.Windowing;
+using System.Collections.Generic;
+
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility.Raii;
+using Dalamud.Interface.Windowing;
 
 public class MockMockWindow : Window
 {

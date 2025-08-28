@@ -1,6 +1,7 @@
 namespace DalaMock.Host.Mediator;
 
 using Dalamud.Plugin.Services;
+
 using Microsoft.Extensions.Logging;
 
 public abstract class MediatorSubscriberBase : IMediatorSubscriber

@@ -1,8 +1,9 @@
-﻿using System;
-
 namespace DalaMock.Core.Mocks;
 
+using System;
+
 using DalaMock.Shared.Interfaces;
+
 using Dalamud.Bindings.ImGui;
 
 public class MockFont : IFont, IMockService

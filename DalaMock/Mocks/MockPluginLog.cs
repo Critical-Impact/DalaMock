@@ -1,10 +1,11 @@
-using ILogger = Serilog.ILogger;
-
 namespace DalaMock.Core.Mocks;
 
 using System;
+
 using Dalamud.Plugin.Services;
 using Serilog.Events;
+
+using ILogger = Serilog.ILogger;
 
 public class MockPluginLog : IPluginLog, IMockService
 {

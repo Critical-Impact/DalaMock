@@ -1,8 +1,9 @@
-﻿namespace DalaMock.Core.Mocks;
+namespace DalaMock.Core.Mocks;
 
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 

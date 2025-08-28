@@ -1,9 +1,11 @@
-﻿namespace DalaMock.Core.Imgui;
+namespace DalaMock.Core.Imgui;
 
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+
 using Dalamud.Bindings.ImGui;
+
 using Veldrid;
 
 /// <summary>
@@ -65,7 +67,7 @@ public partial class ImGuiScene
                     "in_texCoord",
                     VertexElementSemantic.TextureCoordinate,
                     VertexElementFormat.Float2),
-                new VertexElementDescription("in_color", VertexElementSemantic.Color, VertexElementFormat.Byte4_Norm))
+                new VertexElementDescription("in_color", VertexElementSemantic.Color, VertexElementFormat.Byte4_Norm)),
         };
 
         this.layout = factory.CreateResourceLayout(
@@ -192,7 +194,6 @@ public partial class ImGuiScene
                     BufferUsage.IndexBuffer | BufferUsage.Dynamic));
         }
 
-
         for (var i = 0; i < drawData.CmdListsCount; i++)
         {
             var cmdList = drawData.CmdLists[i];
@@ -283,25 +284,29 @@ public partial class ImGuiScene
         switch (factory.BackendType)
         {
             case GraphicsBackend.Direct3D11:
-            {
-                var resourceName = name + ".hlsl.bytes";
-                return this.GetEmbeddedResourceBytes(resourceName);
-            }
+                {
+                    var resourceName = name + ".hlsl.bytes";
+                    return this.GetEmbeddedResourceBytes(resourceName);
+                }
+
             case GraphicsBackend.OpenGL:
-            {
-                var resourceName = name + ".glsl";
-                return this.GetEmbeddedResourceBytes(resourceName);
-            }
+                {
+                    var resourceName = name + ".glsl";
+                    return this.GetEmbeddedResourceBytes(resourceName);
+                }
+
             case GraphicsBackend.Vulkan:
-            {
-                var resourceName = name + ".spv";
-                return this.GetEmbeddedResourceBytes(resourceName);
-            }
+                {
+                    var resourceName = name + ".spv";
+                    return this.GetEmbeddedResourceBytes(resourceName);
+                }
+
             case GraphicsBackend.Metal:
-            {
-                var resourceName = name + ".metallib";
-                return this.GetEmbeddedResourceBytes(resourceName);
-            }
+                {
+                    var resourceName = name + ".metallib";
+                    return this.GetEmbeddedResourceBytes(resourceName);
+                }
+
             default:
                 throw new NotImplementedException();
         }
@@ -318,7 +323,7 @@ public partial class ImGuiScene
             }
 
             var ret = new byte[s.Length];
-            s.Read(ret, 0, (int)s.Length);
+            s.ReadExactly(ret, 0, (int)s.Length);
             return ret;
         }
     }

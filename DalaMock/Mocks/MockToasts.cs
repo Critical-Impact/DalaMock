@@ -1,11 +1,12 @@
-using ToastOptions = Dalamud.Game.Gui.Toast.ToastOptions;
-
 namespace DalaMock.Core.Mocks;
 
 using System;
+
 using Dalamud.Game.Gui.Toast;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
+
+using ToastOptions = Dalamud.Game.Gui.Toast.ToastOptions;
 
 public class MockToastGui : IToastGui, IMockService
 {

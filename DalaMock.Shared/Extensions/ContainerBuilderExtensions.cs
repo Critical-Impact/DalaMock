@@ -1,11 +1,11 @@
+namespace DalaMock.Shared.Extensions;
+
 using System;
 using System.Reflection;
 
 using Autofac;
 using Autofac.Builder;
 using Autofac.Features.Scanning;
-
-namespace DalaMock.Shared.Extensions;
 
 public static class ContainerBuilderExtensions
 {
@@ -74,5 +74,13 @@ public static class ContainerBuilderExtensions
                       .As<T>()
                       .AsSelf()
                       .SingleInstance();
+    }
+
+    public static IRegistrationBuilder<T, ConcreteReflectionActivatorData, SingleRegistrationStyle> RegisterTransientSelf<T>(this ContainerBuilder builder)
+        where T : notnull
+    {
+        return builder.RegisterType<T>()
+                      .As<T>()
+                      .AsSelf();
     }
 }

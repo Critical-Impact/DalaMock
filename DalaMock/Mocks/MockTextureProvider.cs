@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -8,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,14 +17,14 @@ using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Plugin.Services;
 using Lumina.Data.Files;
 using StbiSharp;
-using Textures;
+using DalaMock.Core.Mocks.Textures;
 using Veldrid;
 
 public partial class MockTextureProvider : ITextureProvider, IMockService
 {
-    private const string iconFileFormat = "ui/icon/{0:D3}000/{1}{2:D6}.tex";
-    private const string highResolutionIconFileFormat = "ui/icon/{0:D3}000/{1}{2:D6}_hr1.tex";
-    private const uint millisecondsEvictionTime = 2000;
+    private const string IconFileFormat = "ui/icon/{0:D3}000/{1}{2:D6}.tex";
+    private const string HighResolutionIconFileFormat = "ui/icon/{0:D3}000/{1}{2:D6}_hr1.tex";
+    private const uint MillisecondsEvictionTime = 2000;
 
     private readonly Dictionary<string, TextureInfo> activeTextures = new();
     private readonly MockDalamudConfiguration dalamudConfiguration;
@@ -91,7 +90,7 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
             ClientLanguage.English => "en/",
             ClientLanguage.German => "de/",
             ClientLanguage.French => "fr/",
-            _ => throw new ArgumentOutOfRangeException(nameof(language), $"Unknown Language: {language}")
+            _ => throw new ArgumentOutOfRangeException(nameof(language), $"Unknown Language: {language}"),
         };
 
         // 2. Regular icon, with language, hi-res
@@ -482,7 +481,7 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
 
     private static string FormatIconPath(uint iconId, string? type, bool highResolution)
     {
-        var format = highResolution ? highResolutionIconFileFormat : iconFileFormat;
+        var format = highResolution ? HighResolutionIconFileFormat : IconFileFormat;
 
         type ??= string.Empty;
         if (type.Length > 0 && !type.EndsWith("/"))
@@ -540,7 +539,7 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
                     continue;
                 }
 
-                if (DateTime.UtcNow - texInfo.Value.LastAccess > TimeSpan.FromMilliseconds(millisecondsEvictionTime))
+                if (DateTime.UtcNow - texInfo.Value.LastAccess > TimeSpan.FromMilliseconds(MillisecondsEvictionTime))
                 {
                     this.log.Verbose("Evicting {Path} since too old", texInfo.Key);
                     texInfo.Value.Wrap.Dispose();
@@ -594,7 +593,7 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
         TextureModificationArgs args,
         bool leaveWrapOpen = false,
         string? debugName = null,
-        CancellationToken cancellationToken = new())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
@@ -602,7 +601,7 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
     public Task<IDalamudTextureWrap> CreateFromImGuiViewportAsync(
         ImGuiViewportTextureArgs args,
         string? debugName = null,
-        CancellationToken cancellationToken = new())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
@@ -610,7 +609,7 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
     public Task<IDalamudTextureWrap> CreateFromImageAsync(
         ReadOnlyMemory<byte> bytes,
         string? debugName = null,
-        CancellationToken cancellationToken = new())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
@@ -619,7 +618,7 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
         Stream stream,
         bool leaveOpen = false,
         string? debugName = null,
-        CancellationToken cancellationToken = new())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
@@ -645,7 +644,7 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
         RawImageSpecification specs,
         ReadOnlyMemory<byte> bytes,
         string? debugName = null,
-        CancellationToken cancellationToken = new())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
@@ -655,7 +654,7 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
         Stream stream,
         bool leaveOpen = false,
         string? debugName = null,
-        CancellationToken cancellationToken = new())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
@@ -668,12 +667,12 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
     public Task<IDalamudTextureWrap> CreateFromTexFileAsync(
         TexFile file,
         string? debugName = null,
-        CancellationToken cancellationToken = new())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
 
-    public Task<IDalamudTextureWrap> CreateFromClipboardAsync(string? debugName = null, CancellationToken cancellationToken = new CancellationToken())
+    public Task<IDalamudTextureWrap> CreateFromClipboardAsync(string? debugName = null, CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }

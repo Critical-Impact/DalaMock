@@ -1,23 +1,23 @@
-using Dalamud.Game.Addon.Events.EventDataTypes;
-
-using Microsoft.Extensions.Logging;
-
 namespace DalaMock.Core.Mocks;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Dalamud.Game.Addon.Events.EventDataTypes;
 using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
 
+using Microsoft.Extensions.Logging;
+
 /// <summary>
-/// Currently this is a global dtr bar store which does not mimic what dalamud provides, scoped services will be implemented at some point
+/// Currently this is a global dtr bar store which does not mimic what dalamud provides, scoped services will be implemented at some point.
 /// </summary>
 public class MockDtrBar : IDtrBar, IMockService
 {
     private readonly Func<MockDtrBarEntry> entryFactory;
+    private readonly Dictionary<string, MockDtrBarEntry> dtrBarEntries = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MockDtrBar"/> class.
@@ -27,8 +27,6 @@ public class MockDtrBar : IDtrBar, IMockService
     {
         this.entryFactory = entryFactory;
     }
-
-    private readonly Dictionary<string, MockDtrBarEntry> dtrBarEntries = new();
 
     /// <inheritdoc/>
     public IDtrBarEntry Get(string title, SeString? text = null)
@@ -50,16 +48,16 @@ public class MockDtrBar : IDtrBar, IMockService
     }
 
     /// <inheritdoc/>
-    public void Remove(string title)
-    {
-        this.dtrBarEntries.Remove(title);
-    }
-
-    /// <inheritdoc/>
     public IReadOnlyList<IReadOnlyDtrBarEntry> Entries =>
         this.dtrBarEntries.Select(c => (IReadOnlyDtrBarEntry)c.Value).ToList();
 
     public string ServiceName { get; set; } = "DTR Bar";
+
+    /// <inheritdoc/>
+    public void Remove(string title)
+    {
+        this.dtrBarEntries.Remove(title);
+    }
 }
 
 public class MockReadOnlyDtrEntryBar : IReadOnlyDtrBarEntry
@@ -71,12 +69,6 @@ public class MockReadOnlyDtrEntryBar : IReadOnlyDtrBarEntry
         this.Logger = logger;
     }
 
-    public virtual bool TriggerClickAction()
-    {
-        this.Logger.LogInformation("You cannot trigger an action on a read only dtr entry bar.");
-        return false;
-    }
-
     /// <inheritdoc/>
     public string Title { get; set; }
 
@@ -84,10 +76,10 @@ public class MockReadOnlyDtrEntryBar : IReadOnlyDtrBarEntry
     public bool HasClickAction { get; set; }
 
     /// <inheritdoc/>
-    public SeString Text { get; set; }
+    public SeString? Text { get; set; }
 
     /// <inheritdoc/>
-    public SeString Tooltip { get; set; }
+    public SeString? Tooltip { get; set; }
 
     /// <inheritdoc/>
     public bool Shown { get; set; }
@@ -96,6 +88,12 @@ public class MockReadOnlyDtrEntryBar : IReadOnlyDtrBarEntry
     public bool UserHidden { get; set; }
 
     public Action<DtrInteractionEvent>? OnClick { get; set; }
+
+    public virtual bool TriggerClickAction()
+    {
+        this.Logger.LogInformation("You cannot trigger an action on a read only dtr entry bar.");
+        return false;
+    }
 }
 
 public class MockDtrBarEntry : MockReadOnlyDtrEntryBar, IDtrBarEntry
@@ -113,6 +111,4 @@ public class MockDtrBarEntry : MockReadOnlyDtrEntryBar, IDtrBarEntry
     {
         this.mockDtrBar.Remove(this.Title);
     }
-
-    public Action<AddonMouseEventData>? OnClick { get; set; }
 }

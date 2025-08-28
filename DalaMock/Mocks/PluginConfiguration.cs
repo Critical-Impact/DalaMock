@@ -1,18 +1,20 @@
-﻿namespace DalaMock.Core.Mocks;
+namespace DalaMock.Core.Mocks;
 
 using System.IO;
+
 using Dalamud.Configuration;
+
 using Newtonsoft.Json;
 
 /// <summary>
 /// Configuration to store settings for a dalamud plugin.
 /// </summary>
-public class PluginConfiguration    
+public class PluginConfiguration
 {
     private readonly DirectoryInfo configDirectory;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Dalamud.Configuration.PluginConfigurations"/> class.
+    /// Initializes a new instance of the <see cref="PluginConfiguration"/> class.
     /// </summary>
     /// <param name="storageFolder">Directory for storage of plugin configuration files.</param>
     public PluginConfiguration(string storageFolder)
@@ -104,7 +106,8 @@ public class PluginConfiguration
     /// <param name="pluginName">Plugin Name.</param>
     /// <typeparam name="T">Configuration Type.</typeparam>
     /// <returns>Plugin Configuration.</returns>
-    public T LoadForType<T>(string pluginName) where T : IPluginConfiguration
+    public T LoadForType<T>(string pluginName)
+        where T : IPluginConfiguration
     {
         var path = this.GetConfigFile(pluginName);
 
@@ -136,7 +139,7 @@ public class PluginConfiguration
             Formatting.Indented,
             new JsonSerializerSettings
             {
-                TypeNameHandling = TypeNameHandling.Objects
+                TypeNameHandling = TypeNameHandling.Objects,
             });
     }
 
@@ -151,7 +154,7 @@ public class PluginConfiguration
             data,
             new JsonSerializerSettings
             {
-                TypeNameHandling = TypeNameHandling.Objects
+                TypeNameHandling = TypeNameHandling.Objects,
             });
     }
 

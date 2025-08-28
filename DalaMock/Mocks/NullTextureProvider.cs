@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Plugin.Services;
+
 using Lumina.Data.Files;
 
 public class NullTextureProvider : ITextureProvider, IMockService
@@ -30,7 +31,7 @@ public class NullTextureProvider : ITextureProvider, IMockService
         TextureModificationArgs args,
         bool leaveWrapOpen = false,
         string? debugName = null,
-        CancellationToken cancellationToken = new CancellationToken())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
@@ -38,7 +39,7 @@ public class NullTextureProvider : ITextureProvider, IMockService
     public Task<IDalamudTextureWrap> CreateFromImGuiViewportAsync(
         ImGuiViewportTextureArgs args,
         string? debugName = null,
-        CancellationToken cancellationToken = new CancellationToken())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
@@ -46,7 +47,7 @@ public class NullTextureProvider : ITextureProvider, IMockService
     public Task<IDalamudTextureWrap> CreateFromImageAsync(
         ReadOnlyMemory<byte> bytes,
         string? debugName = null,
-        CancellationToken cancellationToken = new CancellationToken())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
@@ -55,7 +56,7 @@ public class NullTextureProvider : ITextureProvider, IMockService
         Stream stream,
         bool leaveOpen = false,
         string? debugName = null,
-        CancellationToken cancellationToken = new CancellationToken())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
@@ -69,7 +70,7 @@ public class NullTextureProvider : ITextureProvider, IMockService
         RawImageSpecification specs,
         ReadOnlyMemory<byte> bytes,
         string? debugName = null,
-        CancellationToken cancellationToken = new CancellationToken())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
@@ -79,7 +80,7 @@ public class NullTextureProvider : ITextureProvider, IMockService
         Stream stream,
         bool leaveOpen = false,
         string? debugName = null,
-        CancellationToken cancellationToken = new CancellationToken())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
@@ -92,12 +93,12 @@ public class NullTextureProvider : ITextureProvider, IMockService
     public Task<IDalamudTextureWrap> CreateFromTexFileAsync(
         TexFile file,
         string? debugName = null,
-        CancellationToken cancellationToken = new CancellationToken())
+        CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }
 
-    public Task<IDalamudTextureWrap> CreateFromClipboardAsync(string? debugName = null, CancellationToken cancellationToken = new CancellationToken())
+    public Task<IDalamudTextureWrap> CreateFromClipboardAsync(string? debugName = null, CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
     }

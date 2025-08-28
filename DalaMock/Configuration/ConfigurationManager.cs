@@ -1,13 +1,12 @@
-﻿// <copyright file="ConfigurationManager.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 namespace DalaMock.Core.Configuration;
 
 using System.IO;
+
 using DalaMock.Core.Mocks;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+
 using Newtonsoft.Json;
 
 public class ConfigurationManager

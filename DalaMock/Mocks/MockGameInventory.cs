@@ -1,9 +1,8 @@
-﻿using System;
-
-using Dalamud.Game.Inventory;
-
 namespace DalaMock.Core.Mocks;
 
+using System;
+
+using Dalamud.Game.Inventory;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Plugin.Services;
 
@@ -44,5 +43,4 @@ public class MockGameInventory : IGameInventory, IMockService
     {
         return default;
     }
-
 }

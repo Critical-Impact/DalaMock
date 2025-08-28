@@ -1,4 +1,4 @@
-﻿namespace DalaMock.Core.DI;
+namespace DalaMock.Core.DI;
 
 using System;
 using System.Collections.Generic;
@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 
 using Autofac;
+
 using DalaMock.Core.Configuration;
 using DalaMock.Core.Imgui;
 using DalaMock.Core.Imgui.Auto;
@@ -15,11 +16,15 @@ using DalaMock.Core.Mocks;
 using DalaMock.Core.Plugin;
 using DalaMock.Core.Windows;
 using DalaMock.Shared.Interfaces;
+
 using Dalamud.Interface.Windowing;
+
 using Lumina;
 
 using Microsoft.Extensions.Logging;
+
 using NativeFileDialogSharp;
+
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -152,6 +157,7 @@ public class MockContainer
                     {
                         Directory.CreateDirectory(windowsPluginPath);
                     }
+
                     this.dalamudConfiguration.PluginSavePathString = windowsPluginPath;
                 }
             }
@@ -171,6 +177,7 @@ public class MockContainer
                     {
                         Directory.CreateDirectory(linuxPluginPath);
                     }
+
                     this.dalamudConfiguration.PluginSavePathString = linuxPluginPath;
                 }
             }
@@ -198,8 +205,6 @@ public class MockContainer
             this.seriLog.Error("You must provide your plugin save folder either manually or programmatically.");
             Environment.Exit(69);
         }
-
-
 
         var builder = new ContainerBuilder();
         this.RegisterMockServices(builder);

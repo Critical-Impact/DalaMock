@@ -2,6 +2,7 @@ namespace DalaMock.Core.Mocks;
 
 using System;
 using System.Collections.Generic;
+
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Plugin.Services;
 

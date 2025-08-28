@@ -1,6 +1,7 @@
 namespace DalaMock.Sample.Windows;
 
 using DalaMock.Shared.Interfaces;
+
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;

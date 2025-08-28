@@ -1,10 +1,6 @@
-// <copyright file="ImGuiGroupAttribute.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+namespace DalaMock.Core.Imgui.Auto;
 
 using System;
-
-namespace DalaMock.Core.Imgui.Auto;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class ImGuiGroupAttribute : Attribute

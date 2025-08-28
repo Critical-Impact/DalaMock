@@ -3,11 +3,14 @@
 using System.Reflection;
 
 using Autofac;
+
 using DalaMock.Host.Hosting;
 using DalaMock.Sample.Services;
+
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+
 using Microsoft.Extensions.DependencyInjection;
 
 public class DalamudPluginTest : HostedPlugin
@@ -61,7 +64,6 @@ public class DalamudPluginTest : HostedPlugin
             return configurationLoaderService.GetConfiguration();
         }).SingleInstance();
     }
-
 
     public override void ConfigureServices(IServiceCollection serviceCollection)
     {

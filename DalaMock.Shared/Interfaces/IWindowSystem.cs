@@ -1,4 +1,4 @@
-﻿namespace DalaMock.Shared.Interfaces;
+namespace DalaMock.Shared.Interfaces;
 
 using System.Collections.Generic;
 

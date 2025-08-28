@@ -1,10 +1,11 @@
+namespace DalaMock.Core.Imgui;
+
 using System;
 using System.Numerics;
 
 using Veldrid;
 using Veldrid.Sdl2;
 
-namespace DalaMock.Core.Imgui;
 public unsafe class RawSdl2Window : ISdl2Window
 {
     private readonly Sdl2Window sdl2Window;

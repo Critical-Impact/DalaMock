@@ -2,6 +2,7 @@ namespace DalaMock.Core.Mocks;
 
 using System;
 using System.Collections.Generic;
+
 using Dalamud.Interface;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;

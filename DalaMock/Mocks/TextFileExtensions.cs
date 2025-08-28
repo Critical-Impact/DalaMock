@@ -1,8 +1,10 @@
-﻿namespace DalaMock.Core.Mocks;
+namespace DalaMock.Core.Mocks;
 
 using System;
 using System.Runtime.CompilerServices;
+
 using Dalamud.Memory;
+
 using Lumina.Data.Files;
 
 public static class TextFileExtensions

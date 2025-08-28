@@ -1,13 +1,12 @@
-using System.Collections.ObjectModel;
-
-using Dalamud.Game.Text.SeStringHandling.Payloads;
-
 namespace DalaMock.Core.Mocks;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Plugin.Services;
 
 public class MockChatGui : IChatGui, IMockService
@@ -82,25 +81,25 @@ public class MockChatGui : IChatGui, IMockService
     /// <inheritdoc />
     public void Print(string message, string? messageTag = null, ushort? tagColor = null)
     {
-        this.pluginLog.Info($"{(messageTag == null ? "" : $"[{messageTag}] ")}{message}");
+        this.pluginLog.Info($"{(messageTag == null ? string.Empty : $"[{messageTag}] ")}{message}");
     }
 
     /// <inheritdoc />
     public void Print(SeString message, string? messageTag = null, ushort? tagColor = null)
     {
-        this.pluginLog.Info($"{(messageTag == null ? "" : $"[{messageTag}] ")}{message}");
+        this.pluginLog.Info($"{(messageTag == null ? string.Empty : $"[{messageTag}] ")}{message}");
     }
 
     /// <inheritdoc />
     public void PrintError(string message, string? messageTag = null, ushort? tagColor = null)
     {
-        this.pluginLog.Info($"ERROR: {(messageTag == null ? "" : $"[{messageTag}] ")}{message}");
+        this.pluginLog.Info($"ERROR: {(messageTag == null ? string.Empty : $"[{messageTag}] ")}{message}");
     }
 
     /// <inheritdoc />
     public void PrintError(SeString message, string? messageTag = null, ushort? tagColor = null)
     {
-        this.pluginLog.Info($"ERROR: {(messageTag == null ? "" : $"[{messageTag}] ")}{message.TextValue}");
+        this.pluginLog.Info($"ERROR: {(messageTag == null ? string.Empty : $"[{messageTag}] ")}{message.TextValue}");
     }
 
     public void Print(ReadOnlySpan<byte> message, string? messageTag = null, ushort? tagColor = null)

@@ -1,7 +1,6 @@
-﻿using Dalamud.Bindings.ImGui;
-
 namespace DalaMock.Core.Imgui;
 
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Textures.TextureWraps;
 
 /// <summary>

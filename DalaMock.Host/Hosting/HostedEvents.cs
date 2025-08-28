@@ -1,13 +1,13 @@
-using System;
-
 namespace DalaMock.Host.Hosting;
+
+using System;
 
 public enum HostedEventType
 {
     PluginBuilt,
     PluginStarted,
     PluginStopping,
-    PluginStopped
+    PluginStopped,
 }
 
 /// <summary>

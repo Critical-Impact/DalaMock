@@ -1,8 +1,9 @@
+namespace DalaMock.Core.Imgui.Auto;
+
 using System;
 using System.Reflection;
-using Dalamud.Bindings.ImGui;
 
-namespace DalaMock.Core.Imgui.Auto;
+using Dalamud.Bindings.ImGui;
 
 public class ImGuiUlong : ImGuiBaseElement
 {

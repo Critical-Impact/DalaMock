@@ -1,22 +1,19 @@
-﻿using System.IO;
-using System.Reflection;
-
-using Dalamud.Interface;
-
-using Microsoft.Extensions.Logging;
-
-using Newtonsoft.Json;
-
 namespace DalaMock.Core.Plugin;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+
 using Autofac;
 using DalaMock.Core.DI;
 using DalaMock.Core.Mocks;
+using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Serilog;
 
 /// <summary>
@@ -31,7 +28,7 @@ public class PluginLoader : IPluginLoader
     private readonly ILoggerFactory loggerFactory;
 
     /// <summary>
-    /// Has the plugin's state changed, has it started or stopped?
+    /// Has the plugin's state changed, has it started or stopped?.
     /// <param name="mockPlugin">The plugin whose state has changed.</param>
     /// </summary>
     public delegate void PluginStateChangeDelegate(MockPlugin mockPlugin);
@@ -119,6 +116,7 @@ public class PluginLoader : IPluginLoader
                     {
                         continue;
                     }
+
                     var mockPluginManifest = JsonConvert.DeserializeObject<MockPluginManifest>(fileContents);
                     if (mockPluginManifest != null)
                     {
@@ -198,7 +196,6 @@ public class PluginLoader : IPluginLoader
 
         var container = builder.Build();
 
-
         if (container.TryResolve(plugin.PluginType, out object? builtPlugin))
         {
             var dalamudPlugin = (IDalamudPlugin)builtPlugin;
@@ -211,8 +208,6 @@ public class PluginLoader : IPluginLoader
 
         this.logger.LogInformation($"Failed to start plugin {assemblyName}");
         return false;
-
-
     }
 
     /// <summary>
@@ -240,6 +235,7 @@ public class PluginLoader : IPluginLoader
     }
 
     public bool HasPluginsLoaded => this.LoadedPlugins.Count != 0;
+
     public bool HasPluginsStarted => this.LoadedPlugins.Count(c => c.Value.IsLoaded) != 0;
 
     /// <summary>

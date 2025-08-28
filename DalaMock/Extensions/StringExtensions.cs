@@ -9,7 +9,7 @@ public static class StringExtensions
     /// <returns>The altered string.</returns>
     public static string AddSpaces(this string strInput)
     {
-        string strOutput = "";
+        string strOutput = string.Empty;
 
         int intCurrentCharPos = 0;
 

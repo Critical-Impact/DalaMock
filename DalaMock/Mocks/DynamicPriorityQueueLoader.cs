@@ -1,4 +1,4 @@
-﻿namespace DalaMock.Core.Mocks;
+namespace DalaMock.Core.Mocks;
 
 using System;
 using System.Collections.Generic;

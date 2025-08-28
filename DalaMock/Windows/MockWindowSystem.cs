@@ -1,13 +1,14 @@
-﻿namespace DalaMock.Core.Windows;
+namespace DalaMock.Core.Windows;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 using DalaMock.Shared.Interfaces;
+
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
-using Dalamud.Bindings.ImGui;
 
 /// <summary>
 /// A mock window system that simulates Dalamud's window system.

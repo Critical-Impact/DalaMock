@@ -1,13 +1,16 @@
-﻿namespace DalaMock.Core.Interface;
+namespace DalaMock.Core.Interface;
 
 using System;
 using System.Collections.Generic;
+
 using Autofac;
+
 using DalaMock.Core.DI;
 using DalaMock.Core.Imgui;
 using DalaMock.Core.Mocks;
 using DalaMock.Core.Plugin;
 using DalaMock.Core.Windows;
+
 using Dalamud.Bindings.ImGui;
 
 /// <summary>
@@ -44,7 +47,6 @@ public class MockDalamudUi : IDisposable
         this.pluginLoader.PluginStarted += this.PluginLoaderOnPluginStarted;
         this.pluginLoader.PluginStopped += this.PluginLoaderOnPluginStopped;
     }
-
 
     /// <inheritdoc/>
     public void Dispose()

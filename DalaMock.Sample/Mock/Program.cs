@@ -1,4 +1,4 @@
-﻿namespace DalaMock.Sample.Mock;
+namespace DalaMock.Sample.Mock;
 
 using DalaMock.Core.DI;
 

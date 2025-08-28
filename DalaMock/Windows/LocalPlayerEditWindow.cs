@@ -1,17 +1,14 @@
-// <copyright file="LocalPlayerEditWindow.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+namespace DalaMock.Core.Windows;
 
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+
 using DalaMock.Core.Imgui.Auto;
 using DalaMock.Core.Mocks;
-using Dalamud.Interface.Windowing;
 using Dalamud.Bindings.ImGui;
-
-namespace DalaMock.Core.Windows;
+using Dalamud.Interface.Windowing;
 
 public class LocalPlayerEditWindow : Window
 {

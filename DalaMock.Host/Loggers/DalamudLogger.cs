@@ -4,6 +4,7 @@ using System;
 using System.Text;
 
 using Dalamud.Plugin.Services;
+
 using Microsoft.Extensions.Logging;
 
 internal sealed class DalamudLogger : ILogger
@@ -31,8 +32,10 @@ internal sealed class DalamudLogger : ILogger
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
-        if (!this.IsEnabled(logLevel)) return;
-
+        if (!this.IsEnabled(logLevel))
+        {
+            return;
+        }
 
         StringBuilder sb = new();
         sb.Append($"[{this.name}]{{{(int)logLevel}}} {state}: {exception?.Message}");

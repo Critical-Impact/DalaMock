@@ -1,6 +1,7 @@
-﻿namespace DalaMock.Core.Imgui;
+namespace DalaMock.Core.Imgui;
 
 using Dalamud.Bindings.ImGui;
+
 using Veldrid;
 using Veldrid.Sdl2;
 

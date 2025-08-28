@@ -1,8 +1,10 @@
 namespace DalaMock.Core.Windows;
 
-using FFXIVClientStructs.FFXIV.Client.Game;
 using Dalamud.Bindings.ImGui;
-using Mocks;
+
+using FFXIVClientStructs.FFXIV.Client.Game;
+
+using DalaMock.Core.Mocks;
 
 public class MockGameGuiWindow : MockWindow<MockGameGui>
 {
@@ -15,12 +17,14 @@ public class MockGameGuiWindow : MockWindow<MockGameGui>
         MockGameGui mockGameGui,
         string name,
         ImGuiWindowFlags flags = ImGuiWindowFlags.None,
-        bool forceMainWindow = false) : base(mockGameGui, name, flags, forceMainWindow)
+        bool forceMainWindow = false)
+        : base(mockGameGui, name, flags, forceMainWindow)
     {
         this.mockGameGui = mockGameGui;
     }
 
-    public MockGameGuiWindow(MockGameGui mockGameGui) : base(mockGameGui, "Mock Game Gui")
+    public MockGameGuiWindow(MockGameGui mockGameGui)
+        : base(mockGameGui, "Mock Game Gui")
     {
         this.mockGameGui = mockGameGui;
     }

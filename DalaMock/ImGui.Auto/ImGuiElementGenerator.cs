@@ -1,11 +1,13 @@
+namespace DalaMock.Core.Imgui.Auto;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Autofac;
-using DalaMock.Core.Extensions;
 
-namespace DalaMock.Core.Imgui.Auto;
+using Autofac;
+
+using DalaMock.Core.Extensions;
 
 public class ImGuiElementGenerator
 {
@@ -39,7 +41,7 @@ public class ImGuiElementGenerator
                 {
                     element.Group = "Ungrouped";
                 }
-                
+
                 element.GetMethodInfo = property.GetGetMethod();
                 element.SetMethodInfo = property.GetSetMethod();
                 element.Name = property.Name.AddSpaces();

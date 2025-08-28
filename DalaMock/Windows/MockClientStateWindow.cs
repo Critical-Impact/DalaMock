@@ -1,17 +1,16 @@
-﻿using DalaMock.Core.Imgui.Auto;
-
-using Lumina.Excel.Sheets;
-
-namespace DalaMock.Core.Windows;
+﻿namespace DalaMock.Core.Windows;
 
 using System.Collections.Generic;
 using System.Linq;
+
+using DalaMock.Core.Imgui.Auto;
 using DalaMock.Core.Mocks;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
-using Dalamud.Bindings.ImGui;
 using Lumina.Excel;
+using Lumina.Excel.Sheets;
 
 public class MockClientStateWindow : MockWindow<MockClientState>
 {
@@ -29,7 +28,7 @@ public class MockClientStateWindow : MockWindow<MockClientState>
         this.mockClientState = mockClientState;
         this.localPlayersWindow = localPlayersWindow;
         this.territoryTypeSheet = dataManager.GetExcelSheet<TerritoryType>()!;
-        this.character = new MockCharacter(mockClientState);//make factory later
+        this.character = new MockCharacter(mockClientState); // make factory later
     }
 
     public Dictionary<uint, string> TerritoryTypes => this.territoryTypes ??= this.territoryTypeSheet

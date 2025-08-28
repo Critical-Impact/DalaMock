@@ -1,11 +1,13 @@
-﻿namespace DalaMock.Core.Mocks;
+namespace DalaMock.Core.Mocks;
 
 using System;
+
 using Dalamud.Plugin.Ipc;
 
 public class MockCallGateProvider<TRet> : MockCallGatePubSubBase, ICallGateProvider<TRet>
 {
-    public MockCallGateProvider(string name) : base(name)
+    public MockCallGateProvider(string name)
+        : base(name)
     {
     }
 
@@ -28,7 +30,8 @@ public class MockCallGateProvider<TRet> : MockCallGatePubSubBase, ICallGateProvi
 
 public class MockCallGateProvider<T1, TRet> : MockCallGatePubSubBase, ICallGateProvider<T1, TRet>
 {
-    public MockCallGateProvider(string name) : base(name)
+    public MockCallGateProvider(string name)
+        : base(name)
     {
     }
 
@@ -51,7 +54,8 @@ public class MockCallGateProvider<T1, TRet> : MockCallGatePubSubBase, ICallGateP
 
 public class MockCallGateProvider<T1, T2, TRet> : MockCallGatePubSubBase, ICallGateProvider<T1, T2, TRet>
 {
-    public MockCallGateProvider(string name) : base(name)
+    public MockCallGateProvider(string name)
+        : base(name)
     {
     }
 
@@ -74,7 +78,8 @@ public class MockCallGateProvider<T1, T2, TRet> : MockCallGatePubSubBase, ICallG
 
 public class MockCallGateProvider<T1, T2, T3, TRet> : MockCallGatePubSubBase, ICallGateProvider<T1, T2, T3, TRet>
 {
-    public MockCallGateProvider(string name) : base(name)
+    public MockCallGateProvider(string name)
+        : base(name)
     {
     }
 
@@ -98,7 +103,8 @@ public class MockCallGateProvider<T1, T2, T3, TRet> : MockCallGatePubSubBase, IC
 public class MockCallGateProvider<T1, T2, T3, T4, TRet> : MockCallGatePubSubBase,
     ICallGateProvider<T1, T2, T3, T4, TRet>
 {
-    public MockCallGateProvider(string name) : base(name)
+    public MockCallGateProvider(string name)
+        : base(name)
     {
     }
 
@@ -122,7 +128,8 @@ public class MockCallGateProvider<T1, T2, T3, T4, TRet> : MockCallGatePubSubBase
 public class MockCallGateProvider<T1, T2, T3, T4, T5, TRet> : MockCallGatePubSubBase,
     ICallGateProvider<T1, T2, T3, T4, T5, TRet>
 {
-    public MockCallGateProvider(string name) : base(name)
+    public MockCallGateProvider(string name)
+        : base(name)
     {
     }
 
@@ -146,7 +153,8 @@ public class MockCallGateProvider<T1, T2, T3, T4, T5, TRet> : MockCallGatePubSub
 public class MockCallGateProvider<T1, T2, T3, T4, T5, T6, TRet> : MockCallGatePubSubBase,
     ICallGateProvider<T1, T2, T3, T4, T5, T6, TRet>
 {
-    public MockCallGateProvider(string name) : base(name)
+    public MockCallGateProvider(string name)
+        : base(name)
     {
     }
 
@@ -170,7 +178,8 @@ public class MockCallGateProvider<T1, T2, T3, T4, T5, T6, TRet> : MockCallGatePu
 public class MockCallGateProvider<T1, T2, T3, T4, T5, T6, T7, TRet> : MockCallGatePubSubBase,
     ICallGateProvider<T1, T2, T3, T4, T5, T6, T7, TRet>
 {
-    public MockCallGateProvider(string name) : base(name)
+    public MockCallGateProvider(string name)
+        : base(name)
     {
     }
 
@@ -194,7 +203,8 @@ public class MockCallGateProvider<T1, T2, T3, T4, T5, T6, T7, TRet> : MockCallGa
 public class MockCallGateProvider<T1, T2, T3, T4, T5, T6, T7, T8, TRet> : MockCallGatePubSubBase,
     ICallGateProvider<T1, T2, T3, T4, T5, T6, T7, T8, TRet>
 {
-    public MockCallGateProvider(string name) : base(name)
+    public MockCallGateProvider(string name)
+        : base(name)
     {
     }
 

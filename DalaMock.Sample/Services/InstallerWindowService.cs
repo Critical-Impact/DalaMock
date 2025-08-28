@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using DalaMock.Host.Mediator;
 using DalaMock.Sample.Mediator;
 using DalaMock.Sample.Windows;
+
 using Dalamud.Plugin;
+
 using Microsoft.Extensions.Hosting;
 
 public class InstallerWindowService(

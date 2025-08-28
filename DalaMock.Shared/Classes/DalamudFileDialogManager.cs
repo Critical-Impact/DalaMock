@@ -1,17 +1,15 @@
-﻿// <copyright file="DalamudFileDialogManager.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 namespace DalaMock.Shared.Classes;
 
 using System;
 using System.Collections.Generic;
+
 using DalaMock.Shared.Interfaces;
+
 using Dalamud.Interface;
 using Dalamud.Interface.ImGuiFileDialog;
 
 /// <summary>
-/// The dalamud implementation of file dialog manager, wrapped to avoid font crashes
+/// The dalamud implementation of file dialog manager, wrapped to avoid font crashes.
 /// </summary>
 public class DalamudFileDialogManager : IFileDialogManager
 {

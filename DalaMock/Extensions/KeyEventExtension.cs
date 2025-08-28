@@ -1,13 +1,14 @@
 namespace DalaMock.Core.Extensions;
 
 using Dalamud.Game.ClientState.Keys;
+
 using Veldrid;
 
 public static class KeyEventExtension
 {
     public static VirtualKey ToKeyState(this KeyEvent keyEvent)
     {
-        var keyState = new VirtualKey();
+        var keyState = default(VirtualKey);
         switch (keyEvent.Key)
         {
             case Key.A:
@@ -101,7 +102,7 @@ public static class KeyEventExtension
                 keyState = VirtualKey.MENU;
                 break;
         }
-        
+
         return keyState;
     }
 }

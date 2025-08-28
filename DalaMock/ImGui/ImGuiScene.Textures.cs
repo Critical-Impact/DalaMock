@@ -1,10 +1,13 @@
-﻿namespace DalaMock.Core.Imgui;
+namespace DalaMock.Core.Imgui;
 
 using System;
 using System.IO;
 using System.Linq;
+
 using Dalamud.Interface.Textures.TextureWraps;
+
 using StbiSharp;
+
 using Veldrid;
 
 public partial class ImGuiScene

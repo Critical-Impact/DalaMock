@@ -1,9 +1,9 @@
-﻿using Dalamud.Bindings.ImGui;
-
 namespace DalaMock.Core.Mocks.Textures;
 
 using System;
 using System.Numerics;
+
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Textures.TextureWraps;
 
 public class MockTextureManagerTextureWrap : IDalamudTextureWrap
@@ -13,7 +13,7 @@ public class MockTextureManagerTextureWrap : IDalamudTextureWrap
     private readonly string path;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:InventoryToolsMock.TextureManagerTextureWrap" /> class.
+    /// Initializes a new instance of the <see cref="MockTextureManagerTextureWrap"/> class.
     /// </summary>
     /// <param name="path">The path to the texture.</param>
     /// <param name="extents">The extents of the texture.</param>

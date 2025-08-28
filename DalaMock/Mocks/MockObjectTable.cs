@@ -3,6 +3,7 @@ namespace DalaMock.Core.Mocks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 
@@ -45,18 +46,18 @@ public class MockObjectTable : IObjectTable, IMockService
     public nint Address { get; }
 
     public int Length { get; }
-    
+
     public IEnumerable<IBattleChara> PlayerObjects { get; set; }
-    
+
     public IEnumerable<IGameObject> CharacterManagerObjects { get; set; }
-    
+
     public IEnumerable<IGameObject> ClientObjects { get; set; }
-    
+
     public IEnumerable<IGameObject> EventObjects { get; set; }
-    
+
     public IEnumerable<IGameObject> StandObjects { get; set; }
-    
+
     public IEnumerable<IGameObject> ReactionEventObjects { get; set; }
-    
+
     public IGameObject? this[int index] => throw new NotImplementedException();
 }

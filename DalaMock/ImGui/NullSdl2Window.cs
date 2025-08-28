@@ -1,10 +1,10 @@
+namespace DalaMock.Core.Imgui;
+
 using System;
 using System.Numerics;
 
 using Veldrid;
 using Veldrid.Sdl2;
-
-namespace DalaMock.Core.Imgui;
 
 public class NullSdl2Window : ISdl2Window
 {

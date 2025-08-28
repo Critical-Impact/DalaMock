@@ -1,20 +1,22 @@
-﻿namespace DalaMock.Shared.Classes;
+namespace DalaMock.Shared.Classes;
 
 using System.Collections.Generic;
+
 using DalaMock.Shared.Interfaces;
+
 using Dalamud.Interface.Windowing;
 
 public class DalamudWindowSystem : IWindowSystem
 {
-    /// <summary>
-    /// The dalamud window system.
-    /// </summary>
-    public WindowSystem WindowSystem { get; private set; }
-
     public DalamudWindowSystem(string? imNamespace = null)
     {
         this.WindowSystem = new WindowSystem(imNamespace);
     }
+
+    /// <summary>
+    /// Gets the dalamud window system.
+    /// </summary>
+    public WindowSystem WindowSystem { get; private set; }
 
     /// <inheritdoc/>
     public IReadOnlyList<Window> Windows => this.WindowSystem.Windows;

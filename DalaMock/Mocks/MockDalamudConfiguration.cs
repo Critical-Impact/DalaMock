@@ -1,19 +1,21 @@
-﻿namespace DalaMock.Core.Mocks;
+namespace DalaMock.Core.Mocks;
 
 using System.IO;
 using System.Linq;
+
 using Dalamud.Game;
+
 using Newtonsoft.Json;
 
 public class MockDalamudConfiguration
 {
     /// <summary>
-    /// Should a Veldrid window be created.
+    /// Gets or sets a value indicating whether should a Veldrid window be created.
     /// </summary>
     public bool CreateWindow { get; set; } = true;
 
     /// <summary>
-    /// What language should be loaded.
+    /// Gets or sets what language should be loaded.
     /// </summary>
     public ClientLanguage ClientLanguage { get; set; } = ClientLanguage.English;
 
@@ -27,7 +29,7 @@ public class MockDalamudConfiguration
     }
 
     /// <summary>
-    /// Gets a value indicating that the game path provided is valid.
+    /// Gets a value indicating whether gets a value indicating that the game path provided is valid.
     /// </summary>
     public bool GamePathValid
     {
@@ -47,7 +49,7 @@ public class MockDalamudConfiguration
     }
 
     /// <summary>
-    /// Gets a value indicating that the plugin path provided is valid.
+    /// Gets a value indicating whether gets a value indicating that the plugin path provided is valid.
     /// </summary>
     public bool PluginSavePathValid
     {

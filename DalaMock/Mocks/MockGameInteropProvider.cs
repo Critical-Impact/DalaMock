@@ -2,6 +2,7 @@ namespace DalaMock.Core.Mocks;
 
 using System;
 using System.Diagnostics;
+
 using Dalamud.Hooking;
 using Dalamud.Plugin.Services;
 
@@ -11,7 +12,8 @@ public class MockGameInteropProvider : IGameInteropProvider, IMockService
     {
     }
 
-    public Hook<T> HookFromFunctionPointerVariable<T>(nint address, T detour) where T : Delegate
+    public Hook<T> HookFromFunctionPointerVariable<T>(nint address, T detour)
+        where T : Delegate
     {
         return null!;
     }
@@ -21,7 +23,8 @@ public class MockGameInteropProvider : IGameInteropProvider, IMockService
         string moduleName,
         string functionName,
         uint hintOrOrdinal,
-        T detour) where T : Delegate
+        T detour)
+        where T : Delegate
     {
         return null!;
     }
@@ -30,7 +33,8 @@ public class MockGameInteropProvider : IGameInteropProvider, IMockService
         string moduleName,
         string exportName,
         T detour,
-        IGameInteropProvider.HookBackend backend = IGameInteropProvider.HookBackend.Automatic) where T : Delegate
+        IGameInteropProvider.HookBackend backend = IGameInteropProvider.HookBackend.Automatic)
+        where T : Delegate
     {
         return null!;
     }
@@ -38,7 +42,8 @@ public class MockGameInteropProvider : IGameInteropProvider, IMockService
     public Hook<T> HookFromAddress<T>(
         nint procAddress,
         T detour,
-        IGameInteropProvider.HookBackend backend = IGameInteropProvider.HookBackend.Automatic) where T : Delegate
+        IGameInteropProvider.HookBackend backend = IGameInteropProvider.HookBackend.Automatic)
+        where T : Delegate
     {
         return null!;
     }
@@ -46,7 +51,8 @@ public class MockGameInteropProvider : IGameInteropProvider, IMockService
     public Hook<T> HookFromAddress<T>(
         UIntPtr procAddress,
         T detour,
-        IGameInteropProvider.HookBackend backend = IGameInteropProvider.HookBackend.Automatic) where T : Delegate
+        IGameInteropProvider.HookBackend backend = IGameInteropProvider.HookBackend.Automatic)
+        where T : Delegate
     {
         throw new NotImplementedException();
     }
@@ -54,7 +60,8 @@ public class MockGameInteropProvider : IGameInteropProvider, IMockService
     public unsafe Hook<T> HookFromAddress<T>(
         void* procAddress,
         T detour,
-        IGameInteropProvider.HookBackend backend = IGameInteropProvider.HookBackend.Automatic) where T : Delegate
+        IGameInteropProvider.HookBackend backend = IGameInteropProvider.HookBackend.Automatic)
+        where T : Delegate
     {
         throw new NotImplementedException();
     }
@@ -62,7 +69,8 @@ public class MockGameInteropProvider : IGameInteropProvider, IMockService
     public Hook<T> HookFromSignature<T>(
         string signature,
         T detour,
-        IGameInteropProvider.HookBackend backend = IGameInteropProvider.HookBackend.Automatic) where T : Delegate
+        IGameInteropProvider.HookBackend backend = IGameInteropProvider.HookBackend.Automatic)
+        where T : Delegate
     {
         return null!;
     }

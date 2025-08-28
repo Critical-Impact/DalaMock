@@ -1,4 +1,4 @@
-﻿namespace DalaMock.Core.Mocks;
+namespace DalaMock.Core.Mocks;
 
 public interface IMockService
 {

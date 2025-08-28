@@ -9,8 +9,10 @@ using DalaMock.Host.Factories;
 using DalaMock.Host.Mediator;
 using DalaMock.Sample.Mediator;
 using DalaMock.Shared.Interfaces;
+
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
+
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -20,7 +22,8 @@ public class WindowService : DisposableMediatorSubscriberBase, IHostedService
     private readonly IUiBuilder uiBuilder;
     private readonly IWindowSystem windowSystem;
 
-    public WindowService(IEnumerable<Window> windows, ILogger<DisposableMediatorSubscriberBase> logger, MediatorService mediatorService, WindowSystemFactory windowSystemFactory, IUiBuilder uiBuilder) : base(logger, mediatorService)
+    public WindowService(IEnumerable<Window> windows, ILogger<DisposableMediatorSubscriberBase> logger, MediatorService mediatorService, WindowSystemFactory windowSystemFactory, IUiBuilder uiBuilder)
+        : base(logger, mediatorService)
     {
         this.windowSystemFactory = windowSystemFactory;
         this.uiBuilder = uiBuilder;
@@ -40,6 +43,7 @@ public class WindowService : DisposableMediatorSubscriberBase, IHostedService
         {
             window.IsOpen = true;
         }
+
         this.uiBuilder.Draw += this.Draw;
         return Task.CompletedTask;
     }

@@ -1,9 +1,10 @@
+namespace DalaMock.Core.Imgui.Auto;
+
 using System;
 using System.Reflection;
-using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Bindings.ImGui;
 
-namespace DalaMock.Core.Imgui.Auto;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Game.Text.SeStringHandling;
 
 public class ImGuiSeString : ImGuiBaseElement
 {

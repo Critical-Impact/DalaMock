@@ -1,6 +1,7 @@
 namespace DalaMock.Sample;
 
 using Dalamud.Configuration;
+
 using Newtonsoft.Json;
 
 public class Configuration : IPluginConfiguration

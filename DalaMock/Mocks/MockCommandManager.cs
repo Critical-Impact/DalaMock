@@ -1,6 +1,3 @@
-using IPluginLog = Dalamud.Plugin.Services.IPluginLog;
-using IReadOnlyCommandInfo = Dalamud.Game.Command.IReadOnlyCommandInfo;
-
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -8,9 +5,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
+
 using Dalamud.Game;
 using Dalamud.Game.Command;
 using Dalamud.Plugin.Services;
+
+using IPluginLog = Dalamud.Plugin.Services.IPluginLog;
+using IReadOnlyCommandInfo = Dalamud.Game.Command.IReadOnlyCommandInfo;
 
 public class MockCommandManager : ICommandManager, IMockService
 {

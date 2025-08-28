@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 using DalaMock.Host.Mediator;
 using DalaMock.Sample.Mediator;
 using DalaMock.Sample.Windows;
+
 using Dalamud.Game.Command;
 using Dalamud.Plugin.Services;
+
 using Microsoft.Extensions.Hosting;
 
 public class CommandService(ICommandManager commandManager, MediatorService mediatorService) : IHostedService
 {
     private readonly MediatorService mediatorService = mediatorService;
-    private readonly string[] commandName = { "/sampleplugin", "/samplepluginalias"};
+    private readonly string[] commandName = { "/sampleplugin", "/samplepluginalias" };
 
     public ICommandManager CommandManager { get; } = commandManager;
 

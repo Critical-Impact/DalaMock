@@ -1,15 +1,16 @@
+namespace DalaMock.Core.Mocks;
+
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-using FFXIVClientStructs.FFXIV.Component.Excel;
-
-namespace DalaMock.Core.Mocks;
-
-using System;
 using Dalamud.Game;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+
+using FFXIVClientStructs.FFXIV.Component.Excel;
+
 using Lumina;
 using Lumina.Data;
 using Lumina.Excel;
@@ -33,7 +34,8 @@ public class MockDataManager : IDataManager, IMockService
         return this.gameData.GetExcelSheet<T>();
     }
 
-    public ExcelSheet<T>? GetExcelSheet<T>(ClientLanguage language) where T : struct, IExcelRow<T>
+    public ExcelSheet<T>? GetExcelSheet<T>(ClientLanguage language)
+        where T : struct, IExcelRow<T>
     {
         return this.gameData.GetExcelSheet<T>(ClientLanguageExtensions.ToLumina(language));
     }
@@ -55,7 +57,8 @@ public class MockDataManager : IDataManager, IMockService
         return this.gameData.GetFile(path);
     }
 
-    public T? GetFile<T>(string path) where T : FileResource
+    public T? GetFile<T>(string path)
+        where T : FileResource
     {
         var filePath = GameData.ParseFilePath(path);
         if (filePath == null)
@@ -66,7 +69,9 @@ public class MockDataManager : IDataManager, IMockService
         return this.GameData.Repositories.TryGetValue(filePath.Repository, out var repository) ? repository.GetFile<T>(filePath.Category, filePath) : default;
     }
 
-    public Task<T> GetFileAsync<T>(string path, CancellationToken cancellationToken) where T : FileResource =>
+    public Task<T> GetFileAsync<T>(string path, CancellationToken cancellationToken)
+        where T : FileResource
+        =>
         GameData.ParseFilePath(path) is { } filePath &&
             this.GameData.Repositories.TryGetValue(filePath.Repository, out var repository)
                 ? Task.Run(

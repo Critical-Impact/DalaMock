@@ -1,6 +1,7 @@
 namespace DalaMock.Core.Mocks;
 
 using System.Collections.Generic;
+
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Plugin.Services;
 
@@ -24,18 +25,18 @@ public class MockAddonLifecycle : IAddonLifecycle, IMockService
     public void UnregisterListener(
         AddonEvent eventType,
         IEnumerable<string> addonNames,
-        IAddonLifecycle.AddonEventDelegate handler = null)
+        IAddonLifecycle.AddonEventDelegate? handler = null)
     {
     }
 
     public void UnregisterListener(
         AddonEvent eventType,
         string addonName,
-        IAddonLifecycle.AddonEventDelegate handler = null)
+        IAddonLifecycle.AddonEventDelegate? handler = null)
     {
     }
 
-    public void UnregisterListener(AddonEvent eventType, IAddonLifecycle.AddonEventDelegate handler = null)
+    public void UnregisterListener(AddonEvent eventType, IAddonLifecycle.AddonEventDelegate? handler = null)
     {
     }
 

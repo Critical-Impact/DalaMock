@@ -8,7 +8,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 
 using Dalamud.Utility;
+
 using Microsoft.Extensions.Logging;
+
 using Serilog;
 
 /// <summary>
@@ -77,7 +79,9 @@ public class AssertHandler : IDisposable
     {
         var key = $"{file}:{line}";
         if (this.ignoredAsserts.Contains(key))
+        {
             return;
+        }
 
         Lazy<string> stackTrace = new(() => new StackTrace(3).ToString());
 

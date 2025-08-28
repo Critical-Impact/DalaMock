@@ -1,14 +1,10 @@
-// <copyright file="HostingAwareService.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+namespace DalaMock.Host.Hosting;
 
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Hosting;
-
-namespace DalaMock.Host.Hosting;
 
 public abstract class HostingAwareService : IHostedService, IDisposable
 {

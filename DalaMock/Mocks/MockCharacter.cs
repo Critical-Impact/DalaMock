@@ -1,14 +1,16 @@
+namespace DalaMock.Core.Mocks;
+
 using System;
 using System.Numerics;
+
 using DalaMock.Core.Imgui.Auto;
+
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Text.SeStringHandling;
 
 using Lumina.Excel;
 using Lumina.Excel.Sheets;
-
-namespace DalaMock.Core.Mocks;
 
 public class MockCharacter : ICharacter
 {
@@ -54,7 +56,6 @@ public class MockCharacter : ICharacter
     {
         this.clientState = clientState;
     }
-
 
     /// <inheritdoc/>
     public bool Equals(IGameObject? other)

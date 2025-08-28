@@ -1,12 +1,9 @@
-// <copyright file="ImGuiScene.Fonts.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
+namespace DalaMock.Core.Imgui;
 
 using System;
 using System.Runtime.InteropServices;
-using Dalamud.Bindings.ImGui;
 
-namespace DalaMock.Core.Imgui;
+using Dalamud.Bindings.ImGui;
 
 public partial class ImGuiScene
 {

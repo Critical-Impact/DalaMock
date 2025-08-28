@@ -1,9 +1,7 @@
-﻿using DalaMock.Core.Imgui;
-
-using Dalamud.Bindings.ImGui;
-
 namespace DalaMock.Core.Mocks.Textures;
 
+using DalaMock.Core.Imgui;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Textures.TextureWraps;
 
 public class MockTextureMap : IDalamudTextureWrap

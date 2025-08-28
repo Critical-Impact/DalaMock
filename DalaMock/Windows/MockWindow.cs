@@ -1,16 +1,19 @@
-﻿namespace DalaMock.Core.Windows;
+namespace DalaMock.Core.Windows;
 
-using Dalamud.Interface.Windowing;
 using Dalamud.Bindings.ImGui;
-using Mocks;
+using Dalamud.Interface.Windowing;
 
-public abstract class MockWindow<T> : Window, IMockWindow where T : IMockService
+using DalaMock.Core.Mocks;
+
+public abstract class MockWindow<T> : Window, IMockWindow
+    where T : IMockService
 {
     protected MockWindow(
         T mockService,
         string name,
         ImGuiWindowFlags flags = ImGuiWindowFlags.None,
-        bool forceMainWindow = false) : base(name, flags, forceMainWindow)
+        bool forceMainWindow = false)
+        : base(name, flags, forceMainWindow)
     {
         this.MockService = mockService;
     }

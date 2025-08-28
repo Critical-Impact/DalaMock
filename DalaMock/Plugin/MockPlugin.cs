@@ -1,11 +1,13 @@
-﻿namespace DalaMock.Core.Plugin;
+namespace DalaMock.Core.Plugin;
 
 using System;
+
 using Autofac;
+
 using Dalamud.Plugin;
 
 /// <summary>
-/// A mock plugin, managed by <see cref="IPluginLoader"/>
+/// A mock plugin, managed by <see cref="IPluginLoader"/>.
 /// </summary>
 /// <param name="pluginType">The type of the plugin being loaded.</param>
 public class MockPlugin(Type pluginType) : IMockPlugin

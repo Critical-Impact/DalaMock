@@ -1,7 +1,7 @@
+namespace DalaMock.Core.Imgui.Auto;
+
 using System;
 using System.Reflection;
-
-namespace DalaMock.Core.Imgui.Auto;
 
 public abstract class ImGuiBaseElement : IImGuiElement
 {

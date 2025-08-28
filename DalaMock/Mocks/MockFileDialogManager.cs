@@ -1,13 +1,11 @@
-﻿// <copyright file="MockFileDialogManager.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 namespace DalaMock.Core.Mocks;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using DalaMock.Shared.Interfaces;
+
 using NativeFileDialogSharp;
 
 public class MockFileDialogManager : IFileDialogManager
@@ -63,6 +61,7 @@ public class MockFileDialogManager : IFileDialogManager
             this.lastPath = result.Path;
             resultPaths = [result.Path];
         }
+
         callback(result.IsOk, resultPaths);
     }
 

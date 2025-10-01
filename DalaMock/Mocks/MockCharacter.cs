@@ -20,6 +20,7 @@ public class MockCharacter : ICharacter
     private uint entityId;
     private uint dataId;
     private uint ownerId;
+    private uint baseId;
     private ushort objectIndex;
     private ObjectKind objectKind;
     private byte subKind;
@@ -98,6 +99,13 @@ public class MockCharacter : ICharacter
     {
         get => this.dataId;
         set => this.dataId = value;
+    }
+
+    [ImGuiGroup("Ids")]
+    public uint BaseId
+    {
+        get => this.baseId;
+        set => this.baseId = value;
     }
 
     /// <inheritdoc/>

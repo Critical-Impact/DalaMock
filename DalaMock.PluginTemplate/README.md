@@ -9,3 +9,5 @@ By default, it provides:
 - Command, window, installer and configuration services
 - A plugin project
 - A mock plugin project(which can boot your plugin without the game running)
+
+To install the template, please run `dotnet new install DalaMock.PluginTemplate`

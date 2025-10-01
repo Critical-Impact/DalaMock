@@ -44,6 +44,11 @@ public class MockGameGui : IGameGui, IMockService
         return this.GetAddonByName(name, index);
     }
 
+    public unsafe T* GetAddonByName<T>(string name, int index = 1) where T : unmanaged
+    {
+        return null;
+    }
+
     public AgentInterfacePtr GetAgentById(int id)
     {
         throw new NotImplementedException();

@@ -13,11 +13,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [3.0.7] - 2025-10-01
+
+### Changed
+- Updated DalaMock.PluginTemplate
+- Added missing methods/events
+
 ## [3.0.6] - 2025-08-28
 
 ### Added
 - Added RegisterTransientSelf to ContainerBuilderExtensions
-
 
 ## [3.0.5] - 2025-08-26
 

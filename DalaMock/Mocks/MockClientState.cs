@@ -1,3 +1,5 @@
+using Dalamud.Game.ClientState;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -50,6 +52,8 @@ public class MockClientState : IClientState, IMockService
         get => this.mapId;
         set => this.mapId = value;
     }
+
+    public uint Instance { get; }
 
     public IPlayerCharacter? LocalPlayer
     {
@@ -115,7 +119,13 @@ public class MockClientState : IClientState, IMockService
         set => this.isGPosing = value;
     }
 
+    public event Action<ZoneInitEventArgs>? ZoneInit;
+
     public event Action<ushort>? TerritoryChanged;
+
+    public event Action<uint>? MapIdChanged;
+
+    public event Action<uint>? InstanceChanged;
 
     public event IClientState.ClassJobChangeDelegate? ClassJobChanged;
 

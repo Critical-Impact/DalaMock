@@ -119,8 +119,6 @@ public class MockClientState : IClientState, IMockService
         set => this.isGPosing = value;
     }
 
-    public event Action<ZoneInitEventArgs>? ZoneInit;
-
     public event Action<ushort>? TerritoryChanged;
 
     public event Action<uint>? MapIdChanged;

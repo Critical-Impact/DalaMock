@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [3.0.8] - 2025-10-01
+
+### Fixed
+- Fixed minor issues with the DalaMock.PluginTemplate
+
+
 ## [3.0.7] - 2025-10-01
 
 ### Changed

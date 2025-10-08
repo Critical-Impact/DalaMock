@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [3.0.9] - 2025-10-08
+
+### Added
+- Added ZoneInit to MockClientState
+
 ## [3.0.8] - 2025-10-01
 
 ### Fixed

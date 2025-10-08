@@ -119,6 +119,8 @@ public class MockClientState : IClientState, IMockService
         set => this.isGPosing = value;
     }
 
+    public event Action<ZoneInitEventArgs>? ZoneInit;
+
     public event Action<ushort>? TerritoryChanged;
 
     public event Action<uint>? MapIdChanged;
@@ -145,5 +147,10 @@ public class MockClientState : IClientState, IMockService
     public void TriggerCfPop(ContentFinderCondition condition)
     {
         this.CfPop?.Invoke(condition);
+    }
+
+    public void TriggerZoneInit(ZoneInitEventArgs zoneInitEventArgs)
+    {
+        this.ZoneInit?.Invoke(zoneInitEventArgs);
     }
 }

@@ -105,6 +105,8 @@ public class MockGameGui : IGameGui, IMockService
 
     public event EventHandler<HoveredAction>? HoveredActionChanged;
 
+    public event Action<AgentUpdateFlag>? AgentUpdate;
+
     public string ServiceName => "Game Gui";
 
     public void SetHoveredItem(uint itemId, InventoryItem.ItemFlags flags)

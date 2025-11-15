@@ -50,4 +50,6 @@ public class MockPluginManifest : IPluginManifest
     public List<string>? ImageUrls { get; set; }
 
     public string? IconUrl { get; set; }
+
+    public bool IsAvailableForTesting { get; set; }
 }

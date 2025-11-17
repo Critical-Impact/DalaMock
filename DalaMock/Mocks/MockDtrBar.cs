@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -87,7 +89,11 @@ public class MockReadOnlyDtrEntryBar : IReadOnlyDtrBarEntry
     /// <inheritdoc/>
     public bool UserHidden { get; set; }
 
+    /// <inheritdoc/>
     public Action<DtrInteractionEvent>? OnClick { get; set; }
+
+    /// <inheritdoc/>
+    public (Vector2 Min, Vector2 Max) ScreenBounds { get; set; }
 
     public virtual bool TriggerClickAction()
     {

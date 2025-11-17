@@ -1,3 +1,5 @@
+using System.Runtime.Loader;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -143,6 +145,16 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     public bool OpenDeveloperMenu()
     {
         return false;
+    }
+
+    public IExposedPlugin? GetPlugin(Assembly assembly)
+    {
+        return null;
+    }
+
+    public IExposedPlugin? GetPlugin(AssemblyLoadContext context)
+    {
+        return null;
     }
 
     /// <inheritdoc/>

@@ -529,4 +529,9 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     {
         this.ActivePluginsChanged?.Invoke(new MockActivePluginsChangedEventArgs(kind, []));
     }
+
+    public object? GetService(Type serviceType)
+    {
+        throw new NotImplementedException();
+    }
 }

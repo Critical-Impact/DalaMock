@@ -13,11 +13,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [3.0.12] - 2025-11-29
+
+### Added
+- Add missing properties
+
 ## [3.0.11] - 2025-11-15
 
 ### Added
 - Add missing properties/events
-- 
+
 ## [3.0.10] - 2025-11-15
 
 ### Added

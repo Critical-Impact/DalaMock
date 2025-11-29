@@ -1,3 +1,5 @@
+using Dalamud.Game.ClientState.Objects.SubKinds;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -46,6 +48,8 @@ public class MockObjectTable : IObjectTable, IMockService
     public nint Address { get; }
 
     public int Length { get; }
+
+    public IPlayerCharacter? LocalPlayer { get; set; }
 
     public IEnumerable<IBattleChara> PlayerObjects { get; set; }
 

@@ -1,3 +1,5 @@
+using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -8,7 +10,6 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.FontIdentifier;
 using Dalamud.Interface.ManagedFontAtlas;
-using SharpDX.Direct3D11;
 using Veldrid;
 
 using IFontAtlas = Dalamud.Interface.ManagedFontAtlas.IFontAtlas;
@@ -32,11 +33,6 @@ public class MockUiBuilder : IUiBuilder, IMockService
     public MockUiBuilder(ImGuiScene scene)
     {
         this.GraphicsDevice = scene.GraphicsDevice;
-        if (this.GraphicsDevice.GetD3D11Info(out BackendInfoD3D11 dx11Info))
-        {
-            this.Device = new Device(dx11Info.Device);
-        }
-
         this.WindowHandlePtr = scene.Window.SdlWindowHandle;
     }
 

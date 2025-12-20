@@ -1,3 +1,5 @@
+using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -7,8 +9,6 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.FontIdentifier;
 using Dalamud.Interface.ManagedFontAtlas;
-
-using SharpDX.Direct3D11;
 
 public class NullUiBuilder : IUiBuilder, IMockService
 {

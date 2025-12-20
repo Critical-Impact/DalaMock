@@ -1,3 +1,5 @@
+using System;
+
 namespace DalaMock.Core.Mocks;
 
 using System.Collections.Generic;
@@ -42,6 +44,11 @@ public class MockAddonLifecycle : IAddonLifecycle, IMockService
 
     public void UnregisterListener(params IAddonLifecycle.AddonEventDelegate[] handlers)
     {
+    }
+
+    public IntPtr GetOriginalVirtualTable(IntPtr virtualTableAddress)
+    {
+        return IntPtr.Zero;
     }
 
     public string ServiceName => "Addon Lifecycle";

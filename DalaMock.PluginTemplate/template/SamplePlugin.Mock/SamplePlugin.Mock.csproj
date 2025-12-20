@@ -1,4 +1,4 @@
-<Project Sdk="Dalamud.NET.Sdk/13.1.0">
+<Project Sdk="Dalamud.NET.Sdk/14.0.1">
     <PropertyGroup>
         <Use_DalamudPackager>false</Use_DalamudPackager>
         <OutputType>Exe</OutputType>
@@ -43,12 +43,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="8.4.0" />
-        <PackageReference Include="DalaMock.Core" Version="3.0.7" />
+        <PackageReference Include="Autofac" Version="9.0.0" />
+        <PackageReference Include="DalaMock.Core" Version="4.0.0" />
         <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
         <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0"/>
-        <PackageReference Include="System.Collections.Immutable" Version="9.0.9" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
+        <PackageReference Include="System.Collections.Immutable" Version="10.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Properties" />

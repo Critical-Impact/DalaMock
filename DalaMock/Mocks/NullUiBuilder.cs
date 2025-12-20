@@ -88,6 +88,8 @@ public class NullUiBuilder : IUiBuilder, IMockService
 
     public bool ShouldUseReducedMotion { get; set; }
 
+    public bool PluginUISoundEffectsEnabled { get; set; }
+
     public event Action? Draw;
 
     public event Action? ResizeBuffers;

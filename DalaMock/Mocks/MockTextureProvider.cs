@@ -1,3 +1,5 @@
+using Dalamud.Interface.ImGuiSeStringRenderer;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -673,6 +675,14 @@ public partial class MockTextureProvider : ITextureProvider, IMockService
     }
 
     public Task<IDalamudTextureWrap> CreateFromClipboardAsync(string? debugName = null, CancellationToken cancellationToken = default(CancellationToken))
+    {
+        throw new NotImplementedException();
+    }
+
+    public IDalamudTextureWrap CreateTextureFromSeString(
+        ReadOnlySpan<byte> text,
+        scoped in SeStringDrawParams drawParams = new SeStringDrawParams(),
+        string? debugName = null)
     {
         throw new NotImplementedException();
     }

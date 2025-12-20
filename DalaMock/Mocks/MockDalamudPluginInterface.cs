@@ -1,5 +1,7 @@
 using System.Runtime.Loader;
 
+using Dalamud.Plugin.VersionInfo;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -35,6 +37,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
 {
     private readonly IUiBuilder uiBuilder;
     private readonly IComponentContext componentContext;
+    private readonly MockDalamudVersionInfo mockDalamudVersionInfo;
 
     // private readonly MockProgram _mockProgram;
     private readonly IPluginManifest pluginManifest;
@@ -45,11 +48,13 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         IUiBuilder uiBuilder,
         PluginLoadSettings pluginLoadSettings,
         IPluginManifest pluginManifest,
-        IComponentContext componentContext)
+        IComponentContext componentContext,
+        MockDalamudVersionInfo mockDalamudVersionInfo)
     {
         // _mockProgram = mockProgram;
         this.uiBuilder = uiBuilder;
         this.componentContext = componentContext;
+        this.mockDalamudVersionInfo = mockDalamudVersionInfo;
         this.ConfigFile = pluginLoadSettings.ConfigFile;
         this.ConfigDirectory = pluginLoadSettings.ConfigDir;
         this.pluginLoadReason = pluginLoadSettings.PluginLoadReason;
@@ -155,6 +160,11 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     public IExposedPlugin? GetPlugin(AssemblyLoadContext context)
     {
         return null;
+    }
+
+    public IDalamudVersionInfo GetDalamudVersion()
+    {
+        return this.mockDalamudVersionInfo;
     }
 
     /// <inheritdoc/>

@@ -1,6 +1,7 @@
+using Dalamud.Plugin.Services;
+
 namespace DalaMock.Core.Mocks;
 
-using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.Types;
 
 public class MockTargetManager : ITargetManager, IMockService

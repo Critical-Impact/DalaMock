@@ -106,6 +106,8 @@ public class MockUiBuilder : IUiBuilder, IMockService
 
     public bool ShouldUseReducedMotion { get; }
 
+    public bool PluginUISoundEffectsEnabled { get; set; }
+
     public event Action? Draw;
 
     public event Action? ResizeBuffers;

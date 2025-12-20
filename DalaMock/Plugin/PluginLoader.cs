@@ -180,6 +180,7 @@ public class PluginLoader : IPluginLoader
         builder.RegisterInstance(this.mockContainer.GetWindowSystem());
 
         var uiBuilder = this.mockContainer.GetContainer().Resolve<IUiBuilder>();
+        var mockVersionInfo = this.mockContainer.GetContainer().Resolve<MockDalamudVersionInfo>();
         builder.RegisterInstance(uiBuilder).AsSelf().AsImplementedInterfaces();
         builder.RegisterInstance(pluginLoadSettings);
         builder.RegisterInstance(this.loggerFactory).ExternallyOwned();
@@ -192,7 +193,8 @@ public class PluginLoader : IPluginLoader
                 uiBuilder,
                 pluginLoadSettings,
                 pluginManifest,
-                c.Resolve<IComponentContext>())).As<IDalamudPluginInterface>();
+                c.Resolve<IComponentContext>(),
+                mockVersionInfo)).As<IDalamudPluginInterface>();
 
         var container = builder.Build();
 

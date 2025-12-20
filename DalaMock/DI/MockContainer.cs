@@ -264,6 +264,7 @@ public class MockContainer
         builder.RegisterType<MockDalamudUi>().SingleInstance();
         builder.RegisterType<PluginLoader>().SingleInstance();
         builder.RegisterType<AssertHandler>().SingleInstance();
+        builder.RegisterInstance(new MockDalamudVersionInfo(assembly.GetName().Version ?? new Version("Unknown"))).SingleInstance();
         builder.RegisterType<MockFileDialogManager>().As<IFileDialogManager>().SingleInstance();
         builder.RegisterInstance(this).SingleInstance();
         builder.RegisterInstance(new MockWindowSystem("DalaMock"));

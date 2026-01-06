@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [4.0.2] - 2025-12-20
+
+### Fixed
+- Don't use STG
+
 ## [4.0.1] - 2025-12-20
 
 ### Added

@@ -33,6 +33,11 @@ public class MockUiBuilder : IUiBuilder, IMockService
     public MockUiBuilder(ImGuiScene scene)
     {
         this.GraphicsDevice = scene.GraphicsDevice;
+        if (this.GraphicsDevice.GetD3D11Info(out BackendInfoD3D11 dx11Info))
+        {
+            this.DeviceHandle = dx11Info.Device;
+        }
+
         this.WindowHandlePtr = scene.Window.SdlWindowHandle;
     }
 

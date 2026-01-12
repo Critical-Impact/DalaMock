@@ -34,6 +34,8 @@ public class MockChatGui : IChatGui, IMockService
     /// <inheritdoc />
     public event IChatGui.OnMessageUnhandledDelegate? ChatMessageUnhandled;
 
+    public event IChatGui.OnLogMessageDelegate? LogMessage;
+
     /// <inheritdoc />
     public IReadOnlyDictionary<(string PluginName, uint CommandId), Action<uint, SeString>> RegisteredLinkHandlers
     {

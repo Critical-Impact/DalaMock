@@ -87,6 +87,9 @@ public class MockReadOnlyDtrEntryBar : IReadOnlyDtrBarEntry
     public bool Shown { get; set; }
 
     /// <inheritdoc/>
+    public ushort MinimumWidth { get; set; }
+
+    /// <inheritdoc/>
     public bool UserHidden { get; set; }
 
     /// <inheritdoc/>

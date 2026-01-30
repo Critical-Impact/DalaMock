@@ -37,10 +37,10 @@ public static class ContainerBuilderExtensions
         return builder.RegisterType<T>().AsSelf().As(extraTypes).AsImplementedInterfaces().InstancePerDependency();
     }
 
-    public static void RegisterTransientsSelfAndInterfaces<T>(this ContainerBuilder builder, Assembly executingAssembly, params Type[] extraTypes)
+    public static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> RegisterTransientsSelfAndInterfaces<T>(this ContainerBuilder builder, Assembly executingAssembly, params Type[] extraTypes)
         where T : notnull
     {
-        builder.RegisterAssemblyTypes(executingAssembly)
+        return builder.RegisterAssemblyTypes(executingAssembly)
                .AssignableTo<T>()
                .As<T>()
                .As(extraTypes)

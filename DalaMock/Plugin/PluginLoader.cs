@@ -1,3 +1,5 @@
+using DalaMock.Core.Windows;
+
 namespace DalaMock.Core.Plugin;
 
 using System;
@@ -164,7 +166,7 @@ public class PluginLoader : IPluginLoader
 
         foreach (var mockService in mockServices)
         {
-            var registrationBuilder = builder.RegisterInstance(mockService).AsSelf();
+            var registrationBuilder = builder.RegisterInstance(mockService).ExternallyOwned().AsSelf();
             var interfaces = mockService.GetType().GetInterfaces();
             if (interfaces.Length != 0)
             {
@@ -174,27 +176,23 @@ public class PluginLoader : IPluginLoader
 
         foreach (var window in this.mockContainer.GetWindows())
         {
-            builder.RegisterInstance(window).AsSelf().As<Window>();
+            builder.RegisterInstance(window).AsSelf().ExternallyOwned().As<Window>();
         }
 
-        builder.RegisterInstance(this.mockContainer.GetWindowSystem());
-
-        var uiBuilder = this.mockContainer.GetContainer().Resolve<IUiBuilder>();
-        var mockVersionInfo = this.mockContainer.GetContainer().Resolve<MockDalamudVersionInfo>();
-        builder.RegisterInstance(uiBuilder).AsSelf().AsImplementedInterfaces();
-        builder.RegisterInstance(pluginLoadSettings);
+        var parentContainer = this.mockContainer.GetContainer();
+        builder.RegisterInstance(parentContainer.Resolve<MockWindowSystem>()).ExternallyOwned().SingleInstance().AsSelf();
+        builder.RegisterInstance(parentContainer.Resolve<DataShare>()).ExternallyOwned().SingleInstance().AsSelf();
+        builder.RegisterInstance(parentContainer.Resolve<MockDalamudVersionInfo>()).ExternallyOwned().SingleInstance().AsSelf();
+        builder.RegisterInstance(parentContainer.Resolve<MockImGuiComponents>()).ExternallyOwned().SingleInstance().AsSelf();
+        builder.RegisterInstance(parentContainer.Resolve<IUiBuilder>()).ExternallyOwned().AsSelf().AsImplementedInterfaces();
+        builder.RegisterInstance(pluginManifest).AsSelf().AsImplementedInterfaces();
+        builder.RegisterInstance(pluginLoadSettings).AsSelf().AsImplementedInterfaces();
         builder.RegisterInstance(this.loggerFactory).ExternallyOwned();
         builder.RegisterGeneric(typeof(Logger<>))
                .As(typeof(ILogger<>))
                .SingleInstance();
         builder.RegisterInstance(this);
-        builder.Register<MockDalamudPluginInterface>(c =>
-            new MockDalamudPluginInterface(
-                uiBuilder,
-                pluginLoadSettings,
-                pluginManifest,
-                c.Resolve<IComponentContext>(),
-                mockVersionInfo)).As<IDalamudPluginInterface>();
+        builder.RegisterType<MockDalamudPluginInterface>().As<IDalamudPluginInterface>().SingleInstance();
 
         var container = builder.Build();
 

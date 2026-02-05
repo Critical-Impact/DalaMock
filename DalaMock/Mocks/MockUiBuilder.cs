@@ -1,3 +1,5 @@
+using DalaMock.Shared.Interfaces;
+
 using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 
 namespace DalaMock.Core.Mocks;
@@ -18,20 +20,23 @@ using UldWrapper = Dalamud.Interface.UldWrapper;
 
 public class MockUiBuilder : IUiBuilder, IMockService
 {
+    private readonly IFont font;
+
     public float FontDefaultSizePt { get; }
 
     public float FontDefaultSizePx { get; }
 
-    public ImFontPtr FontDefault { get; }
+    public ImFontPtr FontDefault => this.font.DefaultFont;
 
-    public ImFontPtr FontIcon { get; }
+    public ImFontPtr FontIcon => this.font.IconFont;
 
-    public ImFontPtr FontMono { get; }
+    public ImFontPtr FontMono => this.font.MonoFont;
 
     public GraphicsDevice GraphicsDevice { get; }
 
-    public MockUiBuilder(ImGuiScene scene)
+    public MockUiBuilder(ImGuiScene scene, IFont font)
     {
+        this.font = font;
         this.GraphicsDevice = scene.GraphicsDevice;
         if (this.GraphicsDevice.GetD3D11Info(out BackendInfoD3D11 dx11Info))
         {

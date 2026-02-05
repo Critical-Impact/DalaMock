@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageType>Template</PackageType>
-    <PackageVersion>4.0.0</PackageVersion>
+    <PackageVersion>4.0.5</PackageVersion>
     <PackageId>DalaMock.PluginTemplate</PackageId>
     <Title>DalaMock Plugin Template</Title>
     <Authors>Critical-Impact</Authors>

@@ -19,11 +19,15 @@ public abstract class MockWindow<T> : Window, IMockWindow
     }
 
     public IMockService MockService { get; }
+
+    public string Name { get; }
 }
 
 public interface IMockWindow
 {
-    public IMockService MockService { get; }
+    public IMockService? MockService { get; }
+
+    public string Name { get; }
 
     public void Toggle();
 

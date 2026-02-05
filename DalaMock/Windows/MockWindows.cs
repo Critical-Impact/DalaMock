@@ -22,6 +22,7 @@ public class MockWindows : Window
     {
         this.mockUiBuilder = uiBuilder;
         this.mockWindows = mockWindows;
+        this.IsOpen = true;
     }
 
     public override void Draw()
@@ -38,7 +39,7 @@ public class MockWindows : Window
 
         foreach (var mockWindow in this.mockWindows)
         {
-            if (ImGui.Button(mockWindow.MockService.ServiceName))
+            if (ImGui.Button(mockWindow.MockService?.ServiceName ?? mockWindow.Name))
             {
                 mockWindow.Toggle();
             }

@@ -24,7 +24,7 @@ public class MockMockWindow : Window
         {
             foreach (var mockWindow in this.mockWindows)
             {
-                using (var tabItem = ImRaii.TabItem(mockWindow.MockService.ServiceName))
+                using (var tabItem = ImRaii.TabItem(mockWindow.MockService?.ServiceName ?? mockWindow.Name))
                 {
                     if (tabItem)
                     {

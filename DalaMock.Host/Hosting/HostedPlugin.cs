@@ -150,6 +150,7 @@ public abstract class HostedPlugin : IDalamudPlugin
                 containerBuilder.RegisterType<Font>().As<IFont>().AsSelf().SingleInstance();
                 containerBuilder.RegisterType<DalamudWindowSystem>().As<IWindowSystem>();
                 containerBuilder.RegisterType<WindowSystemFactory>().As<IWindowSystemFactory>().AsSelf().SingleInstance();
+                containerBuilder.RegisterType<DalamudImGuiComponents>().As<IImGuiComponents>().AsSelf().SingleInstance();
                 foreach (var potentialInterface in this.interfaces)
                 {
                     var registrationBuilder = containerBuilder.RegisterInstance(potentialInterface).AsSelf();

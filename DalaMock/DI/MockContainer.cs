@@ -1,3 +1,5 @@
+using DalaMock.Shared.Extensions;
+
 namespace DalaMock.Core.DI;
 
 using System;
@@ -261,6 +263,7 @@ public class MockContainer
                     PanicOnSheetChecksumMismatch = false,
                 })).SingleInstance();
         builder.RegisterInstance(this.dalamudConfiguration);
+        builder.RegisterType<MockImGuiComponents>().AsSelf().As<IImGuiComponents>().SingleInstance();
         builder.RegisterType<MockDalamudUi>().SingleInstance();
         builder.RegisterType<PluginLoader>().SingleInstance();
         builder.RegisterType<AssertHandler>().SingleInstance();
@@ -272,6 +275,7 @@ public class MockContainer
         builder.RegisterType<MockSettingsWindow>().AsSelf().As<Window>().SingleInstance();
         builder.RegisterType<LocalPlayersWindow>().AsSelf().As<Window>().SingleInstance();
         builder.RegisterType<LocalPlayerEditWindow>().AsSelf().As<Window>().SingleInstance();
+        builder.RegisterType<DataShare>().AsSelf().SingleInstance();
 
         if (this.dalamudConfiguration.CreateWindow)
         {
@@ -298,6 +302,9 @@ public class MockContainer
                 var context = c.Resolve<ImGuiScene>();
                 return context.Window;
             }).SingleInstance();
+
+            builder.RegisterSingletonsSelfAndInterfaces<IDataWindowWidget>(assembly);
+            builder.RegisterType<MockWindows>().AsSelf().As<Window>().SingleInstance();
         }
         else
         {

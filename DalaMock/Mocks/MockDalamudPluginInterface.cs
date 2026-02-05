@@ -38,6 +38,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     private readonly IUiBuilder uiBuilder;
     private readonly IComponentContext componentContext;
     private readonly MockDalamudVersionInfo mockDalamudVersionInfo;
+    private readonly DataShare dataShare;
 
     // private readonly MockProgram _mockProgram;
     private readonly IPluginManifest pluginManifest;
@@ -49,12 +50,14 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         PluginLoadSettings pluginLoadSettings,
         IPluginManifest pluginManifest,
         IComponentContext componentContext,
-        MockDalamudVersionInfo mockDalamudVersionInfo)
+        MockDalamudVersionInfo mockDalamudVersionInfo,
+        DataShare dataShare)
     {
         // _mockProgram = mockProgram;
         this.uiBuilder = uiBuilder;
         this.componentContext = componentContext;
         this.mockDalamudVersionInfo = mockDalamudVersionInfo;
+        this.dataShare = dataShare;
         this.ConfigFile = pluginLoadSettings.ConfigFile;
         this.ConfigDirectory = pluginLoadSettings.ConfigDir;
         this.pluginLoadReason = pluginLoadSettings.PluginLoadReason;
@@ -171,27 +174,27 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     public T GetOrCreateData<T>(string tag, Func<T> dataGenerator)
         where T : class
     {
-        return null!;
+        return this.dataShare.GetOrCreateData(tag, this.InternalName, dataGenerator);
     }
 
     /// <inheritdoc/>
     public void RelinquishData(string tag)
     {
+        this.dataShare.RelinquishData(tag, this.InternalName);
     }
 
     /// <inheritdoc/>
     public bool TryGetData<T>(string tag, out T? data)
         where T : class
     {
-        data = null;
-        return false;
+        return this.dataShare.TryGetData(tag, this.InternalName, out data);
     }
 
     /// <inheritdoc/>
     public T? GetData<T>(string tag)
         where T : class
     {
-        return null!;
+        return this.dataShare.GetData<T>(tag, this.InternalName);
     }
 
     /// <inheritdoc/>

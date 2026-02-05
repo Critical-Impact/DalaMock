@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [4.0.5] - 2026-02-05
+
+- Add DataShare to MockDalamudPluginInterface
+- Added DataShare widget and Mocks Window
+- Added IImGuiComponents
+- MockUiBuilder now provides the correct fonts
+
 ## [4.0.4] - 2026-01-30
 
 - RegisterTransientsSelfAndInterfaces now returns the IRegistrationBuilder

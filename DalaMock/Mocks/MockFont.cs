@@ -8,10 +8,23 @@ using Dalamud.Bindings.ImGui;
 
 public class MockFont : IFont, IMockService
 {
+    private ImFontPtr defaultFont = null;
+    private ImFontPtr monoFont = null;
     private ImFontPtr iconFont = null;
 
     /// <inheritdoc/>
-    public ImFontPtr DefaultFont => ImGui.GetIO().FontDefault;
+    public unsafe ImFontPtr DefaultFont
+    {
+        get
+        {
+            if ((IntPtr)this.iconFont.Handle == IntPtr.Zero)
+            {
+                this.defaultFont = ImGui.GetIO().Fonts.Fonts[1];
+            }
+
+            return this.defaultFont;
+        }
+    }
 
     /// <inheritdoc/>
     public unsafe ImFontPtr IconFont
@@ -20,7 +33,7 @@ public class MockFont : IFont, IMockService
         {
             if ((IntPtr)this.iconFont.Handle == IntPtr.Zero)
             {
-                this.iconFont = ImGui.GetIO().Fonts.Fonts[1];
+                this.iconFont = ImGui.GetIO().Fonts.Fonts[3];
             }
 
             return this.iconFont;
@@ -28,7 +41,18 @@ public class MockFont : IFont, IMockService
     }
 
     /// <inheritdoc/>
-    public ImFontPtr MonoFont => ImGui.GetIO().FontDefault;
+    public unsafe ImFontPtr MonoFont
+    {
+        get
+        {
+            if ((IntPtr)this.monoFont.Handle == IntPtr.Zero)
+            {
+                this.monoFont = ImGui.GetIO().Fonts.Fonts[2];
+            }
+
+            return this.monoFont;
+        }
+    }
 
     public string ServiceName => "Font";
 }

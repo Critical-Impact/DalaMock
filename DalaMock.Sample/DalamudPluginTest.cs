@@ -15,6 +15,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class DalamudPluginTest : HostedPlugin
 {
+    private readonly IPluginLog pluginLog;
+
     public DalamudPluginTest(
         IDalamudPluginInterface pluginInterface,
         IPluginLog pluginLog,
@@ -26,8 +28,25 @@ public class DalamudPluginTest : HostedPlugin
         IDtrBar dtrBar)
         : base(pluginInterface, pluginLog, framework, commandManager, dataManager, textureProvider, chatGui, dtrBar)
     {
+        this.pluginLog = pluginLog;
         this.CreateHost();
+        this.HostedEvents.PluginStopping += this.HostedEventsOnPluginStopping;
+        this.HostedEvents.PluginStopped += this.HostedEventsOnPluginStopped;
         this.Start();
+    }
+
+    private void HostedEventsOnPluginStopped()
+    {
+        // Do something outside the host/DI process when the process stops. This is normally not required but shown as an example of a potential way of doing things
+        this.pluginLog.Verbose("Plugin stopped!");
+        this.HostedEvents.PluginStopped -= this.HostedEventsOnPluginStopped;
+    }
+
+    private void HostedEventsOnPluginStopping()
+    {
+        // Do something outside the host/DI process when the process starts stopping.
+        this.pluginLog.Verbose("Plugin stopping!");
+        this.HostedEvents.PluginStopping -= this.HostedEventsOnPluginStopping;
     }
 
     /// <summary>

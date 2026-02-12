@@ -23,6 +23,7 @@ public class ConfigurationService : HostingAwareService
         this.pluginLog = pluginLog;
         this.framework = framework;
         var configPath = pluginInterface.GetPluginConfigDirectory();
+        pluginLog.Info("Configuration service loaded.");
     }
 
     /// <summary>

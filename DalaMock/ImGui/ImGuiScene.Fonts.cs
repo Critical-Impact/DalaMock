@@ -1,34 +1,67 @@
 namespace DalaMock.Core.Imgui;
 
 using System;
-using System.Runtime.InteropServices;
+using System.IO;
+using System.Reflection;
 
 using Dalamud.Bindings.ImGui;
 
 public partial class ImGuiScene
 {
-    public unsafe ImFontPtr LoadFont(string fontPath, float fontSize, int fontNo = 0, ushort[]? iconRanges = null)
+    public unsafe ImFontPtr LoadFontFromEmbeddedResource(
+        string resourceName,
+        float fontSize,
+        ushort* glyphRanges = null,
+        bool mergeMode = false)
     {
-        ImGuiIOPtr io = ImGui.GetIO();
+        var io = ImGui.GetIO();
 
-        GCHandle iconRangeHandle = GCHandle.Alloc(iconRanges, GCHandleType.Pinned);
-        IntPtr iconRangePtr = iconRangeHandle.AddrOfPinnedObject();
+        using var stream = typeof(ImGuiScene).Assembly
+                                             .GetManifestResourceStream(resourceName)
+                           ?? throw new InvalidOperationException($"Missing resource {resourceName}");
 
-        ImFontConfigPtr fontConfig = ImGui.ImFontConfig();
-        fontConfig.FontNo = fontNo;
-        fontConfig.GlyphRanges = (ushort*)iconRangePtr;
+        using var ms = new MemoryStream();
+        stream.CopyTo(ms);
+        var fontData = ms.ToArray();
 
-        ImFontPtr newFont = io.Fonts.AddFontFromFileTTF(fontPath, fontSize, fontConfig.Handle, (ushort*)iconRangePtr);
-        ImGui.GetIO().Fonts.Build();
+        var fontConfig = ImGui.ImFontConfig();
+        fontConfig.FontNo = 0;
+        fontConfig.GlyphRanges = glyphRanges;
+        fontConfig.FontDataOwnedByAtlas = true;
+        fontConfig.MergeMode = mergeMode;
 
-        this.RecreateFontDeviceTexture(this.GraphicsDevice);
+        var font = io.Fonts.AddFontFromMemoryTTF(
+            fontData,
+            fontSize,
+            fontConfig,
+            glyphRanges);
 
         fontConfig.Destroy();
-        if (iconRangeHandle.IsAllocated)
+        return font;
+    }
+
+    private byte[] LoadEmbeddedResource(string resourceName)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+
+        var fullResourceName = typeof(ImGuiScene).Assembly.GetManifestResourceStream(resourceName);
+
+        if (fullResourceName == null)
         {
-            iconRangeHandle.Free();
+            throw new FileNotFoundException(
+                $"Embedded resource '{resourceName}' not found. Available resources: {string.Join(", ", assembly.GetManifestResourceNames())}");
         }
 
-        return newFont;
+        using var stream = typeof(ImGuiScene).Assembly
+                                             .GetManifestResourceStream(resourceName)
+                           ?? throw new InvalidOperationException($"Missing resource {resourceName}");
+        if (stream == null)
+        {
+            throw new FileNotFoundException($"Could not load embedded resource '{resourceName}'");
+        }
+
+        using var memoryStream = new MemoryStream();
+        stream.CopyTo(memoryStream);
+        return memoryStream.ToArray();
     }
 }

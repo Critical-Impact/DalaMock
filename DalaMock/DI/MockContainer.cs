@@ -216,7 +216,7 @@ public class MockContainer
 
     private void ConfigureLogging(ILoggingBuilder log)
     {
-        log.AddSerilog();
+        log.AddSerilog(this.seriLog);
         log.AddConsole();
     }
 
@@ -251,7 +251,7 @@ public class MockContainer
                .As(typeof(ILogger<>))
                .SingleInstance();
 
-        builder.RegisterInstance(this.seriLog).As<Serilog.ILogger>();
+        builder.RegisterInstance(this.seriLog).As<Serilog.ILogger>().SingleInstance();
 
         builder.RegisterInstance(this.levelSwitch);
         builder.RegisterInstance(this.configurationManager);

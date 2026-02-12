@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [4.0.6] - 2026-09-02
+
+- The 3 default fonts are now loaded as embedded resources and have the game glyphs merged
+- The window size/position/state are saved in a dalamock_ui.json and DalaMock will attempt to restore these
+- HostedPlugin now exposes HostedEvents and has a virtual Dispose
+- The sample now includes examples of overriding a DalaMock service and subscribing to HostedEvents outside the regular host/DI workflow
+- Fixed an issue with the wrong serilog being used for mocks
+
 ## [4.0.5] - 2026-02-05
 
 - Add DataShare to MockDalamudPluginInterface

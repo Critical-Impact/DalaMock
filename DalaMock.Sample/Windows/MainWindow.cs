@@ -1,3 +1,5 @@
+using Dalamud.Game.Text;
+
 namespace DalaMock.Sample.Windows;
 
 using DalaMock.Shared.Interfaces;
@@ -25,6 +27,10 @@ public class MainWindow : Window
         using (ImRaii.PushFont(this.font1.IconFont))
         {
             ImGui.Text(FontAwesomeIcon.Times.ToIconString());
+        }
+        using (ImRaii.PushFont(this.font1.DefaultFont))
+        {
+            ImGui.Text(SeIconChar.BoxedLetterD.ToIconString() + SeIconChar.BoxedLetterA.ToIconString() + SeIconChar.BoxedLetterL.ToIconString() + SeIconChar.BoxedLetterA.ToIconString() + SeIconChar.BoxedLetterM.ToIconString() + SeIconChar.BoxedLetterO.ToIconString() + SeIconChar.BoxedLetterC.ToIconString() + SeIconChar.BoxedLetterK.ToIconString());
         }
     }
 }

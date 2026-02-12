@@ -13,7 +13,7 @@ using Veldrid;
 /// </summary>
 public partial class ImGuiScene
 {
-    private readonly ImTextureID fontAtlasId = 1;
+    private readonly IntPtr fontAtlasId = (IntPtr)1;
     private Texture? fontTexture;
     private ResourceSet? fontTextureResourceSet;
     private TextureView fontTextureView;
@@ -117,7 +117,7 @@ public partial class ImGuiScene
         io.Fonts.GetTexDataAsRGBA32(0, ref pixels, ref width, ref height, ref bytesPerPixel);
 
         // Store our identifier
-        io.Fonts.SetTexID(0, this.fontAtlasId);
+        io.Fonts.SetTexID(0, new ImTextureID(this.fontAtlasId));
 
         this.fontTexture?.Dispose();
         this.fontTexture = gd.ResourceFactory.CreateTexture(

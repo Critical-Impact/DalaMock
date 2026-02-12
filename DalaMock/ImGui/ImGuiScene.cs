@@ -3,12 +3,16 @@ namespace DalaMock.Core.Imgui;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Game.Text;
 using Dalamud.Interface.Utility;
-
+using Newtonsoft.Json;
 using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
@@ -20,26 +24,33 @@ using static System.Reflection.BindingFlags;
 /// </summary>
 public partial class ImGuiScene : IDisposable
 {
+    private const string StateFilePath = "dalamock_ui.json";
+    private const int DebounceDelayMs = 500;
+    private static readonly char SeIconCharMin = (char)Enum.GetValues<SeIconChar>().Min();
+    private static readonly char SeIconCharMax = (char)Enum.GetValues<SeIconChar>().Max();
     private readonly AssertHandler assertHandler;
-
-    public delegate void BuildUiDelegate();
-
     private readonly Dictionary<Texture, TextureView> autoViewsByTexture = new();
     private readonly List<IDisposable> ownedResources = new();
-
     private readonly Dictionary<TextureView, ResourceSetInfo> setsByView = new();
     private readonly Dictionary<IntPtr, ResourceSetInfo> viewsById = new();
-    private Vector3 backgroundColour = new(0.45f, 0.55f, 0.6f);
+    private readonly Vector3 backgroundColour = new(0.45f, 0.55f, 0.6f);
+    private readonly byte[] gameFontData;
+    private readonly unsafe ushort* gameGlyphRanges;
+    private readonly bool pauseRendering = false;
+    private readonly Vector2 scaleFactor = Vector2.One;
+
+    private MockWindowState currentWindowState;
+    private CancellationTokenSource debounceCts;
+
     private bool disposedValue;
     private int lastAssignedId = 100;
 
     /// <summary>
     /// User methods invoked every ImGui frame to construct custom UIs.
     /// </summary>
-    public BuildUiDelegate OnBuildUi;
+    public event BuildUiDelegate OnBuildUi;
 
-    private bool pauseRendering = false;
-    private Vector2 scaleFactor = Vector2.One;
+    public delegate void BuildUiDelegate();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ImGuiScene"/> class.
@@ -47,7 +58,7 @@ public partial class ImGuiScene : IDisposable
     /// </summary>
     /// <param name="createInfo">Creation details for the window.</param>
     /// <param name="assertHandler"></param>
-    public ImGuiScene(WindowCreateInfo createInfo, AssertHandler assertHandler)
+    public unsafe ImGuiScene(WindowCreateInfo createInfo, AssertHandler assertHandler)
     {
         this.assertHandler = assertHandler;
         GraphicsDevice graphicsDevice;
@@ -71,7 +82,12 @@ public partial class ImGuiScene : IDisposable
         var context = ImGui.CreateContext();
         ImGui.SetCurrentContext(context);
         assertHandler.Setup();
-        ImGui.GetIO().Fonts.AddFontDefault();
+
+        this.gameFontData = this.LoadEmbeddedResource("gf.ttf");
+        this.gameGlyphRanges = this.GetGameGlyphRanges();
+
+        this.BuildDefaultFonts();
+
         ImGui.GetIO().BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
         ImGui.GetIO().FontGlobalScale = 1;
         var field = typeof(ImGuiHelpers).GetProperty(
@@ -82,11 +98,72 @@ public partial class ImGuiScene : IDisposable
         this.CreateDeviceResources(
             this.GraphicsDevice,
             this.GraphicsDevice.MainSwapchain.Framebuffer.OutputDescription);
-        this.LoadFont(Path.Combine("Fonts", "FontAwesomeFreeSolid.otf"), 12.0f, 0, new ushort[] { 0xe005, 0xf8ff, 0x00 });
         this.SetKeyMappings();
         this.SetPerFrameImGuiData(0);
         ImGui.NewFrame();
         ImGui.EndFrame();
+
+        this.currentWindowState = this.CaptureWindowState();
+    }
+
+    private unsafe void BuildDefaultFonts()
+    {
+        var baseFontSize = (12 * 4.0f) / 3.0f;
+        var gameGlyphSize = baseFontSize * 2.0f;
+
+        ImGui.GetIO().Fonts.AddFontDefault(null);
+        this.AddFontFromMemory(this.gameFontData, gameGlyphSize, this.gameGlyphRanges, mergeMode: true);
+
+        this.LoadFontFromEmbeddedResource(
+            "NotoSansCJKjp-Medium.otf",
+            baseFontSize,
+            ImGui.GetIO().Fonts.GetGlyphRangesJapanese());
+        this.AddFontFromMemory(this.gameFontData, gameGlyphSize, this.gameGlyphRanges, mergeMode: true);
+
+        this.LoadFontFromEmbeddedResource(
+            "Inconsolata-Regular.ttf",
+            baseFontSize,
+            ImGui.GetIO().Fonts.GetGlyphRangesDefault());
+        this.AddFontFromMemory(this.gameFontData, gameGlyphSize, this.gameGlyphRanges, mergeMode: true);
+
+        this.LoadFontFromEmbeddedResource(
+            "FontAwesomeFreeSolid.otf",
+            baseFontSize,
+            GetFontAwesomeRanges());
+        this.AddFontFromMemory(this.gameFontData, gameGlyphSize, this.gameGlyphRanges, mergeMode: true);
+
+        ImGui.GetIO().Fonts.Build();
+    }
+
+    private unsafe ushort* GetGameGlyphRanges()
+    {
+        var builder = ImGuiNative.ImFontGlyphRangesBuilder();
+
+        for (char c = SeIconCharMin; c <= SeIconCharMax; c++)
+        {
+            ImGuiNative.AddChar(builder, c);
+        }
+
+        ImVector<ushort> ranges;
+        ImGuiNative.BuildRanges(builder, &ranges);
+
+        return ranges.Data;
+    }
+
+    private unsafe void AddFontFromMemory(byte[] fontData, float size, ushort* glyphRanges, bool mergeMode)
+    {
+        var fontConfig = ImGui.ImFontConfig();
+        fontConfig.MergeMode = mergeMode;
+        fontConfig.GlyphMinAdvanceX = 13.0f;
+        fontConfig.FontDataOwnedByAtlas = true;
+
+        ImGui.GetIO().Fonts.AddFontFromMemoryTTF(
+            fontData,
+            size,
+            fontConfig,
+            glyphRanges);
+
+        fontConfig.Destroy();
     }
 
     /// <summary>
@@ -120,18 +197,43 @@ public partial class ImGuiScene : IDisposable
     /// </summary>
     /// <param name="assertHandler">The assert handler.</param>
     /// <returns>Returns a imguiscene.</returns>
-    public static ImGuiScene CreateWindow(AssertHandler assertHandler)
+    public static unsafe ImGuiScene CreateWindow(AssertHandler assertHandler)
     {
-        var scene = new ImGuiScene(
-            new WindowCreateInfo
+        var savedState = LoadWindowState();
+
+        var createInfo = new WindowCreateInfo
+        {
+            WindowTitle = "DalaMock",
+            WindowWidth = savedState?.Width ?? 1024,
+            WindowHeight = savedState?.Height ?? 768,
+            X = savedState?.X ?? 0,
+            Y = savedState?.Y ?? 0,
+            WindowInitialState = WindowState.Maximized,
+        };
+        if (savedState != null)
+        {
+            createInfo.WindowInitialState = savedState.IsMaximized
+                                                ? Veldrid.WindowState.Maximized
+                                                : Veldrid.WindowState.Normal;
+            int numDisplays = Sdl2Native.SDL_GetNumVideoDisplays();
+            if (savedState.MonitorIndex >= numDisplays)
             {
-                WindowTitle = "DalaMock",
-                WindowInitialState = WindowState.Maximized,
-                WindowWidth = 500,
-                WindowHeight = 500,
-            },
-            assertHandler);
+                savedState.MonitorIndex = 0;
+            }
+
+            Rectangle displayBounds;
+            Sdl2Native.SDL_GetDisplayBounds(savedState.MonitorIndex, &displayBounds);
+
+            int clampedX = Math.Max(displayBounds.X, Math.Min(savedState.X, (displayBounds.X + displayBounds.Width) - 100));
+            int clampedY = Math.Max(displayBounds.Y, Math.Min(savedState.Y, (displayBounds.Y + displayBounds.Height) - 100));
+
+            createInfo.X = clampedX;
+            createInfo.Y = clampedY;
+        }
+
+        var scene = new ImGuiScene(createInfo, assertHandler);
         scene.Window.Opacity = 1;
+
         return scene;
     }
 
@@ -160,6 +262,8 @@ public partial class ImGuiScene : IDisposable
     {
         var snapshot = this.Window.PumpEvents();
 
+        this.TrackWindowState();
+
         if (!this.pauseRendering)
         {
             var deltaSeconds = 1000f / SDL_GetPerformanceFrequency();
@@ -181,8 +285,128 @@ public partial class ImGuiScene : IDisposable
         }
     }
 
+    private unsafe MockWindowState CaptureWindowState()
+    {
+        var handle = this.Window.SdlWindowHandle;
+
+        int x, y, width, height;
+        Sdl2Native.SDL_GetWindowPosition(handle, &x, &y);
+        Sdl2Native.SDL_GetWindowSize(handle, &width, &height);
+
+        bool isMaximized = this.Window.WindowState == WindowState.Maximized;
+
+        int monitorIndex = this.GetMonitorIndexForWindow(handle);
+
+        return new MockWindowState
+        {
+            X = x,
+            Y = y,
+            Width = width,
+            Height = height,
+            IsMaximized = isMaximized,
+            MonitorIndex = monitorIndex,
+        };
+    }
+
+    private void TrackWindowState()
+    {
+        var newState = this.CaptureWindowState();
+
+        if (!this.WindowStatesEqual(newState, this.currentWindowState))
+        {
+            this.currentWindowState = newState;
+            this.DebounceSaveWindowState();
+        }
+    }
+
+    private bool WindowStatesEqual(MockWindowState a, MockWindowState b)
+    {
+        return a.X == b.X
+            && a.Y == b.Y
+            && a.Width == b.Width
+            && a.Height == b.Height
+            && a.IsMaximized == b.IsMaximized
+            && a.MonitorIndex == b.MonitorIndex;
+    }
+
+    private void DebounceSaveWindowState()
+    {
+        this.debounceCts?.Cancel();
+        this.debounceCts = new CancellationTokenSource();
+
+        var token = this.debounceCts.Token;
+
+        Task.Run(
+            async () =>
+        {
+            try
+            {
+                await Task.Delay(DebounceDelayMs, token);
+
+                if (!token.IsCancellationRequested)
+                {
+                    SaveWindowState(this.currentWindowState);
+                }
+            }
+            catch (TaskCanceledException)
+            {
+            }
+        },
+            token);
+    }
+
+    private static void SaveWindowState(MockWindowState state)
+    {
+        try
+        {
+            var json = JsonConvert.SerializeObject(state, Formatting.Indented);
+            File.WriteAllText(StateFilePath, json);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to save window state: {ex.Message}");
+        }
+    }
+
+    private static MockWindowState? LoadWindowState()
+    {
+        try
+        {
+            if (File.Exists(StateFilePath))
+            {
+                var json = File.ReadAllText(StateFilePath);
+                return JsonConvert.DeserializeObject<MockWindowState>(json);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log error or handle gracefully
+            Console.WriteLine($"Failed to load window state: {ex.Message}");
+        }
+
+        return null;
+    }
+
+    private unsafe int GetMonitorIndexForWindow(IntPtr windowHandle)
+    {
+        int displayIndex = Sdl2Native.SDL_GetWindowDisplayIndex(windowHandle);
+        return displayIndex >= 0 ? displayIndex : 0;
+    }
+
+
+    private static unsafe ushort* GetFontAwesomeRanges()
+    {
+        var ranges = (ushort*)ImGui.MemAlloc(sizeof(ushort) * 3);
+        ranges[0] = 0xF000;
+        ranges[1] = 0xF8FF;
+        ranges[2] = 0;
+        return ranges;
+    }
+
     private void WindowOnClosed()
     {
+        this.debounceCts?.Cancel();
+        SaveWindowState(this.currentWindowState);
         this.ShouldQuit = true;
     }
 

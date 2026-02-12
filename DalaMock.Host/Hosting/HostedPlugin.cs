@@ -76,10 +76,12 @@ public abstract class HostedPlugin : IDalamudPlugin
     /// </summary>
     public HostedPluginOptions HostedPluginOptions { get; private set; }
 
+    public HostedEvents HostedEvents => this.hostedEvents;
+
     /// <summary>
     /// Can the plugin be disposed?.
     /// </summary>
-    public void Dispose()
+    public virtual void Dispose()
     {
         if (this.IsStarted)
         {
@@ -145,7 +147,7 @@ public abstract class HostedPlugin : IDalamudPlugin
             .ConfigureContainer<ContainerBuilder>(containerBuilder =>
             {
                 this.interfaces.Add(this.pluginLog);
-                containerBuilder.RegisterInstance(this.hostedEvents).AsSelf();
+                containerBuilder.RegisterInstance(this.HostedEvents).AsSelf();
                 containerBuilder.RegisterInstance(this.pluginInterface).As<IDalamudPluginInterface>().AsSelf();
                 containerBuilder.RegisterType<Font>().As<IFont>().AsSelf().SingleInstance();
                 containerBuilder.RegisterType<DalamudWindowSystem>().As<IWindowSystem>();
@@ -184,8 +186,8 @@ public abstract class HostedPlugin : IDalamudPlugin
         });
 
         this.host = hostBuilder.Build();
-        this.hostedEvents.OnPluginEvent(HostedEventType.PluginBuilt);
-        this.hostedEvents.OnPluginBuilt();
+        this.HostedEvents.OnPluginEvent(HostedEventType.PluginBuilt);
+        this.HostedEvents.OnPluginBuilt();
 
         return this.host;
     }
@@ -218,8 +220,8 @@ public abstract class HostedPlugin : IDalamudPlugin
             this.host.Services.GetRequiredService<MediatorService>().Publish(new PluginStartedMessage());
         }
 
-        this.hostedEvents.OnPluginEvent(HostedEventType.PluginStarted);
-        this.hostedEvents.OnPluginStarted();
+        this.HostedEvents.OnPluginEvent(HostedEventType.PluginStarted);
+        this.HostedEvents.OnPluginStarted();
 
         this.IsStarted = true;
     }
@@ -231,10 +233,11 @@ public abstract class HostedPlugin : IDalamudPlugin
             this.host?.Services.GetRequiredService<MediatorService>().Publish(new PluginStoppingMessage());
         }
 
-        this.hostedEvents.OnPluginEvent(HostedEventType.PluginStopping);
-        this.hostedEvents.OnPluginStopping();
+        this.HostedEvents.OnPluginEvent(HostedEventType.PluginStopping);
+        this.HostedEvents.OnPluginStopping();
         this.host?.StopAsync().GetAwaiter().GetResult();
         this.IsStarted = false;
-        this.hostedEvents.OnPluginEvent(HostedEventType.PluginStopped);
+        this.HostedEvents.OnPluginEvent(HostedEventType.PluginStopped);
+        this.HostedEvents.OnPluginStopped();
     }
 }

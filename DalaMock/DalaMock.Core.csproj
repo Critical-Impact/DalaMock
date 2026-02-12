@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <LangVersion>12.0</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>4.0.5</Version>
+        <Version>4.0.6</Version>
         <PackageProjectUrl>https://github.com/Critical-Impact/DalaMock</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Critical-Impact/DalaMock</RepositoryUrl>
         <Authors>Critical-Impact</Authors>
@@ -16,13 +16,6 @@
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <IncludeSymbols>true</IncludeSymbols>
     </PropertyGroup>
-
-    <ItemGroup>
-        <ContentWithTargetPath Include="Fonts\FontAwesomeFreeSolid.otf">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <TargetPath>Fonts\FontAwesomeFreeSolid.otf</TargetPath>
-        </ContentWithTargetPath>
-    </ItemGroup>
 
     <PropertyGroup>
         <CodeAnalysisRuleSet>../custom.ruleset</CodeAnalysisRuleSet>
@@ -115,6 +108,12 @@
         <EmbeddedResource Include="Shaders/SPIR-V/imgui-frag.spv" LogicalName="imgui-frag.spv"/>
         <EmbeddedResource Include="Shaders/Metal/imgui-vertex.metallib" LogicalName="imgui-vertex.metallib"/>
         <EmbeddedResource Include="Shaders/Metal/imgui-frag.metallib" LogicalName="imgui-frag.metallib"/>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="../lib/DalamudAssets/UIRes/NotoSansCJKjp-Medium.otf" LogicalName="NotoSansCJKjp-Medium.otf"/>
+        <EmbeddedResource Include="../lib/DalamudAssets/UIRes/FontAwesomeFreeSolid.otf" LogicalName="FontAwesomeFreeSolid.otf"/>
+        <EmbeddedResource Include="../lib/DalamudAssets/UIRes/Inconsolata-Regular.ttf" LogicalName="Inconsolata-Regular.ttf"/>
+        <EmbeddedResource Include="Fonts\gf.ttf" LogicalName="gf.ttf" />
     </ItemGroup>
     <ItemGroup>
         <None Update="cimgui.dll">

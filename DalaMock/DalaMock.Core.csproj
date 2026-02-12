@@ -108,11 +108,13 @@
         <EmbeddedResource Include="Shaders/SPIR-V/imgui-frag.spv" LogicalName="imgui-frag.spv"/>
         <EmbeddedResource Include="Shaders/Metal/imgui-vertex.metallib" LogicalName="imgui-vertex.metallib"/>
         <EmbeddedResource Include="Shaders/Metal/imgui-frag.metallib" LogicalName="imgui-frag.metallib"/>
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="$(MSBuildProjectDirectory)/../lib/DalamudAssets/UIRes/NotoSansCJKjp-Medium.otf" LogicalName="NotoSansCJKjp-Medium.otf"/>
-        <EmbeddedResource Include="$(MSBuildProjectDirectory)/../lib/DalamudAssets/UIRes/FontAwesomeFreeSolid.otf" LogicalName="FontAwesomeFreeSolid.otf"/>
-        <EmbeddedResource Include="$(MSBuildProjectDirectory)/../lib/DalamudAssets/UIRes/Inconsolata-Regular.ttf" LogicalName="Inconsolata-Regular.ttf"/>
+        <EmbeddedResource Include="Fonts\NotoSansKR-Regular.otf" LogicalName="NotoSansKR-Regular.otf"/>
+        <EmbeddedResource Include="Fonts\NotoSansCJK-Medium.ttc" LogicalName="NotoSansCJK-Medium.ttc"/>
+        <EmbeddedResource Include="Fonts\Inconsolata-Regular.ttf" LogicalName="Inconsolata-Regular.ttf"/>
+        <EmbeddedResource Include="Fonts\NotoSansCJK-Regular.ttc" LogicalName="NotoSansCJK-Regular.ttc"/>
+        <EmbeddedResource Include="Fonts\NotoSansCJKjp-Medium.otf" LogicalName="NotoSansCJKjp-Medium.otf"/>
+        <EmbeddedResource Include="Fonts\FontAwesome710FreeSolid.otf" LogicalName="FontAwesome710FreeSolid.otf"/>
+        <EmbeddedResource Include="Fonts\FontAwesomeFreeSolid.otf" LogicalName="FontAwesomeFreeSolid.otf"/>
         <EmbeddedResource Include="Fonts\gf.ttf" LogicalName="gf.ttf" />
     </ItemGroup>
     <ItemGroup>

@@ -110,9 +110,9 @@
         <EmbeddedResource Include="Shaders/Metal/imgui-frag.metallib" LogicalName="imgui-frag.metallib"/>
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="../lib/DalamudAssets/UIRes/NotoSansCJKjp-Medium.otf" LogicalName="NotoSansCJKjp-Medium.otf"/>
-        <EmbeddedResource Include="../lib/DalamudAssets/UIRes/FontAwesomeFreeSolid.otf" LogicalName="FontAwesomeFreeSolid.otf"/>
-        <EmbeddedResource Include="../lib/DalamudAssets/UIRes/Inconsolata-Regular.ttf" LogicalName="Inconsolata-Regular.ttf"/>
+        <EmbeddedResource Include="$(MSBuildProjectDirectory)/../lib/DalamudAssets/UIRes/NotoSansCJKjp-Medium.otf" LogicalName="NotoSansCJKjp-Medium.otf"/>
+        <EmbeddedResource Include="$(MSBuildProjectDirectory)/../lib/DalamudAssets/UIRes/FontAwesomeFreeSolid.otf" LogicalName="FontAwesomeFreeSolid.otf"/>
+        <EmbeddedResource Include="$(MSBuildProjectDirectory)/../lib/DalamudAssets/UIRes/Inconsolata-Regular.ttf" LogicalName="Inconsolata-Regular.ttf"/>
         <EmbeddedResource Include="Fonts\gf.ttf" LogicalName="gf.ttf" />
     </ItemGroup>
     <ItemGroup>

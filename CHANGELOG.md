@@ -13,7 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-## [4.0.6] - 2026-09-02
+## [4.1.0] - 2026-02-15
+
+- MockContainer's serviceReplacements dictionary now expects a <InterfaceType, ImplementingType>. The interface should be the dalamud service you want to provide. The implementing type should implement the interface plus IMockService.
+- If DalaMock already provides a mock for the dalamud service, it will be replaced. If DalaMock does not provide a mock, it will be added to the service container.
+
+## [4.0.6] - 2026-02-09
 
 - The 3 default fonts are now loaded as embedded resources and have the game glyphs merged
 - The window size/position/state are saved in a dalamock_ui.json and DalaMock will attempt to restore these

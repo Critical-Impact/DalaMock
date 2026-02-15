@@ -1,5 +1,7 @@
 using DalaMock.Shared.Extensions;
 
+using Dalamud;
+
 namespace DalaMock.Core.DI;
 
 using System;
@@ -51,7 +53,7 @@ public class MockContainer
     /// </summary>
     /// <param name="dalamudConfiguration">The configuration to use.</param>
     /// <param name="containerBuildHook">Allows you to alter the services registered by the container.</param>
-    /// <param name="serviceReplacements">A dictionary of dalamud mocks service types and what they should be replaced with.</param>
+    /// <param name="serviceReplacements">A dictionary of service replacements or additions. Provide the dalamud interface and the corresponding mock you want to supply. Will either replace the existing mock or add it to the service container. Mocks must implement IMockService</param>
     /// <param name="askPath">If set to true and no game path is found, will ask the user to select the ffxiv sqpack folder.</param>
     public MockContainer(MockDalamudConfiguration? dalamudConfiguration = null, Action<ContainerBuilder>? containerBuildHook = null, Dictionary<Type, Type>? serviceReplacements = null, bool askPath = true)
     {
@@ -317,16 +319,31 @@ public class MockContainer
             mockServiceTypes = fixedList;
         }
 
+        var replacedTypes = new Dictionary<Type, Type>();
+
         // Register each type as implementing IMockService or as the replacement type if specified
         foreach (var type in mockServiceTypes)
         {
-            if (this.serviceReplacements != null && this.serviceReplacements.TryGetValue(type, out var replacementType))
+            var backingInterface = type.GetInterfaces().FirstOrDefault(c => this.GetType() == typeof(IServiceType));
+            if (backingInterface != null && this.serviceReplacements != null && this.serviceReplacements.TryGetValue(backingInterface, out var replacementType))
             {
+                replacedTypes.Add(type, replacementType);
                 builder.RegisterType(replacementType).AsSelf().As(replacementType.GetInterfaces()).SingleInstance();
             }
             else
             {
                 builder.RegisterType(type).AsSelf().As(type.GetInterfaces()).SingleInstance();
+            }
+        }
+
+        if (this.serviceReplacements != null)
+        {
+            foreach (var replacement in this.serviceReplacements)
+            {
+                if (!replacedTypes.ContainsKey(replacement.Key))
+                {
+                    builder.RegisterType(replacement.Value).AsSelf().As(replacement.Key).As<IMockService>().SingleInstance();
+                }
             }
         }
 

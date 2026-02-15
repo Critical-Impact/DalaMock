@@ -1,20 +1,22 @@
+namespace DalaMock.Sample.Mock;
+
 using System;
 using System.Collections.Generic;
 
+using DalaMock.Core.DI;
 using DalaMock.Core.Mocks;
 using DalaMock.Sample.Services;
-
-namespace DalaMock.Sample.Mock;
-
-using DalaMock.Core.DI;
+using Dalamud.Plugin.Services;
 
 internal static class Program
 {
     private static void Main(string[] args)
     {
-        var mockContainer = new MockContainer(serviceReplacements: new Dictionary<Type, Type>()
+        var mockContainer = new MockContainer(
+            serviceReplacements: new Dictionary<Type, Type>()
         {
-            { typeof(MockPluginLog), typeof(MockPluginLogReplacement) },
+            { typeof(IPluginLog), typeof(MockPluginLogReplacement) },
+            { typeof(ISigScanner), typeof(MockSigScanner) },
         });
         var mockDalamudUi = mockContainer.GetMockUi();
         var pluginLoader = mockContainer.GetPluginLoader();

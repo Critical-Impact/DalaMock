@@ -1,3 +1,5 @@
+using Dalamud.Game.ClientState.Customize;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -314,6 +316,8 @@ public class MockCharacter : ICharacter
         get => this.customize;
         set => this.customize = value;
     }
+
+    public ICustomizeData CustomizeData { get; set; }
 
     /// <inheritdoc/>
     [ImGuiGroup("Basic")]

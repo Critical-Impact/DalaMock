@@ -1,5 +1,6 @@
 using System.Runtime.Loader;
 
+using Dalamud.Plugin.Ipc.Internal;
 using Dalamud.Plugin.VersionInfo;
 
 namespace DalaMock.Core.Mocks;
@@ -44,6 +45,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     private readonly IPluginManifest pluginManifest;
     private PluginConfiguration pluginConfiguration;
     private PluginLoadReason pluginLoadReason;
+    private readonly Guid pluginGuid;
 
     public MockDalamudPluginInterface(
         IUiBuilder uiBuilder,
@@ -64,6 +66,8 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         this.AssemblyLocation = new FileInfo((pluginLoadSettings.AssemblyLocation ?? Environment.ProcessPath)!);
         this.pluginConfiguration = new PluginConfiguration(pluginLoadSettings.ConfigDir.FullName);
         this.pluginManifest = pluginManifest;
+        //TODO: Move this GUID into a LocalPluginManifest record
+        pluginGuid = Guid.NewGuid();
     }
 
     /// <inheritdoc/>
@@ -174,27 +178,28 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     public T GetOrCreateData<T>(string tag, Func<T> dataGenerator)
         where T : class
     {
-        return this.dataShare.GetOrCreateData(tag, this.InternalName, dataGenerator);
+        return this.dataShare.GetOrCreateData(tag, new DataCachePluginId(this.InternalName, this.pluginGuid), dataGenerator);
     }
 
     /// <inheritdoc/>
     public void RelinquishData(string tag)
     {
-        this.dataShare.RelinquishData(tag, this.InternalName);
+
+        this.dataShare.RelinquishData(tag, new DataCachePluginId(this.InternalName, this.pluginGuid));
     }
 
     /// <inheritdoc/>
     public bool TryGetData<T>(string tag, out T? data)
         where T : class
     {
-        return this.dataShare.TryGetData(tag, this.InternalName, out data);
+        return this.dataShare.TryGetData(tag, new DataCachePluginId(this.InternalName, this.pluginGuid), out data);
     }
 
     /// <inheritdoc/>
     public T? GetData<T>(string tag)
         where T : class
     {
-        return this.dataShare.GetData<T>(tag, this.InternalName);
+        return this.dataShare.GetData<T>(tag, new DataCachePluginId(this.InternalName, this.pluginGuid));
     }
 
     /// <inheritdoc/>

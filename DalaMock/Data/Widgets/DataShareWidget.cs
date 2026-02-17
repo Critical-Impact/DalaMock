@@ -1,3 +1,5 @@
+using Dalamud.Plugin.Ipc.Internal;
+
 namespace DalaMock.Core.Data.Widgets;
 
 using System;
@@ -96,7 +98,7 @@ internal class DataShareWidget : IDataWindowWidget
             {
                 try
                 {
-                    var data2 = this.dataShare.Value.GetData<object>(name, "DataShareWidget");
+                    var data2 = this.dataShare.Value.GetData<object>(name, new DataCachePluginId("DataShareWidget", Guid.Empty));
                     try
                     {
                         data = Encoding.UTF8.GetBytes(
@@ -107,7 +109,7 @@ internal class DataShareWidget : IDataWindowWidget
                     }
                     finally
                     {
-                        this.dataShare.Value.RelinquishData(name, "DataShareWidget");
+                        this.dataShare.Value.RelinquishData(name, new DataCachePluginId("DataShareWidget", Guid.Empty));
                     }
                 }
                 catch (Exception e)
@@ -205,9 +207,9 @@ internal class DataShareWidget : IDataWindowWidget
                 this.nextTab = 2 + index;
             }
 
-            this.DrawTextCell(share.CreatorAssembly, null, true);
-            this.DrawTextCell(share.Users.Length.ToString(), null, true);
-            this.DrawTextCell(string.Join(", ", share.Users), null, true);
+            this.DrawTextCell(share.CreatorPluginId.InternalName, () => share.CreatorPluginId.EffectiveWorkingId.ToString(), true);
+            this.DrawTextCell(share.UserPluginIds.Length.ToString(), null, true);
+            this.DrawTextCell(string.Join(", ", share.UserPluginIds.Select(c => c.InternalName)), () => string.Join("\n", share.UserPluginIds.Select(c => $"{c.InternalName} ({c.EffectiveWorkingId.ToString()}")), true);
         }
     }
 }

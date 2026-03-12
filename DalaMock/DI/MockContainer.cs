@@ -1,3 +1,5 @@
+using DalaMock.Core.Mocks.NounProcessor;
+using DalaMock.Core.Mocks.SeStringEvaluator;
 using DalaMock.Shared.Extensions;
 
 using Dalamud;
@@ -278,6 +280,9 @@ public class MockContainer
         builder.RegisterType<LocalPlayersWindow>().AsSelf().As<Window>().SingleInstance();
         builder.RegisterType<LocalPlayerEditWindow>().AsSelf().As<Window>().SingleInstance();
         builder.RegisterType<DataShare>().AsSelf().SingleInstance();
+        builder.RegisterType<SheetRedirectResolver>().AsSelf().SingleInstance();
+        builder.RegisterType<NounProcessor>().AsSelf().SingleInstance();
+        builder.RegisterType<MockMacroDecoder>().AsSelf().SingleInstance();
 
         if (this.dalamudConfiguration.CreateWindow)
         {

@@ -1,3 +1,5 @@
+using Dalamud.Interface.Windowing;
+
 namespace DalaMock.Host.Hosting;
 
 using System;
@@ -25,7 +27,6 @@ using Microsoft.Extensions.Logging;
 /// </summary>
 public abstract class HostedPlugin : IDalamudPlugin
 {
-    private readonly List<object> interfaces;
     private readonly IDalamudPluginInterface pluginInterface;
     private readonly IPluginLog pluginLog;
     private readonly HostedEvents hostedEvents;
@@ -37,26 +38,12 @@ public abstract class HostedPlugin : IDalamudPlugin
     /// </summary>
     /// <param name="pluginInterface">The dalamud plugin interface.</param>
     /// <param name="pluginLog">The plugin log.</param>
-    /// <param name="interfaces">A list of dalamud services you want to inject into the container.</param>
-    public HostedPlugin(IDalamudPluginInterface pluginInterface, IPluginLog pluginLog, params object[] interfaces)
+    public HostedPlugin(IDalamudPluginInterface pluginInterface)
     {
         this.pluginInterface = pluginInterface;
-        this.pluginLog = pluginLog;
-        this.interfaces = new List<object>();
+        this.pluginLog = new DalamudServiceWrapper<IPluginLog>(pluginInterface).Service;
         this.hostedEvents = new HostedEvents();
         this.hostedServices = new Dictionary<Type, Type>();
-        foreach (var potentialInterface in interfaces)
-        {
-            if (potentialInterface.GetType().GetInterfaces().Length != 0)
-            {
-                this.interfaces.Add(potentialInterface);
-            }
-            else
-            {
-                pluginLog.Error(
-                    $"Object {potentialInterface.GetType()} was passed into HostedPlugin but does not implement any interfaces.");
-            }
-        }
     }
 
     /// <summary>
@@ -146,22 +133,14 @@ public abstract class HostedPlugin : IDalamudPlugin
             })
             .ConfigureContainer<ContainerBuilder>(containerBuilder =>
             {
-                this.interfaces.Add(this.pluginLog);
+                containerBuilder.RegisterInstance(this.pluginLog).AsSelf().AsImplementedInterfaces().ExternallyOwned();
                 containerBuilder.RegisterInstance(this.HostedEvents).AsSelf();
                 containerBuilder.RegisterInstance(this.pluginInterface).As<IDalamudPluginInterface>().AsSelf();
                 containerBuilder.RegisterType<Font>().As<IFont>().AsSelf().SingleInstance();
                 containerBuilder.RegisterType<DalamudWindowSystem>().As<IWindowSystem>();
                 containerBuilder.RegisterType<WindowSystemFactory>().As<IWindowSystemFactory>().AsSelf().SingleInstance();
                 containerBuilder.RegisterType<DalamudImGuiComponents>().As<IImGuiComponents>().AsSelf().SingleInstance();
-                foreach (var potentialInterface in this.interfaces)
-                {
-                    var registrationBuilder = containerBuilder.RegisterInstance(potentialInterface).AsSelf();
-                    var serviceInterfaces = potentialInterface.GetType().GetInterfaces();
-                    if (serviceInterfaces.Length != 0)
-                    {
-                        registrationBuilder.As(serviceInterfaces);
-                    }
-                }
+                containerBuilder.RegisterSource(new DalamudServiceRegistrationSource(this.pluginInterface));
 
                 if (this.HostedPluginOptions.UseMediatorService)
                 {

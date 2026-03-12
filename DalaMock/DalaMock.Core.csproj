@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <LangVersion>12.0</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>4.1.1</Version>
+        <Version>5.0.0</Version>
         <PackageProjectUrl>https://github.com/Critical-Impact/DalaMock</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Critical-Impact/DalaMock</RepositoryUrl>
         <Authors>Critical-Impact</Authors>
@@ -75,6 +75,10 @@
         </Reference>
         <Reference Include="TerraFX.Interop.Windows">
             <HintPath>$(DalamudLibPath)TerraFX.Interop.Windows.dll</HintPath>
+        </Reference>
+        <Reference Include="InteropGenerator.Runtime">
+            <HintPath>$(DalamudLibPath)InteropGenerator.Runtime.dll</HintPath>
+            <Private>True</Private>
         </Reference>
     </ItemGroup>
     <ItemGroup>

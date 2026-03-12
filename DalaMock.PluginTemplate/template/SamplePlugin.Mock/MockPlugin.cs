@@ -10,13 +10,11 @@ using Microsoft.Extensions.Logging;
 
 public class MockPlugin : Plugin
 {
-    private readonly ILogger<MockPlugin> logger;
 
-    public MockPlugin(IDalamudPluginInterface pluginInterface, ILogger<MockPlugin> logger, IPluginLog pluginLog, IFramework framework, ICommandManager commandManager, IDataManager dataManager, ITextureProvider textureProvider, IChatGui chatGui, IDtrBar dtrBar)
-        : base(pluginInterface, pluginLog, framework, commandManager, dataManager, textureProvider, chatGui, dtrBar)
+    public MockPlugin(IDalamudPluginInterface pluginInterface, IPluginLog pluginLog)
+        : base(pluginInterface, pluginLog)
     {
-        this.logger = logger;
-        this.logger.LogInformation("Plugin mock started");
+        pluginLog.Info("Plugin mock started");
     }
 
     public override void ConfigureContainer(ContainerBuilder containerBuilder)

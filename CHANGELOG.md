@@ -13,6 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [5.0.0] - 2026-03-12
+
+- Breaking Change: Dalamud dependencies no longer need to be provided when using HostedPlugin, only a IDalamudPluginInterface is required for construction.
+- Added a dalamud registration source if you aren't using HostedPlugin
+- Implemented MockGameConfig for IGameConfig
+- Implemented MockSeStringEvaluator for ISeStringEvaluator
+- Implemented MockReliableFileStorage for IReliableFileStorage
+- Implemented EffectiveLanguage and LanguageOverride in MockDalamudConfiguration
+- Added missing properties to MockDalamudPluginInterface
+- Update deps
+
 ## [4.1.1] - 2026-02-17
 
 - Update DataShare to function like Dalamuds

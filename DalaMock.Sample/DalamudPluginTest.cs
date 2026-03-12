@@ -3,14 +3,12 @@
 using System.Reflection;
 
 using Autofac;
-
+using DalaMock.Core.Mocks;
 using DalaMock.Host.Hosting;
 using DalaMock.Sample.Services;
-
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-
 using Microsoft.Extensions.DependencyInjection;
 
 public class DalamudPluginTest : HostedPlugin
@@ -19,15 +17,8 @@ public class DalamudPluginTest : HostedPlugin
 
     public DalamudPluginTest(
         IDalamudPluginInterface pluginInterface,
-        IPluginLog pluginLog,
-        IFramework framework,
-        ICommandManager commandManager,
-        IDataManager dataManager,
-        ITextureProvider textureProvider,
-        IChatGui chatGui,
-        IDtrBar dtrBar,
-        ISigScanner sigScanner)
-        : base(pluginInterface, pluginLog, framework, commandManager, dataManager, textureProvider, chatGui, dtrBar, sigScanner)
+        IPluginLog pluginLog)
+        : base(pluginInterface)
     {
         this.pluginLog = pluginLog;
         this.CreateHost();

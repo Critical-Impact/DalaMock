@@ -13,13 +13,10 @@ using Microsoft.Extensions.Logging;
 
 public class DalamudMockPluginTest : DalamudPluginTest
 {
-    private readonly ILogger<DalamudMockPluginTest> logger;
-
-    public DalamudMockPluginTest(IDalamudPluginInterface pluginInterface, ILogger<DalamudMockPluginTest> logger, IPluginLog pluginLog, IFramework framework, ICommandManager commandManager, IDataManager dataManager, ITextureProvider textureProvider, IChatGui chatGui, IDtrBar dtrBar, ISigScanner sigScanner)
-        : base(pluginInterface, pluginLog, framework, commandManager, dataManager, textureProvider, chatGui, dtrBar, sigScanner)
+    public DalamudMockPluginTest(IDalamudPluginInterface pluginInterface, IPluginLog pluginLog)
+        : base(pluginInterface, pluginLog)
     {
-        this.logger = logger;
-        this.logger.LogInformation("Plugin mock started");
+        pluginLog.Info("Plugin mock started");
     }
 
     public override void ConfigureContainer(ContainerBuilder containerBuilder)

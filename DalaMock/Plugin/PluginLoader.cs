@@ -187,6 +187,7 @@ public class PluginLoader : IPluginLoader
         builder.RegisterInstance(parentContainer.Resolve<IUiBuilder>()).ExternallyOwned().AsSelf().AsImplementedInterfaces();
         builder.RegisterInstance(pluginManifest).AsSelf().AsImplementedInterfaces();
         builder.RegisterInstance(pluginLoadSettings).AsSelf().AsImplementedInterfaces();
+        builder.RegisterInstance(this.mockDalamudConfiguration).AsSelf().AsImplementedInterfaces();
         builder.RegisterInstance(this.loggerFactory).ExternallyOwned();
         builder.RegisterGeneric(typeof(Logger<>))
                .As(typeof(ILogger<>))

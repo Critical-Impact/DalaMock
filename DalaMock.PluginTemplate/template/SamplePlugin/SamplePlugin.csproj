@@ -4,6 +4,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DalaMock.Host" Version="4.0.6" />
+        <PackageReference Include="DalaMock.Host" Version="5.0.0" />
     </ItemGroup>
 </Project>

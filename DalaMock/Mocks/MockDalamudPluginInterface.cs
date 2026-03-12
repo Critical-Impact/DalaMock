@@ -40,6 +40,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     private readonly IComponentContext componentContext;
     private readonly MockDalamudVersionInfo mockDalamudVersionInfo;
     private readonly DataShare dataShare;
+    private readonly ILogger<MockDalamudPluginInterface> logger;
 
     // private readonly MockProgram _mockProgram;
     private readonly IPluginManifest pluginManifest;
@@ -53,13 +54,15 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         IPluginManifest pluginManifest,
         IComponentContext componentContext,
         MockDalamudVersionInfo mockDalamudVersionInfo,
-        DataShare dataShare)
+        DataShare dataShare,
+        ILogger<MockDalamudPluginInterface> logger)
     {
         // _mockProgram = mockProgram;
         this.uiBuilder = uiBuilder;
         this.componentContext = componentContext;
         this.mockDalamudVersionInfo = mockDalamudVersionInfo;
         this.dataShare = dataShare;
+        this.logger = logger;
         this.ConfigFile = pluginLoadSettings.ConfigFile;
         this.ConfigDirectory = pluginLoadSettings.ConfigDir;
         this.pluginLoadReason = pluginLoadSettings.PluginLoadReason;
@@ -82,6 +85,11 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         throw new NotImplementedException();
     }
 
+    public Task<PluginUpdate?> CheckForUpdateAsync()
+    {
+        return Task.FromResult((PluginUpdate?)null);
+    }
+
     /// <inheritdoc/>
     public PluginLoadReason Reason => this.pluginLoadReason;
 
@@ -102,6 +110,8 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
 
     /// <inheritdoc/>
     public bool IsTesting => false;
+
+    public bool IsInProfile => false;
 
     /// <inheritdoc/>
     public DateTime LoadTime => DateTime.Now;
@@ -126,6 +136,8 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
 
     /// <inheritdoc/>
     public bool IsDebugging => true;
+
+    public bool AllowSeasonalEvents => true;
 
     /// <inheritdoc/>
     public string UiLanguage => "English";
@@ -381,7 +393,6 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     public T? Create<T>(params object[] scopedObjects)
         where T : class
     {
-        var logger = this.componentContext.Resolve<ILogger<T>>();
         var mockServices = this.componentContext.Resolve<IEnumerable<IMockService>>();
         Dictionary<Type, object> mockServicesDict = new();
         foreach (var mockService in mockServices)
@@ -478,7 +489,6 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     /// <inheritdoc/>
     public bool Inject(object instance, params object[] scopedObjects)
     {
-        var logger = this.componentContext.Resolve<ILogger>();
         var mockServices = this.componentContext.Resolve<IEnumerable<IMockService>>();
         Dictionary<Type, object> mockServicesDict = new();
         foreach (var mockService in mockServices)

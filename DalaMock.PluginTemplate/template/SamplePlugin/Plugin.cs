@@ -14,14 +14,8 @@ public class Plugin : HostedPlugin
 {
     public Plugin(
         IDalamudPluginInterface pluginInterface,
-        IPluginLog pluginLog,
-        IFramework framework,
-        ICommandManager commandManager,
-        IDataManager dataManager,
-        ITextureProvider textureProvider,
-        IChatGui chatGui,
-        IDtrBar dtrBar)
-        : base(pluginInterface, pluginLog, framework, commandManager, dataManager, textureProvider, chatGui, dtrBar)
+        IPluginLog pluginLog)
+        : base(pluginInterface, pluginLog)
     {
         this.CreateHost();
         this.Start();

@@ -1,3 +1,8 @@
+using System;
+using System.Globalization;
+
+using Dalamud;
+
 namespace DalaMock.Core.Mocks;
 
 using System.IO;
@@ -56,6 +61,42 @@ public class MockDalamudConfiguration
         get
         {
             return this.PluginSavePath != null && Directory.Exists(this.PluginSavePath.FullName);
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the language code to load Dalamud localization with.
+    /// </summary>
+    public string? LanguageOverride { get; set; } = null;
+
+    /// <summary>
+    /// Gets the ISO 639-1 two-letter code for the language of the effective Dalamud display language.
+    /// </summary>
+    public string EffectiveLanguage
+    {
+        get
+        {
+            var languages = Localization.ApplicableLangCodes.Prepend("en").ToArray();
+            try
+            {
+                if (string.IsNullOrEmpty(this.LanguageOverride))
+                {
+                    var currentUiLang = CultureInfo.CurrentUICulture;
+
+                    if (Localization.ApplicableLangCodes.Any(x => currentUiLang.TwoLetterISOLanguageName == x))
+                    {
+                        return currentUiLang.TwoLetterISOLanguageName;
+                    }
+
+                    return languages[0];
+                }
+
+                return this.LanguageOverride;
+            }
+            catch (Exception)
+            {
+                return languages[0];
+            }
         }
     }
 }

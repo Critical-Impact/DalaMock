@@ -1,11 +1,8 @@
-using Autofac.Core;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Autofac.Builder;
-
-using Dalamud.IoC;
+using Autofac.Core;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
@@ -31,23 +28,29 @@ public sealed class DalamudServiceRegistrationSource : IRegistrationSource
 
         var type = typedService.ServiceType;
 
-        if (!typeof(IDalamudService).IsAssignableFrom(type))
+        if (!typeof(IDalamudService).IsAssignableFrom(type) || type.GetInterface("IMockService") != null)
+        {
+            yield break;
+        }
+
+        var wrapperType = typeof(DalamudServiceWrapper<>).MakeGenericType(type);
+
+        var wrapper = Activator.CreateInstance(
+            wrapperType,
+            this.pluginInterface);
+        var prop = wrapperType.GetProperty("Service")!;
+        var value = prop.GetValue(wrapper)!;
+
+        if (value == null!)
         {
             yield break;
         }
 
         var rb = RegistrationBuilder
-                 .ForDelegate(type, (ctx, p) =>
-                 {
-                     var wrapperType = typeof(DalamudServiceWrapper<>).MakeGenericType(type);
-
-                     var wrapper = Activator.CreateInstance(
-                         wrapperType,
-                         this.pluginInterface);
-                     var prop = wrapperType.GetProperty("Service")!;
-                     return prop.GetValue(wrapper)!;
-                 })
+                 .ForDelegate((_, _) => value)
                  .SingleInstance()
+                 .As(value.GetType())
+                 .As(type)
                  .ExternallyOwned()
                  .CreateRegistration();
 

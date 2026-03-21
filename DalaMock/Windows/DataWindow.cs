@@ -47,11 +47,11 @@ internal class DataWindow : Window, IMockWindow
 
         this.RespectCloseHotkey = false;
         this.orderedModules = widgets.OrderBy(module => module.DisplayName);
-        this.CurrentWidget = this.orderedModules.First();
+        this.CurrentWidget = this.orderedModules.FirstOrDefault();
     }
 
     /// <summary>Gets or sets the current widget.</summary>
-    public IDataWindowWidget CurrentWidget { get; set; }
+    public IDataWindowWidget? CurrentWidget { get; set; }
 
     /// <summary>Gets the data window widget of the specified type.</summary>
     /// <typeparam name="T">Type of the data window widget to find.</typeparam>

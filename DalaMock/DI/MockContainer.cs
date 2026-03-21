@@ -1,5 +1,7 @@
+using DalaMock.Core.Formatters;
 using DalaMock.Core.Mocks.NounProcessor;
 using DalaMock.Core.Mocks.SeStringEvaluator;
+using DalaMock.Core.Pickers;
 using DalaMock.Shared.Extensions;
 
 using Dalamud;
@@ -283,6 +285,21 @@ public class MockContainer
         builder.RegisterType<SheetRedirectResolver>().AsSelf().SingleInstance();
         builder.RegisterType<NounProcessor>().AsSelf().SingleInstance();
         builder.RegisterType<MockMacroDecoder>().AsSelf().SingleInstance();
+        builder.RegisterGeneric(typeof(DefaultExcelRowFormatter<>))
+               .As(typeof(IExcelRowFormatter<>))
+               .SingleInstance();
+        builder.RegisterAssemblyTypes(assembly)
+               .AsClosedTypesOf(typeof(IExcelRowFormatter<>))
+               .SingleInstance();
+        builder.RegisterType<ExcelRowFormatterResolver>()
+               .As<IExcelRowFormatterResolver>()
+               .SingleInstance();
+        builder.RegisterGeneric(typeof(ExcelRowPicker<>))
+               .AsSelf()
+               .InstancePerLifetimeScope();
+        builder.RegisterType<ExcelRowPickerFactory>()
+               .As<IExcelRowPickerFactory>()
+               .SingleInstance();
 
         if (this.dalamudConfiguration.CreateWindow)
         {

@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [5.0.1] - 2026-03-21
+
+- Correctly provide both the implementation of MockServices and the underlying interface when running a mock project
+- Fix issue that'd break test runs
+- Add MockUnlockState and UnlockStateWidget
+
+
 ## [5.0.0] - 2026-03-12
 
 - Breaking Change: Dalamud dependencies no longer need to be provided when using HostedPlugin, only a IDalamudPluginInterface is required for construction.

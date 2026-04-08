@@ -21,4 +21,9 @@ public interface IFont
     /// Gets dalamud's mon font.
     /// </summary>
     public ImFontPtr MonoFont { get; }
+
+    /// <summary>
+    /// Gets dalamud's fixed width font.
+    /// </summary>
+    public ImFontPtr IconFixedWidth { get; }
 }

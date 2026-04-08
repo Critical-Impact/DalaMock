@@ -60,6 +60,8 @@ public class NullUiBuilder : IUiBuilder, IMockService
 
     public ImFontPtr FontMono { get; set; }
 
+    public ImFontPtr FontIconFixedWidth { get; }
+
     public Device Device { get; set; }
 
     public IntPtr DeviceHandle { get; set; }

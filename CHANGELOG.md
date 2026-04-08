@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [5.0.2] - 2026-04-08
+
+- Add FontIconFixedWidth to MockUiBuilder
+
 ## [5.0.1] - 2026-03-21
 
 - Correctly provide both the implementation of MockServices and the underlying interface when running a mock project

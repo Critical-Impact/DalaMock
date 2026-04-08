@@ -11,13 +11,14 @@ public class MockFont : IFont, IMockService
     private ImFontPtr defaultFont = null;
     private ImFontPtr monoFont = null;
     private ImFontPtr iconFont = null;
+    private ImFontPtr iconFixedWidth = null;
 
     /// <inheritdoc/>
     public unsafe ImFontPtr DefaultFont
     {
         get
         {
-            if ((IntPtr)this.iconFont.Handle == IntPtr.Zero)
+            if ((IntPtr)this.defaultFont.Handle == IntPtr.Zero)
             {
                 this.defaultFont = ImGui.GetIO().Fonts.Fonts[1];
             }
@@ -51,6 +52,19 @@ public class MockFont : IFont, IMockService
             }
 
             return this.monoFont;
+        }
+    }
+
+    public unsafe ImFontPtr IconFixedWidth
+    {
+        get
+        {
+            if ((IntPtr)this.iconFixedWidth.Handle == IntPtr.Zero)
+            {
+                this.iconFixedWidth = ImGui.GetIO().Fonts.Fonts[1];
+            }
+
+            return this.iconFixedWidth;
         }
     }
 

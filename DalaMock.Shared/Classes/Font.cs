@@ -18,4 +18,6 @@ public class Font : IFont
 
     /// <inheritdoc/>
     public ImFontPtr MonoFont => UiBuilder.MonoFont;
+
+    public ImFontPtr IconFixedWidth => UiBuilder.IconFontFixedWidth;
 }

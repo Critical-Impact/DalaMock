@@ -32,6 +32,8 @@ public class MockUiBuilder : IUiBuilder, IMockService
 
     public ImFontPtr FontMono => this.font.MonoFont;
 
+    public ImFontPtr FontIconFixedWidth => this.font.IconFixedWidth;
+
     public GraphicsDevice GraphicsDevice { get; }
 
     public MockUiBuilder(ImGuiScene scene, IFont font)

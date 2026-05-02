@@ -311,10 +311,10 @@ public class MockCharacter : ICharacter
 
     /// <inheritdoc/>
     [ImGuiGroup("Basic")]
-    public byte[] Customize
+    public Span<byte> Customize
     {
         get => this.customize;
-        set => this.customize = value;
+        set => this.customize = value.ToArray();
     }
 
     public ICustomizeData CustomizeData { get; set; }

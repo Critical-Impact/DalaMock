@@ -71,7 +71,7 @@ public class MockClientStateWindow : MockWindow<MockClientState>
         }
 
         // TerritoryType
-        int territoryType = this.mockClientState.TerritoryType;
+        uint territoryType = this.mockClientState.TerritoryType;
         ImGui.Text("Territory Type: ");
         ImGui.SameLine();
         ImGui.SetNextItemWidth(100);

@@ -51,6 +51,7 @@ public class MockUnlockState : IUnlockState, IMockService
     public HashSet<uint> EmjCostumeUnlocked = new();
     public HashSet<uint> GeneralActionUnlocked = new();
     public HashSet<uint> GlassesUnlocked = new();
+    public HashSet<uint> GlassesStyleUnlocked = new();
     public HashSet<uint> HowToUnlocked = new();
     public HashSet<uint> InstanceContentUnlocked = new();
     public HashSet<uint> ItemUnlocked = new();
@@ -168,6 +169,10 @@ public class MockUnlockState : IUnlockState, IMockService
     /// <inheritdoc/>
     public bool IsGlassesUnlocked(Glasses row)
         => Check(this.GlassesUnlocked, row.RowId);
+
+    /// <inheritdoc/>
+    public bool IsGlassesStyleUnlocked(GlassesStyle row)
+        => Check(this.GlassesStyleUnlocked, row.RowId);
 
     /// <inheritdoc/>
     public bool IsHowToUnlocked(HowTo row)

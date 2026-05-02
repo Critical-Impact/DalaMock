@@ -21,7 +21,7 @@ public class MockClientState : IClientState, IMockService
     private ulong localContentId;
     private IPlayerCharacter? localPlayer;
     private uint mapId;
-    private ushort territoryType;
+    private uint territoryType;
 
     public bool IsClientIdle(out ConditionFlag blockingFlag)
     {
@@ -34,7 +34,7 @@ public class MockClientState : IClientState, IMockService
         set => this.clientLanguage = value;
     }
 
-    public ushort TerritoryType
+    public uint TerritoryType
     {
         get => this.territoryType;
         set
@@ -121,7 +121,7 @@ public class MockClientState : IClientState, IMockService
 
     public event Action<ZoneInitEventArgs>? ZoneInit;
 
-    public event Action<ushort>? TerritoryChanged;
+    public event Action<uint>? TerritoryChanged;
 
     public event Action<uint>? MapIdChanged;
 

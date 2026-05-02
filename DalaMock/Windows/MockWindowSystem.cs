@@ -15,9 +15,9 @@ using Dalamud.Interface.Windowing;
 /// </summary>
 public class MockWindowSystem : IWindowSystem
 {
-    private readonly Dictionary<Window, WindowState> windowStates = new();
+    private readonly Dictionary<IWindow, WindowState> windowStates = new();
 
-    private readonly List<Window> windows = new();
+    private readonly List<IWindow> windows = new();
 
     private string lastFocusedWindowName = string.Empty;
 
@@ -32,7 +32,7 @@ public class MockWindowSystem : IWindowSystem
     }
 
     /// <inheritdoc/>
-    public IReadOnlyList<Window> Windows => this.windows;
+    public IReadOnlyList<IWindow> Windows => this.windows;
 
     /// <inheritdoc/>
     public bool HasAnyFocus { get; set; }
@@ -41,7 +41,7 @@ public class MockWindowSystem : IWindowSystem
     public string? Namespace { get; set; }
 
     /// <inheritdoc/>
-    public void AddWindow(Window window)
+    public void AddWindow(IWindow window)
     {
         if (this.windows.Any(w => w.WindowName == window.WindowName))
         {
@@ -52,7 +52,7 @@ public class MockWindowSystem : IWindowSystem
     }
 
     /// <inheritdoc/>
-    public void RemoveWindow(Window window)
+    public void RemoveWindow(IWindow window)
     {
         if (!this.windows.Contains(window))
         {
@@ -104,7 +104,7 @@ public class MockWindowSystem : IWindowSystem
         }
     }
 
-    private WindowState GetState(Window window)
+    private WindowState GetState(IWindow window)
     {
         if (!this.windowStates.TryGetValue(window, out var state))
         {
@@ -115,7 +115,7 @@ public class MockWindowSystem : IWindowSystem
         return state;
     }
 
-    private void ApplyConditionals(Window window)
+    private void ApplyConditionals(IWindow window)
     {
         if (window.Position.HasValue)
         {
@@ -150,7 +150,7 @@ public class MockWindowSystem : IWindowSystem
         }
     }
 
-    private void DrawWindow(Window window)
+    private void DrawWindow(IWindow window)
     {
         var state = this.GetState(window);
 

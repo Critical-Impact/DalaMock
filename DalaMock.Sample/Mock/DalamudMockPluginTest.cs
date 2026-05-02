@@ -1,3 +1,5 @@
+using Dalamud.Interface.Windowing;
+
 namespace DalaMock.Sample.Mock;
 
 using Autofac;

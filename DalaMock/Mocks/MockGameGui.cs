@@ -19,6 +19,11 @@ public class MockGameGui : IGameGui, IMockService
         throw new NotImplementedException();
     }
 
+    public bool OpenMapWithMapLink(uint territory, uint map, Vector3 worldPos)
+    {
+        throw new NotImplementedException();
+    }
+
     public bool WorldToScreen(Vector3 worldPos, out Vector2 screenPos)
     {
         throw new NotImplementedException();

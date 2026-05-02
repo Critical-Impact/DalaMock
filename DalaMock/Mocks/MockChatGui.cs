@@ -1,3 +1,5 @@
+using Dalamud.Game.Chat;
+
 namespace DalaMock.Core.Mocks;
 
 using System;
@@ -22,17 +24,13 @@ public class MockChatGui : IChatGui, IMockService
 
     IReadOnlyDictionary<(string PluginName, uint CommandId), Action<uint, SeString>> IChatGui.RegisteredLinkHandlers => this.registeredLinkHandlers;
 
-    /// <inheritdoc />
-    public event IChatGui.OnMessageDelegate? ChatMessage;
+    public event IChatGui.OnHandleableChatMessageDelegate? ChatMessage;
 
-    /// <inheritdoc />
-    public event IChatGui.OnCheckMessageHandledDelegate? CheckMessageHandled;
+    public event IChatGui.OnHandleableChatMessageDelegate? CheckMessageHandled;
 
-    /// <inheritdoc />
-    public event IChatGui.OnMessageHandledDelegate? ChatMessageHandled;
+    public event IChatGui.OnChatMessageDelegate? ChatMessageHandled;
 
-    /// <inheritdoc />
-    public event IChatGui.OnMessageUnhandledDelegate? ChatMessageUnhandled;
+    public event IChatGui.OnChatMessageDelegate? ChatMessageUnhandled;
 
     public event IChatGui.OnLogMessageDelegate? LogMessage;
 
@@ -111,23 +109,23 @@ public class MockChatGui : IChatGui, IMockService
         this.Print(stringBuilder.ToSeString(), messageTag, tagColor);
     }
 
-    public virtual void OnChatMessage(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool ishandled)
+    public virtual void OnChatMessage(IHandleableChatMessage message)
     {
-        this.ChatMessage?.Invoke(type, timestamp, ref sender, ref message, ref ishandled);
+        this.ChatMessage?.Invoke(message);
     }
 
-    public virtual void OnCheckMessageHandled(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool ishandled)
+    public virtual void OnCheckMessageHandled(IHandleableChatMessage message)
     {
-        this.CheckMessageHandled?.Invoke(type, timestamp, ref sender, ref message, ref ishandled);
+        this.CheckMessageHandled?.Invoke(message);
     }
 
-    public virtual void OnChatMessageHandled(XivChatType type, int timestamp, SeString sender, SeString message)
+    public virtual void OnChatMessageHandled(IChatMessage message)
     {
-        this.ChatMessageHandled?.Invoke(type, timestamp, sender, message);
+        this.ChatMessageHandled?.Invoke(message);
     }
 
-    public virtual void OnChatMessageUnhandled(XivChatType type, int timestamp, SeString sender, SeString message)
+    public virtual void OnChatMessageUnhandled(IChatMessage message)
     {
-        this.ChatMessageUnhandled?.Invoke(type, timestamp, sender, message);
+        this.ChatMessageUnhandled?.Invoke(message);
     }
 }

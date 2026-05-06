@@ -72,33 +72,10 @@
         <Folder Include="Properties" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include="DLLs\cimgui.dll">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="DLLs\cimgui.pdb">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="DLLs\cimgui.so">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="DLLs\cimguizmo.dll">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="DLLs\cimguizmo.pdb">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="DLLs\cimguizmo.so">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="DLLs\cimplot.dll">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="DLLs\cimplot.pdb">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="DLLs\cimplot.so">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
+        <None Include="DLLs\**\*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TargetPath>%(Filename)%(Extension)</TargetPath>
+        </None>
         <Content Include="Fonts\FontAwesomeFreeSolid.otf">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>

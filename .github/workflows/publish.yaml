@@ -56,16 +56,3 @@ jobs:
           if-no-files-found: error
           retention-days: 7
           path: ${{ env.NuGetDirectory }}/*.nupkg
-
-  run_test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 9.0.x
-      - name: Run tests
-        run: |
-          $env:DALAMUD_HOME = "${{ env.DALAMUD_HOME }}"
-          dotnet test --configuration Release

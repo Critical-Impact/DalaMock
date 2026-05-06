@@ -1,30 +1,11 @@
-using Dalamud.Plugin.Ipc.Internal;
-
 namespace DalaMock.Core.Data.Widgets;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Reflection;
-using System.Text;
-
-using DalaMock.Core.Interface;
-using DalaMock.Core.Mocks;
-using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Raii;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-
-using Formatting = Newtonsoft.Json.Formatting;
 
 /// <summary>
 /// Widget for displaying plugin data share modules.
 /// </summary>
 internal class DataShareWidget : IDataWindowWidget
 {
-    private readonly Lazy<DataShare> dataShare;
+    private readonly Lazy<MockDataShare> dataShare;
     private readonly ILogger<DataShareWidget> logger;
     private const ImGuiTabItemFlags NoCloseButton = (ImGuiTabItemFlags)ImGuiTabItemFlagsPrivate.NoCloseButton;
 
@@ -46,7 +27,7 @@ internal class DataShareWidget : IDataWindowWidget
         this.Ready = true;
     }
 
-    public DataShareWidget(Lazy<DataShare> dataShare, ILogger<DataShareWidget> logger)
+    public DataShareWidget(Lazy<MockDataShare> dataShare, ILogger<DataShareWidget> logger)
     {
         this.dataShare = dataShare;
         this.logger = logger;

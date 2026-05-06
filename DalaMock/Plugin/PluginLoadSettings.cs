@@ -1,9 +1,5 @@
 namespace DalaMock.Core.Plugin;
 
-using System.IO;
-
-using Dalamud.Plugin;
-
 /// <summary>
 /// The settings to use when loading the plugin.
 /// </summary>

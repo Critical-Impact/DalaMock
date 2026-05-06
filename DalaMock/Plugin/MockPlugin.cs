@@ -1,11 +1,5 @@
 namespace DalaMock.Core.Plugin;
 
-using System;
-
-using Autofac;
-
-using Dalamud.Plugin;
-
 /// <summary>
 /// A mock plugin, managed by <see cref="IPluginLoader"/>.
 /// </summary>
@@ -13,7 +7,7 @@ using Dalamud.Plugin;
 public class MockPlugin(Type pluginType) : IMockPlugin
 {
     private IContainer? container;
-    private IDalamudPlugin? dalamudPlugin;
+    private IAsyncDalamudPlugin? dalamudPlugin;
     private PluginLoadSettings? pluginLoadSettings;
 
     public MockPlugin(Type pluginType, PluginLoadSettings pluginLoadSettings)
@@ -26,7 +20,19 @@ public class MockPlugin(Type pluginType) : IMockPlugin
     public bool IsLoaded => this.DalamudPlugin != null && this.PluginLoadSettings != null && this.Container != null;
 
     /// <inheritdoc/>
-    public IDalamudPlugin? DalamudPlugin => this.dalamudPlugin;
+    public bool IsTransitioning => this.TransitionState != PluginTransitionState.None;
+
+    /// <inheritdoc/>
+    public PluginTransitionState TransitionState { get; private set; }
+
+    /// <inheritdoc/>
+    public bool IsFaulted { get; private set; }
+
+    /// <inheritdoc/>
+    public Exception? LastException { get; private set; }
+
+    /// <inheritdoc/>
+    public IAsyncDalamudPlugin? DalamudPlugin => this.dalamudPlugin;
 
     /// <inheritdoc/>
     public PluginLoadSettings? PluginLoadSettings => this.pluginLoadSettings;
@@ -38,7 +44,7 @@ public class MockPlugin(Type pluginType) : IMockPlugin
     public Type PluginType => pluginType;
 
     /// <inheritdoc/>
-    public void Startup(IDalamudPlugin dalamudPlugin, PluginLoadSettings pluginLoadSettings, IContainer container)
+    public void Startup(IAsyncDalamudPlugin dalamudPlugin, PluginLoadSettings pluginLoadSettings, IContainer container)
     {
         this.dalamudPlugin = dalamudPlugin;
         this.pluginLoadSettings = pluginLoadSettings;
@@ -49,5 +55,34 @@ public class MockPlugin(Type pluginType) : IMockPlugin
     public void Teardown()
     {
         this.dalamudPlugin = null;
+    }
+
+    /// <inheritdoc/>
+    public void BeginTransition(PluginTransitionState state)
+    {
+        this.TransitionState = state;
+        this.IsFaulted = false;
+        this.LastException = null;
+    }
+
+    /// <inheritdoc/>
+    public void EndTransition()
+    {
+        this.TransitionState = PluginTransitionState.None;
+    }
+
+    /// <inheritdoc/>
+    public void SetFault(Exception exception)
+    {
+        this.TransitionState = PluginTransitionState.None;
+        this.IsFaulted = true;
+        this.LastException = exception;
+    }
+
+    /// <inheritdoc/>
+    public void ClearFault()
+    {
+        this.IsFaulted = false;
+        this.LastException = null;
     }
 }

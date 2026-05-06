@@ -125,4 +125,9 @@ public class DalamudImGuiComponents : IImGuiComponents
     {
         return ImGuiComponents.GetIconButtonWithTextWidth(icon, text);
     }
+
+    public void HelpMarker(string helpText, FontAwesomeIcon icon, Vector4? color = null)
+    {
+        ImGuiComponents.HelpMarker(helpText, icon, color);
+    }
 }

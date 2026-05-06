@@ -1,3 +1,6 @@
+using System.Threading;
+using System.Threading.Tasks;
+
 using Dalamud.Interface.Windowing;
 
 namespace DalaMock.Host.Hosting;
@@ -25,7 +28,7 @@ using Microsoft.Extensions.Logging;
 /// <summary>
 /// A hosted plugin, will automatically inject any services provided. Will handle the startup and shutdown of the plugin.
 /// </summary>
-public abstract class HostedPlugin : IDalamudPlugin
+public abstract class HostedPlugin : IAsyncDalamudPlugin
 {
     private readonly IDalamudPluginInterface pluginInterface;
     private readonly IPluginLog pluginLog;
@@ -44,6 +47,7 @@ public abstract class HostedPlugin : IDalamudPlugin
         this.pluginLog = new DalamudServiceWrapper<IPluginLog>(pluginInterface).Service;
         this.hostedEvents = new HostedEvents();
         this.hostedServices = new Dictionary<Type, Type>();
+        this.ReplacementContainer = new DalamudReplacementContainer();
     }
 
     /// <summary>
@@ -72,10 +76,12 @@ public abstract class HostedPlugin : IDalamudPlugin
     {
         if (this.IsStarted)
         {
-            this.Stop();
+            this.StoppingAsync().GetAwaiter().GetResult();
+            this.Stop().GetAwaiter().GetResult();
+            this.StoppedAsync().GetAwaiter().GetResult();
         }
 
-        this.host?.Dispose();
+        this.Host?.Dispose();
     }
 
     /// <summary>
@@ -115,6 +121,13 @@ public abstract class HostedPlugin : IDalamudPlugin
     }
 
     /// <summary>
+    /// A container for all DalaMock provided services.
+    /// </summary>
+    public virtual IReplacementContainer ReplacementContainer { get; }
+
+    public IHost? Host => this.host;
+
+    /// <summary>
     /// Builds the host and starts the plugin.
     /// </summary>
     /// <returns>A built host.</returns>
@@ -131,15 +144,12 @@ public abstract class HostedPlugin : IDalamudPlugin
                                                  new DalamudLoggingProvider(b.GetRequiredService<IPluginLog>())));
                 lb.SetMinimumLevel(LogLevel.Trace);
             })
+            .ConfigureContainer<ContainerBuilder>(this.ReplacementContainer.Register)
             .ConfigureContainer<ContainerBuilder>(containerBuilder =>
             {
                 containerBuilder.RegisterInstance(this.pluginLog).AsSelf().AsImplementedInterfaces().ExternallyOwned();
                 containerBuilder.RegisterInstance(this.HostedEvents).AsSelf();
                 containerBuilder.RegisterInstance(this.pluginInterface).As<IDalamudPluginInterface>().AsSelf();
-                containerBuilder.RegisterType<Font>().As<IFont>().AsSelf().SingleInstance();
-                containerBuilder.RegisterType<WindowSystem>().As<IWindowSystem>();
-                containerBuilder.RegisterType<WindowSystemFactory>().As<IWindowSystemFactory>().AsSelf().SingleInstance();
-                containerBuilder.RegisterType<DalamudImGuiComponents>().As<IImGuiComponents>().AsSelf().SingleInstance();
                 containerBuilder.RegisterSource(new DalamudServiceRegistrationSource(this.pluginInterface));
 
                 if (this.HostedPluginOptions.UseMediatorService)
@@ -179,24 +189,27 @@ public abstract class HostedPlugin : IDalamudPlugin
     {
     }
 
-    public void Start()
+    private async Task Start(CancellationToken cancellationToken)
     {
-        if (this.host == null)
+        if (this.Host == null)
         {
             this.pluginLog.Error("You attempted to start the plugin before the container has been built.");
             return;
         }
 
-        var startTask = this.host.StartAsync();
-        if (startTask.IsFaulted)
+        try
         {
-            this.pluginLog.Error(startTask.Exception, "Plugin startup faulted.");
-            throw startTask.Exception;
+            await this.Host.StartAsync(cancellationToken);
+        }
+        catch (Exception startTask)
+        {
+            this.pluginLog.Error(startTask, "Plugin startup faulted.");
+            throw;
         }
 
         if (this.HostedPluginOptions.UseMediatorService)
         {
-            this.host.Services.GetRequiredService<MediatorService>().Publish(new PluginStartedMessage());
+            this.Host.Services.GetRequiredService<MediatorService>().Publish(new PluginStartedMessage());
         }
 
         this.HostedEvents.OnPluginEvent(HostedEventType.PluginStarted);
@@ -205,18 +218,70 @@ public abstract class HostedPlugin : IDalamudPlugin
         this.IsStarted = true;
     }
 
-    public void Stop()
+    private async Task Stop()
     {
         if (this.HostedPluginOptions.UseMediatorService)
         {
-            this.host?.Services.GetRequiredService<MediatorService>().Publish(new PluginStoppingMessage());
+            this.Host?.Services.GetRequiredService<MediatorService>().Publish(new PluginStoppingMessage());
         }
 
         this.HostedEvents.OnPluginEvent(HostedEventType.PluginStopping);
         this.HostedEvents.OnPluginStopping();
-        this.host?.StopAsync().GetAwaiter().GetResult();
+        if (this.Host != null)
+        {
+            try
+            {
+                await this.Host.StopAsync();
+            }
+            catch (Exception startTask)
+            {
+                this.pluginLog.Error(startTask, "Plugin stop faulted.");
+                throw;
+            }
+        }
+
         this.IsStarted = false;
         this.HostedEvents.OnPluginEvent(HostedEventType.PluginStopped);
         this.HostedEvents.OnPluginStopped();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (this.IsStarted)
+        {
+            await this.StoppingAsync();
+            await this.Stop();
+            await this.StoppedAsync();
+        }
+
+        this.Host?.Dispose();
+    }
+
+    public async Task LoadAsync(CancellationToken cancellationToken)
+    {
+        this.host = this.CreateHost();
+        await this.StartingAsync(cancellationToken);
+        await this.Start(cancellationToken);
+        await this.StartedAsync(cancellationToken);
+    }
+
+    public virtual Task StartingAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
+
+    public virtual Task StoppingAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    public virtual Task StartedAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
+
+    public virtual Task StoppedAsync()
+    {
+        return Task.CompletedTask;
     }
 }

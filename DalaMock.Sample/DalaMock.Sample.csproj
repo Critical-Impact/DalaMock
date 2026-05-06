@@ -7,65 +7,18 @@
         <Authors>Critical-Impact</Authors>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <OutputType>Exe</OutputType>
-    </PropertyGroup>
-
     <PropertyGroup>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <IncludeSymbols>true</IncludeSymbols>
     </PropertyGroup>
 
     <PropertyGroup>
-        <CodeAnalysisRuleSet>../custom.ruleset</CodeAnalysisRuleSet>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
-    <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <Reference Include="Dalamud">
-            <HintPath>$(DalamudLibPath)Dalamud.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="Lumina">
-            <HintPath>$(DalamudLibPath)Lumina.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="Lumina.Excel">
-            <HintPath>$(DalamudLibPath)Lumina.Excel.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="FFXIVClientStructs">
-            <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="Newtonsoft.Json" PrivateAssets="All">
-            <HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="Dalamud.Bindings.ImGui">
-            <HintPath>$(DalamudLibPath)Dalamud.Bindings.ImGui.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="Serilog">
-            <HintPath>$(DalamudLibPath)Serilog.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="Serilog.Sinks.Async.dll">
-            <HintPath>$(DalamudLibPath)Serilog.Sinks.Async.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="Serilog.Sinks.Console.dll">
-            <HintPath>$(DalamudLibPath)Serilog.Sinks.Console.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="Serilog.Sinks.File.dll">
-            <HintPath>$(DalamudLibPath)Serilog.Sinks.File.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-        <Reference Include="InteropGenerator.Runtime.dll">
-            <HintPath>$(DalamudLibPath)InteropGenerator.Runtime.dll</HintPath>
-            <Private>True</Private>
-        </Reference>
-    </ItemGroup>
+    <PropertyGroup>
+        <CodeAnalysisRuleSet>../custom.ruleset</CodeAnalysisRuleSet>
+    </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\DalaMock.Host\DalaMock.Host.csproj"/>
@@ -83,41 +36,5 @@
     </ItemGroup>
     <ItemGroup>
         <Content Include="DalaMock.Sample.json"/>
-        <Content Include="Mock\cimgui.dll">
-            <TargetPath>cimgui.dll</TargetPath>
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Mock\cimgui.pdb">
-            <TargetPath>cimgui.pdb</TargetPath>
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Mock\cimgui.so">
-            <TargetPath>cimgui.so</TargetPath>
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Mock\cimguizmo.dll">
-            <TargetPath>cimguizmo.dll</TargetPath>
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Mock\cimguizmo.pdb">
-            <TargetPath>cimguizmo.pdb</TargetPath>
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Mock\cimguizmo.so">
-            <TargetPath>cimguizmo.so</TargetPath>
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Mock\cimplot.dll">
-            <TargetPath>cimplot.dll</TargetPath>
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Mock\cimplot.pdb">
-            <TargetPath>cimplot.pdb</TargetPath>
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="Mock\cimplot.so">
-            <TargetPath>cimplot.so</TargetPath>
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
     </ItemGroup>
 </Project>

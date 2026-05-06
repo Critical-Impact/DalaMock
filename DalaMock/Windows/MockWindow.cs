@@ -1,10 +1,5 @@
 namespace DalaMock.Core.Windows;
 
-using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Windowing;
-
-using DalaMock.Core.Mocks;
-
 public abstract class MockWindow<T> : Window, IMockWindow
     where T : IMockService
 {

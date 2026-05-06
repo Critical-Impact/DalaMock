@@ -1,18 +1,5 @@
 namespace DalaMock.Core.Interface;
 
-using System;
-using System.Collections.Generic;
-
-using Autofac;
-
-using DalaMock.Core.DI;
-using DalaMock.Core.Imgui;
-using DalaMock.Core.Mocks;
-using DalaMock.Core.Plugin;
-using DalaMock.Core.Windows;
-
-using Dalamud.Bindings.ImGui;
-
 /// <summary>
 /// Provides a mock dalamud UI allowing for plugins to be loaded/unloaded at will.
 /// </summary>
@@ -20,6 +7,7 @@ public class MockDalamudUi : IDisposable
 {
     private readonly ImGuiScene imGuiScene;
     private readonly PluginLoader pluginLoader;
+    private readonly MockMainMenuBar mockMainMenuBar;
     private readonly MockWindowSystem windowSystem;
     private Dictionary<MockPlugin, MockFramework> frameworks;
     private Dictionary<MockPlugin, MockUiBuilder> uiBUilders;
@@ -30,9 +18,10 @@ public class MockDalamudUi : IDisposable
     /// </summary>
     /// <param name="mockContainer">The autofac container for the primary mock application.</param>
     /// <param name="pluginLoader">The plugin loader.</param>
-    public MockDalamudUi(MockContainer mockContainer, PluginLoader pluginLoader)
+    public MockDalamudUi(MockContainer mockContainer, PluginLoader pluginLoader, MockMainMenuBar mockMainMenuBar)
     {
         this.pluginLoader = pluginLoader;
+        this.mockMainMenuBar = mockMainMenuBar;
         this.frameworks = new Dictionary<MockPlugin, MockFramework>();
         this.uiBUilders = new Dictionary<MockPlugin, MockUiBuilder>();
         var windows = mockContainer.GetWindows();
@@ -62,7 +51,7 @@ public class MockDalamudUi : IDisposable
     {
         this.imGuiScene.OnBuildUi += () =>
         {
-            ImGui.ShowDemoWindow();
+            this.mockMainMenuBar.Draw();
 
             // Move the updates elsewhere
             foreach (var framework in this.frameworks)

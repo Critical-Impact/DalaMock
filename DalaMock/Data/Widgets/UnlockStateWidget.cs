@@ -1,16 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Numerics;
-using System.Reflection;
-using Lumina;
-using Lumina.Excel;
-using DalaMock.Core.Interface;
-using DalaMock.Core.Pickers;
-
-using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Utility.Raii;
+namespace DalaMock.Core.Data.Widgets;
 
 internal sealed class UnlockStateWidget : IDataWindowWidget
 {
@@ -39,7 +27,7 @@ internal sealed class UnlockStateWidget : IDataWindowWidget
             typeof(MockUnlockState)
                 .GetFields(BindingFlags.Instance | BindingFlags.Public)
                 .Where(f =>
-                    f.FieldType == typeof(HashSet<uint>) && (f.Name.EndsWith("Unlocked", StringComparison.Ordinal) || f.Name.EndsWith("Completed", StringComparison.Ordinal))).ToArray();
+                           f.FieldType == typeof(HashSet<uint>) && (f.Name.EndsWith("Unlocked", StringComparison.Ordinal) || f.Name.EndsWith("Completed", StringComparison.Ordinal))).ToArray();
 
         this.Ready = true;
     }

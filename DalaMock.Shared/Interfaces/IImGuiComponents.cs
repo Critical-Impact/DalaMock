@@ -150,4 +150,18 @@ public interface IImGuiComponents
     /// <param name="text">Text to use.</param>
     /// <returns>Width.</returns>
     float GetIconButtonWithTextWidth(FontAwesomeIcon icon, string text);
+
+    /// <summary>
+    /// HelpMarker component to add a help icon with text on hover.
+    /// </summary>
+    /// <param name="helpText">The text to display on hover.</param>
+    void HelpMarker(string helpText, FontAwesomeIcon icon, Vector4? color = null);
+
+    /// <summary>
+    /// HelpMarker component to add a custom icon with text on hover.
+    /// </summary>
+    /// <param name="helpText">The text to display on hover.</param>
+    /// <param name="icon">The icon to use.</param>
+    /// <param name="color">The color of the icon.</param>
+    void HelpMarker(string helpText) => HelpMarker(helpText, FontAwesomeIcon.InfoCircle);
 }

@@ -1,17 +1,5 @@
 ﻿namespace DalaMock.Core.Windows;
 
-using System.Collections.Generic;
-using System.Linq;
-
-using DalaMock.Core.Imgui.Auto;
-using DalaMock.Core.Mocks;
-using Dalamud.Bindings.ImGui;
-using Dalamud.Game;
-using Dalamud.Interface.Utility.Raii;
-using Dalamud.Plugin.Services;
-using Lumina.Excel;
-using Lumina.Excel.Sheets;
-
 public class MockClientStateWindow : MockWindow<MockClientState>
 {
     private readonly MockClientState mockClientState;

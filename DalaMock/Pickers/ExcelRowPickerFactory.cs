@@ -1,10 +1,5 @@
 namespace DalaMock.Core.Pickers;
 
-using System;
-using System.Collections.Concurrent;
-
-using Autofac;
-
 public sealed class ExcelRowPickerFactory
     : IExcelRowPickerFactory
 {

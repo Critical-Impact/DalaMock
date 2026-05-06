@@ -1,7 +1,5 @@
 namespace DalaMock.Core.Formatters;
 
-using Lumina.Excel;
-
 public sealed class DefaultExcelRowFormatter<T> : IExcelRowFormatter<T>
     where T : struct, IExcelRow<T>
 {

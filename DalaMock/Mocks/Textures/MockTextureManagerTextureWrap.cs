@@ -1,11 +1,5 @@
 namespace DalaMock.Core.Mocks.Textures;
 
-using System;
-using System.Numerics;
-
-using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Textures.TextureWraps;
-
 public class MockTextureManagerTextureWrap : IDalamudTextureWrap
 {
     private readonly bool keepAlive;

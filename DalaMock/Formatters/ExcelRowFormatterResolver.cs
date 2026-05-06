@@ -1,11 +1,5 @@
 namespace DalaMock.Core.Formatters;
 
-using System;
-using System.Collections.Concurrent;
-
-using Autofac;
-using Lumina.Excel;
-
 public sealed class ExcelRowFormatterResolver
     : IExcelRowFormatterResolver
 {

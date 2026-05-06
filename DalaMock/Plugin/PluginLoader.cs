@@ -1,22 +1,4 @@
-using DalaMock.Core.Windows;
-
 namespace DalaMock.Core.Plugin;
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-
-using Autofac;
-using DalaMock.Core.DI;
-using DalaMock.Core.Mocks;
-using Dalamud.Interface;
-using Dalamud.Interface.Windowing;
-using Dalamud.Plugin;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Serilog;
 
 /// <summary>
 /// The plugin loader is responsible for loading/starting and stopping plugins.
@@ -79,7 +61,7 @@ public class PluginLoader : IPluginLoader
         return this.loadedPlugins[dalamudPluginType];
     }
 
-    public bool StartPlugin(MockPlugin mockPlugin)
+    public async Task<bool> StartPlugin(MockPlugin mockPlugin)
     {
         if (this.mockDalamudConfiguration.PluginSavePath == null)
         {
@@ -90,7 +72,7 @@ public class PluginLoader : IPluginLoader
         var assemblyName = mockPlugin.PluginType.BaseType?.Assembly.GetName().Name ?? mockPlugin.PluginType.Assembly.GetName().Name ?? mockPlugin.PluginType.Name;
 
         var pluginDirectory = new DirectoryInfo(this.mockDalamudConfiguration.PluginSavePath.FullName);
-        return this.StartPlugin(mockPlugin, new PluginLoadSettings(pluginDirectory, new FileInfo(Path.Combine(this.mockDalamudConfiguration.PluginSavePath.FullName, assemblyName + ".json"))));
+        return await this.StartPlugin(mockPlugin, new PluginLoadSettings(pluginDirectory, new FileInfo(Path.Combine(this.mockDalamudConfiguration.PluginSavePath.FullName, assemblyName + ".json"))));
     }
 
     /// <summary>
@@ -99,7 +81,7 @@ public class PluginLoader : IPluginLoader
     /// <param name="plugin">The mock plugin to start.</param>
     /// <param name="pluginLoadSettings">The settings that should be used to start the plugin.</param>
     /// <returns>A boolean indicating whether or not the plugin started successfully.</returns>
-    public bool StartPlugin(MockPlugin plugin, PluginLoadSettings pluginLoadSettings)
+    public async Task<bool> StartPlugin(MockPlugin plugin, PluginLoadSettings pluginLoadSettings)
     {
         var assemblyName = plugin.PluginType.BaseType?.Assembly.GetName().Name ?? plugin.PluginType.Assembly.GetName().Name ?? plugin.PluginType.Name;
 
@@ -152,7 +134,7 @@ public class PluginLoader : IPluginLoader
 
         var builder = new ContainerBuilder();
 
-        builder.RegisterType(plugin.PluginType).AsSelf().As<IDalamudPlugin>();
+        builder.RegisterType(plugin.PluginType).AsSelf().As<IAsyncDalamudPlugin>();
         IEnumerable<IMockService> mockServices;
         try
         {
@@ -181,10 +163,11 @@ public class PluginLoader : IPluginLoader
 
         var parentContainer = this.mockContainer.GetContainer();
         builder.RegisterInstance(parentContainer.Resolve<MockWindowSystem>()).ExternallyOwned().SingleInstance().AsSelf();
-        builder.RegisterInstance(parentContainer.Resolve<DataShare>()).ExternallyOwned().SingleInstance().AsSelf();
+        builder.RegisterInstance(parentContainer.Resolve<MockDataShare>()).ExternallyOwned().SingleInstance().AsSelf();
         builder.RegisterInstance(parentContainer.Resolve<MockDalamudVersionInfo>()).ExternallyOwned().SingleInstance().AsSelf();
         builder.RegisterInstance(parentContainer.Resolve<MockImGuiComponents>()).ExternallyOwned().SingleInstance().AsSelf();
         builder.RegisterInstance(parentContainer.Resolve<IUiBuilder>()).ExternallyOwned().AsSelf().AsImplementedInterfaces();
+        builder.RegisterInstance(parentContainer.Resolve<MockReplacementContainer>()).ExternallyOwned().AsSelf().AsImplementedInterfaces();
         builder.RegisterInstance(pluginManifest).AsSelf().AsImplementedInterfaces();
         builder.RegisterInstance(pluginLoadSettings).AsSelf().AsImplementedInterfaces();
         builder.RegisterInstance(this.mockDalamudConfiguration).AsSelf().AsImplementedInterfaces();
@@ -199,7 +182,8 @@ public class PluginLoader : IPluginLoader
 
         if (container.TryResolve(plugin.PluginType, out object? builtPlugin))
         {
-            var dalamudPlugin = (IDalamudPlugin)builtPlugin;
+            var dalamudPlugin = (IAsyncDalamudPlugin)builtPlugin;
+            await dalamudPlugin.LoadAsync(CancellationToken.None).ConfigureAwait(false);
             plugin.Startup(dalamudPlugin, pluginLoadSettings, container);
 
             this.logger.LogInformation($"Started plugin {assemblyName}");
@@ -216,7 +200,7 @@ public class PluginLoader : IPluginLoader
     /// </summary>
     /// <param name="plugin">The plugin to stop.</param>
     /// <returns>A boolean indicating whether the plugin could be stopped.</returns>
-    public bool StopPlugin(MockPlugin plugin)
+    public async Task<bool> StopPlugin(MockPlugin plugin)
     {
         if (!plugin.IsLoaded || plugin.DalamudPlugin == null || plugin.Container == null)
         {
@@ -227,7 +211,7 @@ public class PluginLoader : IPluginLoader
 
         this.logger.LogInformation($"Stopping plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}");
 
-        plugin.DalamudPlugin.Dispose();
+        await plugin.DalamudPlugin.DisposeAsync();
         plugin.Container.Dispose();
         plugin.Teardown();
         this.logger.LogInformation($"Stopped plugin {plugin.PluginType.FullName ?? plugin.PluginType.Name}");

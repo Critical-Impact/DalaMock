@@ -8,19 +8,13 @@ using DalaMock.Shared.Interfaces;
 
 using Dalamud.Interface.Windowing;
 
-public interface IWindowSystemFactory
-{
-    IWindowSystem Create(string? imNamespace = null);
-}
-
+/// <inheritdoc />
 public class WindowSystemFactory : IWindowSystemFactory
 {
-    private readonly IComponentContext context;
     private readonly Dictionary<string?, IWindowSystem> cache = new();
 
-    public WindowSystemFactory(IComponentContext context)
+    public WindowSystemFactory()
     {
-        this.context = context;
     }
 
     public IWindowSystem Create(string? imNamespace = null)
@@ -31,7 +25,7 @@ public class WindowSystemFactory : IWindowSystemFactory
             return existingInstance;
         }
 
-        var newInstance = this.context.Resolve<IWindowSystem>(new NamedParameter("imNamespace", imNamespace));
+        var newInstance = new WindowSystem(imNamespace);
         this.cache[imNamespace] = newInstance;
 
         return newInstance;

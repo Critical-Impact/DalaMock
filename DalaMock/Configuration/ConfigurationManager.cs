@@ -1,14 +1,5 @@
 namespace DalaMock.Core.Configuration;
 
-using System.IO;
-
-using DalaMock.Core.Mocks;
-
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-
-using Newtonsoft.Json;
-
 public class ConfigurationManager
 {
     private const string ConfigFileName = "DalaMockConfig.json";

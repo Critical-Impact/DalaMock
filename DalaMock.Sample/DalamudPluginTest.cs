@@ -1,9 +1,10 @@
 ﻿namespace DalaMock.Sample;
 
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Autofac;
-using DalaMock.Core.Mocks;
 using DalaMock.Host.Hosting;
 using DalaMock.Sample.Services;
 using Dalamud.Interface.Windowing;
@@ -21,24 +22,6 @@ public class DalamudPluginTest : HostedPlugin
         : base(pluginInterface)
     {
         this.pluginLog = pluginLog;
-        this.CreateHost();
-        this.HostedEvents.PluginStopping += this.HostedEventsOnPluginStopping;
-        this.HostedEvents.PluginStopped += this.HostedEventsOnPluginStopped;
-        this.Start();
-    }
-
-    private void HostedEventsOnPluginStopped()
-    {
-        // Do something outside the host/DI process when the process stops. This is normally not required but shown as an example of a potential way of doing things
-        this.pluginLog.Verbose("Plugin stopped!");
-        this.HostedEvents.PluginStopped -= this.HostedEventsOnPluginStopped;
-    }
-
-    private void HostedEventsOnPluginStopping()
-    {
-        // Do something outside the host/DI process when the process starts stopping.
-        this.pluginLog.Verbose("Plugin stopping!");
-        this.HostedEvents.PluginStopping -= this.HostedEventsOnPluginStopping;
     }
 
     /// <summary>
@@ -78,5 +61,28 @@ public class DalamudPluginTest : HostedPlugin
 
     public override void ConfigureServices(IServiceCollection serviceCollection)
     {
+    }
+
+    public override async Task StartingAsync(CancellationToken cancellationToken)
+    {
+        this.pluginLog.Verbose("Plugin starting!");
+    }
+
+    public override Task StartedAsync(CancellationToken cancellationToken)
+    {
+        this.pluginLog.Verbose("Plugin started!");
+        return Task.CompletedTask;
+    }
+
+    public override Task StoppingAsync()
+    {
+        this.pluginLog.Verbose("Plugin stopping!");
+        return Task.CompletedTask;
+    }
+
+    public override Task StoppedAsync()
+    {
+        this.pluginLog.Verbose("Plugin stopped!");
+        return Task.CompletedTask;
     }
 }

@@ -13,6 +13,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [6.0.0] - 2026-05-06
+
+### Breaking Changes:
+This version of DalaMock introduces several breaking changes with how non-dalamud services are provided to your plugin. 
+ - Previously it was up to the developer to construct replacement services for services like IWindowSystemFactory, IImGuiComponents, IFileDialogManager
+ - Now when constructing the mock version of your plugin you can request a MockReplacementContainer which will have the services provided by DalaMock that are not native to Dalamud. Override the MockReplacementContainer property on your mock plugin class and pass the MockReplacementContainer instance provided to it. The mock services will be injected automatically.
+ - If you are using HostedPlugin IImGuiComponents, IWindowSystemFactory, IFont, IFileDialogManager will automatically be injected into your container.
+ - If you are not using HostedPlugin, you will be responsible for handling service replacements.
+ - HostedPlugin's now implement IAsyncDalamudPlugin. HostedPlugin provides StartingAsync, StoppingAsync, StartedAsync and StoppedAsync virtual methods that can be overridden if you need to perform tasks when these events occur. 
+
+### Required Changes(HostBuilder plugin):
+ - Request a `MockReplacementContainer mockReplacementContainer` in your Mock plugin's 
+ - Override MockReplacementContainer `public override IReplacementContainer MockReplacementContainer => this.mockReplacementContainer;` inside your mock class.
+ - If you were previously registering any of DalaMocks services in your container remove them
+ - Remove these from your plugin
+
+```
+        containerBuilder.RegisterType<FileDialogManager>().SingleInstance();
+        containerBuilder.RegisterType<DalamudFileDialogManager>().As<IFileDialogManager>().SingleInstance();
+```
+- Remove these from your mock plugin
+```
+        containerBuilder.RegisterType<MockWindowSystem>().AsSelf().As<IWindowSystem>().SingleInstance();
+        containerBuilder.RegisterType<MockFileDialogManager>().AsSelf().As<IFileDialogManager>().SingleInstance();
+        containerBuilder.RegisterType<MockFont>().AsSelf().As<IFont>().SingleInstance();
+```
+
+### Other Changes:
+- Split the plugin loader window 
+- Introduced IWindowSystemFactory and MockWindowSystemFactory
+- ImGuiComponents now includes HelpMarker
+- Switch DalaMock's WindowSystem to a similar system dalamud now uses.
+- Implemented titlebar button support for plugin windows.
+- Added a main menu allowing for dalamock provided windows to be hidden.
+- Stopped publishing DalaMock.Sample
+- Split DalaMock.Sample into DalaMock.Sample.Mock and added DalaMock.Sample.Tests
+
 ## [5.1.1] - 2026-05-03
 
 - Bump core version

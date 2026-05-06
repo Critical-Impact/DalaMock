@@ -1,14 +1,5 @@
 namespace DalaMock.Core.Windows;
 
-using System.Collections.Generic;
-using System.Numerics;
-using System.Threading.Tasks;
-
-using DalaMock.Core.Mocks;
-using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Utility.Raii;
-using Dalamud.Interface.Windowing;
-
 public class LocalPlayersWindow : Window
 {
     private readonly LocalPlayerEditWindow editWindow;

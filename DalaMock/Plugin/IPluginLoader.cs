@@ -1,8 +1,5 @@
 namespace DalaMock.Core.Plugin;
 
-using System;
-using System.Collections.Generic;
-
 /// <summary>
 /// An interface describing a plugin loader.
 /// </summary>
@@ -12,9 +9,9 @@ public interface IPluginLoader
 
     MockPlugin AddPlugin(Type dalamudPluginType);
 
-    bool StartPlugin(MockPlugin plugin, PluginLoadSettings pluginLoadSettings);
+    Task<bool> StartPlugin(MockPlugin plugin, PluginLoadSettings pluginLoadSettings);
 
-    bool StopPlugin(MockPlugin plugin);
+    Task<bool> StopPlugin(MockPlugin plugin);
 
     bool HasPluginsLoaded { get; }
 

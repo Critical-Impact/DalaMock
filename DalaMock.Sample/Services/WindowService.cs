@@ -18,11 +18,11 @@ using Microsoft.Extensions.Logging;
 
 public class WindowService : DisposableMediatorSubscriberBase, IHostedService
 {
-    private readonly WindowSystemFactory windowSystemFactory;
+    private readonly IWindowSystemFactory windowSystemFactory;
     private readonly IUiBuilder uiBuilder;
     private readonly IWindowSystem windowSystem;
 
-    public WindowService(IEnumerable<Window> windows, ILogger<DisposableMediatorSubscriberBase> logger, MediatorService mediatorService, WindowSystemFactory windowSystemFactory, IUiBuilder uiBuilder)
+    public WindowService(IEnumerable<Window> windows, ILogger<DisposableMediatorSubscriberBase> logger, MediatorService mediatorService, IWindowSystemFactory windowSystemFactory, IUiBuilder uiBuilder)
         : base(logger, mediatorService)
     {
         this.windowSystemFactory = windowSystemFactory;

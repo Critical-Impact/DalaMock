@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [6.0.1] - 2026-05-10
+
+### Added
+- Added MockNamePlateGui
+
 ## [6.0.0] - 2026-05-06
 
 ### Breaking Changes:

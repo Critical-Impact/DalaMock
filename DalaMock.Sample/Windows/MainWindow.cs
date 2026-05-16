@@ -24,7 +24,13 @@ public class MainWindow : Window
         ImGui.TextUnformatted("Hello, world!");
 
         ImGui.Text("A sample window");
+        ImGui.Text("Icon Font");
         using (ImRaii.PushFont(this.font1.IconFont))
+        {
+            ImGui.Text(FontAwesomeIcon.Times.ToIconString());
+        }
+        ImGui.Text("Fixed Width Icon Font");
+        using (ImRaii.PushFont(this.font1.IconFixedWidth))
         {
             ImGui.Text(FontAwesomeIcon.Times.ToIconString());
         }

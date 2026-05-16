@@ -113,7 +113,54 @@ public partial class ImGuiScene : IDisposable
             GetFontAwesomeRanges());
         this.AddFontFromMemory(this.gameFontData, gameGlyphSize, this.gameGlyphRanges, mergeMode: true);
 
+        this.LoadFontFromEmbeddedResource(
+            "FontAwesome710FreeSolid.otf",
+            baseFontSize,
+            GetFontAwesomeFixedRanges());
+        this.AddFontFromMemory(this.gameFontData, gameGlyphSize, this.gameGlyphRanges, mergeMode: true);
+
         ImGui.GetIO().Fonts.Build();
+
+        var fonts = ImGui.GetIO().Fonts.Fonts;
+        var iconFont = fonts[3];
+        var iconFixedFont = fonts[4];
+        ImGuiHelpers.CopyGlyphsAcrossFonts(iconFont, iconFixedFont, missingOnly: true, rebuildLookupTable: false);
+        FitRatio(iconFixedFont);
+    }
+
+    private static unsafe void FitRatio(ImFontPtr font)
+    {
+        var nsize = font.FontSize;
+        var glyphs = (ImGuiHelpers.ImFontGlyphReal*)font.Glyphs.Data;
+        if (glyphs == null)
+        {
+            return;
+        }
+
+        for (var i = 0; i < font.Glyphs.Size; i++)
+        {
+            ref var glyph = ref glyphs[i];
+            var ratio = 1f;
+            if (glyph.X1 - glyph.X0 > nsize)
+            {
+                ratio = MathF.Max(ratio, (glyph.X1 - glyph.X0) / nsize);
+            }
+
+            if (glyph.Y1 - glyph.Y0 > nsize)
+            {
+                ratio = MathF.Max(ratio, (glyph.Y1 - glyph.Y0) / nsize);
+            }
+
+            var w = MathF.Round((glyph.X1 - glyph.X0) / ratio, MidpointRounding.ToZero);
+            var h = MathF.Round((glyph.Y1 - glyph.Y0) / ratio, MidpointRounding.AwayFromZero);
+            glyph.X0 = MathF.Round((nsize - w) / 2f, MidpointRounding.ToZero);
+            glyph.Y0 = MathF.Round((nsize - h) / 2f, MidpointRounding.AwayFromZero);
+            glyph.X1 = glyph.X0 + w;
+            glyph.Y1 = glyph.Y0 + h;
+            glyph.AdvanceX = nsize;
+        }
+
+        font.BuildLookupTable();
     }
 
     private unsafe ushort* GetGameGlyphRanges()
@@ -380,6 +427,15 @@ public partial class ImGuiScene : IDisposable
         var ranges = (ushort*)ImGui.MemAlloc(sizeof(ushort) * 3);
         ranges[0] = 0xF000;
         ranges[1] = 0xF8FF;
+        ranges[2] = 0;
+        return ranges;
+    }
+
+    private static unsafe ushort* GetFontAwesomeFixedRanges()
+    {
+        var ranges = (ushort*)ImGui.MemAlloc(sizeof(ushort) * 3);
+        ranges[0] = 0x20;
+        ranges[1] = 0x20;
         ranges[2] = 0;
         return ranges;
     }

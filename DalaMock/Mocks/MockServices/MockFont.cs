@@ -55,7 +55,7 @@ public class MockFont : IFont, IMockService
         {
             if ((IntPtr)this.iconFixedWidth.Handle == IntPtr.Zero)
             {
-                this.iconFixedWidth = ImGui.GetIO().Fonts.Fonts[1];
+                this.iconFixedWidth = ImGui.GetIO().Fonts.Fonts[4];
             }
 
             return this.iconFixedWidth;

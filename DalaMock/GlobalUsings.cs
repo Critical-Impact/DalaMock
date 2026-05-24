@@ -1,7 +1,3 @@
-// <copyright file="GlobalUsings.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 global using System;
 global using System.Collections;
 global using System.Collections.Concurrent;
@@ -28,6 +24,12 @@ global using Autofac;
 
 global using DalaMock.Core.Configuration;
 global using DalaMock.Core.Extensions;
+global using DalaMock.Core.Fonts;
+global using DalaMock.Core.Fonts.Atlas;
+global using DalaMock.Core.Fonts.Chooser;
+global using DalaMock.Core.Fonts.GameFonts;
+global using DalaMock.Core.Fonts.Handles;
+global using DalaMock.Core.Fonts.SystemFonts;
 global using DalaMock.Core.Formatters;
 global using DalaMock.Core.Imgui;
 global using DalaMock.Core.Imgui.Auto;
@@ -89,8 +91,11 @@ global using Dalamud.Game.Text.SeStringHandling.Payloads;
 global using Dalamud.Hooking;
 global using Dalamud.Interface.Colors;
 global using Dalamud.Interface.FontIdentifier;
+global using Dalamud.Interface.GameFonts;
+global using TerraFX.Interop.DirectX;
 global using Dalamud.Interface.ImGuiSeStringRenderer;
 global using Dalamud.Interface.Internal.Windows.StyleEditor;
+global using Dalamud.Interface.Style;
 global using Dalamud.Interface.ManagedFontAtlas;
 global using Dalamud.Interface.Textures;
 global using Dalamud.IoC;

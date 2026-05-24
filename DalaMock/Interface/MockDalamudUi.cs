@@ -9,6 +9,10 @@ public class MockDalamudUi : IDisposable
     private readonly PluginLoader pluginLoader;
     private readonly MockMainMenuBar mockMainMenuBar;
     private readonly MockWindowSystem windowSystem;
+    private readonly MockStyleManager mockStyleManager;
+    private readonly MockDalamudConfiguration dalamudConfiguration;
+    private readonly MockSystemFontProvider systemFontProvider;
+    private readonly MockUiBuilder mockUiBuilder;
     private Dictionary<MockPlugin, MockFramework> frameworks;
     private Dictionary<MockPlugin, MockUiBuilder> uiBUilders;
 
@@ -27,6 +31,10 @@ public class MockDalamudUi : IDisposable
         var windows = mockContainer.GetWindows();
         this.windowSystem = mockContainer.GetWindowSystem();
         this.imGuiScene = mockContainer.GetContainer().Resolve<ImGuiScene>();
+        this.mockStyleManager = mockContainer.GetContainer().Resolve<MockStyleManager>();
+        this.dalamudConfiguration = mockContainer.GetContainer().Resolve<MockDalamudConfiguration>();
+        this.systemFontProvider = mockContainer.GetContainer().Resolve<MockSystemFontProvider>();
+        this.mockUiBuilder = mockContainer.GetContainer().Resolve<MockUiBuilder>();
 
         foreach (var window in windows)
         {
@@ -49,6 +57,18 @@ public class MockDalamudUi : IDisposable
     /// </summary>
     public void Run()
     {
+        this.mockStyleManager.ApplyChosenStyle();
+
+        if (this.dalamudConfiguration.DefaultFont is { } savedFont)
+        {
+            var spec = savedFont.ToSpec(this.systemFontProvider);
+            if (spec is not null)
+            {
+                this.mockUiBuilder.DefaultFontSpec = spec;
+                this.imGuiScene.RequestDefaultFont(spec);
+            }
+        }
+
         this.imGuiScene.OnBuildUi += () =>
         {
             this.mockMainMenuBar.Draw();

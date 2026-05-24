@@ -3,10 +3,11 @@ namespace DalaMock.Core.Mocks.MockServices;
 public class MockUiBuilder : IUiBuilder, IMockService
 {
     private readonly IFont font;
+    private readonly ImGuiScene scene;
 
-    public float FontDefaultSizePt { get; }
+    public float FontDefaultSizePt { get; } = 12f;
 
-    public float FontDefaultSizePx { get; }
+    public float FontDefaultSizePx { get; } = (12f * 4f) / 3f;
 
     public ImFontPtr FontDefault => this.font.DefaultFont;
 
@@ -18,9 +19,19 @@ public class MockUiBuilder : IUiBuilder, IMockService
 
     public GraphicsDevice GraphicsDevice { get; }
 
+    /// <summary>Gets the current global font/UI scale driven by <see cref="ImGuiScene"/>.</summary>
+    public float GlobalFontScale => this.scene.GlobalFontScale;
+
+    /// <summary>
+    /// Requests a new global font/UI scale. Rebuilds the global atlas (and global-scaled plugin
+    /// atlases) at the new pixel size between frames so fonts stay crisp. DalaMock-specific helper.
+    /// </summary>
+    public void RequestGlobalFontScale(float scale) => this.scene.RequestGlobalFontScale(scale);
+
     public MockUiBuilder(ImGuiScene scene, IFont font)
     {
         this.font = font;
+        this.scene = scene;
         this.GraphicsDevice = scene.GraphicsDevice;
         if (this.GraphicsDevice.GetD3D11Info(out BackendInfoD3D11 dx11Info))
         {
@@ -28,6 +39,19 @@ public class MockUiBuilder : IUiBuilder, IMockService
         }
 
         this.WindowHandlePtr = scene.Window.SdlWindowHandle;
+
+        this.DefaultFontHandle = new MockGlobalFontHandle(() => this.font.DefaultFont);
+        this.IconFontHandle = new MockGlobalFontHandle(() => this.font.IconFont);
+        this.MonoFontHandle = new MockGlobalFontHandle(() => this.font.MonoFont);
+        this.IconFontFixedWidthHandle = new MockGlobalFontHandle(() => this.font.IconFixedWidth);
+
+        this.DefaultFontSpec = new MockFontSpec(this.FontDefaultSizePx);
+
+        this.FontAtlas = new MockFontAtlas(
+            scene,
+            "MockUiBuilder",
+            FontAtlasAutoRebuildMode.OnNewFrame,
+            isGlobalScaled: true);
     }
 
     public DalamudUldWrapper LoadUld(string uldPath)
@@ -35,27 +59,24 @@ public class MockUiBuilder : IUiBuilder, IMockService
         throw new NotImplementedException();
     }
 
-    public Task WaitForUi()
-    {
-        throw new NotImplementedException();
-    }
+    public Task WaitForUi() => Task.CompletedTask;
 
-    public Task<T> RunWhenUiPrepared<T>(Func<T> func, bool runInFrameworkThread = false)
-    {
-        throw new NotImplementedException();
-    }
+    public Task<T> RunWhenUiPrepared<T>(Func<T> func, bool runInFrameworkThread = false) =>
+        Task.FromResult(func());
 
-    public Task<T> RunWhenUiPrepared<T>(Func<Task<T>> func, bool runInFrameworkThread = false)
-    {
-        throw new NotImplementedException();
-    }
+    public Task<T> RunWhenUiPrepared<T>(Func<Task<T>> func, bool runInFrameworkThread = false) =>
+        func();
 
     public DalamudIFontAtlas CreateFontAtlas(
         FontAtlasAutoRebuildMode autoRebuildMode,
         bool isGlobalScaled = true,
         string? debugName = null)
     {
-        throw new NotImplementedException();
+        return new MockFontAtlas(
+            this.scene,
+            debugName ?? "MockAtlas",
+            autoRebuildMode,
+            isGlobalScaled);
     }
 
     public DalamudIFontHandle DefaultFontHandle { get; }
@@ -66,7 +87,7 @@ public class MockUiBuilder : IUiBuilder, IMockService
 
     public DalamudIFontHandle IconFontFixedWidthHandle { get; }
 
-    public IFontSpec DefaultFontSpec { get; }
+    public IFontSpec DefaultFontSpec { get; set; }
 
     public Device Device { get; }
 

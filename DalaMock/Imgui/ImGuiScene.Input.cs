@@ -117,6 +117,44 @@ public partial class ImGuiScene
         io.KeyMap[(int)ImGuiKey.Z] = (int)Key.Z;
     }
 
+    private static IntPtr clipboardTextPtr = IntPtr.Zero;
+
+    [DllImport("SDL2", CallingConvention = CallingConvention.Cdecl)]
+    private static extern IntPtr SDL_GetClipboardText();
+
+    [DllImport("SDL2", CallingConvention = CallingConvention.Cdecl)]
+    private static extern unsafe int SDL_SetClipboardText(byte* text);
+
+    [DllImport("SDL2", CallingConvention = CallingConvention.Cdecl)]
+    private static extern void SDL_free(IntPtr mem);
+
+    [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
+    private static unsafe byte* GetClipboardTextImpl(void* userData)
+    {
+        if (clipboardTextPtr != IntPtr.Zero)
+        {
+            SDL_free(clipboardTextPtr);
+            clipboardTextPtr = IntPtr.Zero;
+        }
+
+        clipboardTextPtr = SDL_GetClipboardText();
+        return (byte*)clipboardTextPtr;
+    }
+
+    [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
+    private static unsafe void SetClipboardTextImpl(void* userData, byte* text)
+    {
+        SDL_SetClipboardText(text);
+    }
+
+    private unsafe void SetClipboardFunctions()
+    {
+        var io = ImGui.GetIO();
+        io.GetClipboardTextFn = (void*)(delegate* unmanaged[Cdecl]<void*, byte*>)&GetClipboardTextImpl;
+        io.SetClipboardTextFn = (void*)(delegate* unmanaged[Cdecl]<void*, byte*, void>)&SetClipboardTextImpl;
+        io.ClipboardUserData = null;
+    }
+
     private SDL_SystemCursor ToSdlCursor(ImGuiMouseCursor cursor)
     {
         switch (cursor)

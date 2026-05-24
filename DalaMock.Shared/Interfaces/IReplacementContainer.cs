@@ -17,6 +17,8 @@ public interface IReplacementContainer
 
     IFileDialogManager FileDialogManager { get; }
 
+    IFontChooserFactory FontChooserFactory { get; }
+
     /// <summary>
     /// Registers the services with your autofac container.
     /// </summary>

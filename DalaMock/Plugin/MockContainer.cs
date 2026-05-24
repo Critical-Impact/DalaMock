@@ -235,6 +235,7 @@ public class MockContainer
 
         builder.RegisterInstance(this.levelSwitch);
         builder.RegisterInstance(this.configurationManager);
+        builder.RegisterType<MockStyleManager>().AsSelf().SingleInstance();
         builder.Register<GameData>(
             c => new GameData(
                 this.dalamudConfiguration.GamePath!.FullName,
@@ -258,6 +259,8 @@ public class MockContainer
         builder.RegisterType<SheetRedirectResolver>().AsSelf().SingleInstance();
         builder.RegisterType<NounProcessor>().AsSelf().SingleInstance();
         builder.RegisterType<MockMacroDecoder>().AsSelf().SingleInstance();
+        builder.RegisterType<MockSystemFontProvider>().AsSelf().SingleInstance();
+        builder.RegisterType<MockFontChooserFactory>().As<IFontChooserFactory>().AsSelf().SingleInstance();
         builder.RegisterType<MockReplacementContainer>().AsSelf().InstancePerDependency();
         builder.RegisterGeneric(typeof(DefaultExcelRowFormatter<>))
                .As(typeof(IExcelRowFormatter<>))
@@ -280,7 +283,8 @@ public class MockContainer
             builder.Register<ImGuiScene>(c =>
             {
                 var assertHandler = c.Resolve<AssertHandler>();
-                return ImGuiScene.CreateWindow(assertHandler);
+                var gameData = c.Resolve<GameData>();
+                return ImGuiScene.CreateWindow(assertHandler, gameData, this.dalamudConfiguration.GlobalUiScale);
             }).SingleInstance();
 
             builder.Register<GraphicsDevice>(c =>

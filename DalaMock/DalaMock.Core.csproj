@@ -91,6 +91,7 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="Serilog" Version="4.3.0" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
+        <PackageReference Include="SixLabors.Fonts" Version="2.1.3" />
         <PackageReference Include="StbiSharp" Version="1.2.1" />
         <PackageReference Include="System.Collections.Immutable" Version="10.0.1" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
@@ -105,54 +106,60 @@
         </PackageReference>
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="Shaders/GLSL/imgui-vertex.glsl" LogicalName="imgui-vertex.glsl"/>
-        <EmbeddedResource Include="Shaders/GLSL/imgui-frag.glsl" LogicalName="imgui-frag.glsl"/>
-        <EmbeddedResource Include="Shaders/HLSL/imgui-vertex.hlsl.bytes" LogicalName="imgui-vertex.hlsl.bytes"/>
-        <EmbeddedResource Include="Shaders/HLSL/imgui-frag.hlsl.bytes" LogicalName="imgui-frag.hlsl.bytes"/>
-        <EmbeddedResource Include="Shaders/SPIR-V/imgui-vertex.spv" LogicalName="imgui-vertex.spv"/>
-        <EmbeddedResource Include="Shaders/SPIR-V/imgui-frag.spv" LogicalName="imgui-frag.spv"/>
-        <EmbeddedResource Include="Shaders/Metal/imgui-vertex.metallib" LogicalName="imgui-vertex.metallib"/>
-        <EmbeddedResource Include="Shaders/Metal/imgui-frag.metallib" LogicalName="imgui-frag.metallib"/>
-        <EmbeddedResource Include="Fonts\NotoSansKR-Regular.otf" LogicalName="NotoSansKR-Regular.otf"/>
-        <EmbeddedResource Include="Fonts\NotoSansCJK-Medium.ttc" LogicalName="NotoSansCJK-Medium.ttc"/>
-        <EmbeddedResource Include="Fonts\Inconsolata-Regular.ttf" LogicalName="Inconsolata-Regular.ttf"/>
-        <EmbeddedResource Include="Fonts\NotoSansCJK-Regular.ttc" LogicalName="NotoSansCJK-Regular.ttc"/>
-        <EmbeddedResource Include="Fonts\NotoSansCJKjp-Medium.otf" LogicalName="NotoSansCJKjp-Medium.otf"/>
-        <EmbeddedResource Include="Fonts\FontAwesome710FreeSolid.otf" LogicalName="FontAwesome710FreeSolid.otf"/>
-        <EmbeddedResource Include="Fonts\FontAwesomeFreeSolid.otf" LogicalName="FontAwesomeFreeSolid.otf"/>
-        <EmbeddedResource Include="Fonts\gf.ttf" LogicalName="gf.ttf" />
+        <EmbeddedResource Include="Resources/Shaders/GLSL/imgui-vertex.glsl" LogicalName="imgui-vertex.glsl"/>
+        <EmbeddedResource Include="Resources/Shaders/GLSL/imgui-frag.glsl" LogicalName="imgui-frag.glsl"/>
+        <EmbeddedResource Include="Resources/Shaders/HLSL/imgui-vertex.hlsl.bytes" LogicalName="imgui-vertex.hlsl.bytes"/>
+        <EmbeddedResource Include="Resources/Shaders/HLSL/imgui-frag.hlsl.bytes" LogicalName="imgui-frag.hlsl.bytes"/>
+        <EmbeddedResource Include="Resources/Shaders/SPIR-V/imgui-vertex.spv" LogicalName="imgui-vertex.spv"/>
+        <EmbeddedResource Include="Resources/Shaders/SPIR-V/imgui-frag.spv" LogicalName="imgui-frag.spv"/>
+        <EmbeddedResource Include="Resources/Shaders/Metal/imgui-vertex.metallib" LogicalName="imgui-vertex.metallib"/>
+        <EmbeddedResource Include="Resources/Shaders/Metal/imgui-frag.metallib" LogicalName="imgui-frag.metallib"/>
+        <EmbeddedResource Include="Resources\Fonts\NotoSansKR-Regular.otf" LogicalName="NotoSansKR-Regular.otf"/>
+        <EmbeddedResource Include="Resources\Fonts\NotoSansCJK-Medium.ttc" LogicalName="NotoSansCJK-Medium.ttc"/>
+        <EmbeddedResource Include="Resources\Fonts\Inconsolata-Regular.ttf" LogicalName="Inconsolata-Regular.ttf"/>
+        <EmbeddedResource Include="Resources\Fonts\NotoSansCJK-Regular.ttc" LogicalName="NotoSansCJK-Regular.ttc"/>
+        <EmbeddedResource Include="Resources\Fonts\NotoSansCJKjp-Medium.otf" LogicalName="NotoSansCJKjp-Medium.otf"/>
+        <EmbeddedResource Include="Resources\Fonts\FontAwesome710FreeSolid.otf" LogicalName="FontAwesome710FreeSolid.otf"/>
+        <EmbeddedResource Include="Resources\Fonts\FontAwesomeFreeSolid.otf" LogicalName="FontAwesomeFreeSolid.otf"/>
+        <EmbeddedResource Include="Resources\Fonts\gf.ttf" LogicalName="gf.ttf" />
     </ItemGroup>
     <ItemGroup>
         <None Update="cimgui.dll">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="cimgui.pdb">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <Pack>true</Pack>
+            <PackagePath>runtimes/win-x64/native/</PackagePath>
         </None>
         <None Update="cimguizmo.dll">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="cimguizmo.pdb">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <Pack>true</Pack>
+            <PackagePath>runtimes/win-x64/native/</PackagePath>
         </None>
         <None Update="cimplot.dll">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="cimplot.pdb">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <Pack>true</Pack>
+            <PackagePath>runtimes/win-x64/native/</PackagePath>
         </None>
         <None Update="cimgui.so">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <Pack>true</Pack>
+            <PackagePath>runtimes/linux-x64/native/</PackagePath>
         </None>
         <None Update="cimguizmo.so">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <Pack>true</Pack>
+            <PackagePath>runtimes/linux-x64/native/</PackagePath>
         </None>
-        <None Update="gimplot.so">
+        <None Update="cimplot.so">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <Pack>true</Pack>
+            <PackagePath>runtimes/linux-x64/native/</PackagePath>
         </None>
         <None Update="SDL2.so">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <Pack>true</Pack>
+            <PackagePath>runtimes/linux-x64/native/</PackagePath>
         </None>
+        <None Include="build\DalaMock.Core.targets" Pack="true" PackagePath="build\" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\DalaMock.Shared\DalaMock.Shared.csproj" />

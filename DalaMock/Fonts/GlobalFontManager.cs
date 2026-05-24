@@ -29,6 +29,8 @@ internal sealed unsafe class GlobalFontManager
 
     public GlobalFontManager(GameData? gameData, float initialScale)
     {
+        MockFontAtlasResources.VerifyEmbeddedResources();
+
         this.gameData = gameData;
         this.globalFontScale = this.pendingFontScale = Math.Clamp(initialScale, 0.5f, 4.0f);
         this.gameFontData = this.LoadEmbeddedResource("gf.ttf");
@@ -224,6 +226,13 @@ internal sealed unsafe class GlobalFontManager
         ImFontConfigPtr fontConfig,
         ushort* glyphRanges)
     {
+        if (data.Length == 0)
+        {
+            throw new InvalidOperationException(
+                "Font data passed to AddFontFromBytesOwned is empty. "
+                + "A zero-length buffer would cause a native crash inside ImGui — the embedded resource may not have been packaged correctly.");
+        }
+
         var native = (byte*)ImGui.MemAlloc((nuint)data.Length);
         data.AsSpan().CopyTo(new Span<byte>(native, data.Length));
         fontConfig.FontDataOwnedByAtlas = true;

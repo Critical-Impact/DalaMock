@@ -58,7 +58,21 @@ public partial class ImGuiScene
 
         var atlas = ImGui.GetIO().Fonts;
         atlas.Clear();
-        this.fontManager.BuildInto();
+
+        try
+        {
+            this.fontManager.BuildInto();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(
+                ex,
+                "[ImGuiScene] Font rebuild failed during scale change — falling back to the ImGui built-in default font to prevent a native crash. ");
+
+            atlas.AddFontDefault();
+            atlas.Build();
+        }
+
         this.RecreateFontDeviceTexture(this.GraphicsDevice);
 
         // FontGlobalScale carries the scale for layout (ImGuiHelpers.GlobalScale reads it); the manager

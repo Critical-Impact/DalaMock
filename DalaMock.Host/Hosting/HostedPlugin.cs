@@ -47,7 +47,7 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
         this.pluginLog = new DalamudServiceWrapper<IPluginLog>(pluginInterface).Service;
         this.hostedEvents = new HostedEvents();
         this.hostedServices = new Dictionary<Type, Type>();
-        this.ReplacementContainer = new DalamudReplacementContainer();
+        this.ReplacementContainer = new DalamudReplacementContainer(pluginInterface.UiBuilder);
     }
 
     /// <summary>

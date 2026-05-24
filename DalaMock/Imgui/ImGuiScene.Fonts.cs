@@ -1,61 +1,83 @@
 namespace DalaMock.Core.Imgui;
 
+/// <summary>
+/// Bridges the scene to its <see cref="GlobalFontManager"/>: exposes the font-facing surface that the
+/// rest of DalaMock calls, and orchestrates the between-frames global-atlas rebuild (the manager builds
+/// the fonts; the scene clears the atlas, re-uploads the GPU texture, and flags plugin atlases).
+/// </summary>
 public partial class ImGuiScene
 {
+    /// <summary>
+    /// Gets the current global font/UI scale.
+    /// </summary>
+    public float GlobalFontScale => this.fontManager.GlobalScale;
+
+    /// <summary>Bytes of the bundled gf.ttf game-symbol font, used as a fallback by plugin atlases.</summary>
+    internal byte[] GameFontData => this.fontManager.GameFontData;
+
+    /// <summary>Glyph range for SeIconChar covered by <see cref="GameFontData"/>.</summary>
+    internal unsafe ushort* GameGlyphRanges => this.fontManager.GameGlyphRanges;
+
+    /// <summary>
+    /// Requests a new global font/UI scale. The actual atlas rebuild happens between frames (in
+    /// <see cref="Update"/>), since rebuilding the live ImGui atlas mid-frame is unsafe.
+    /// </summary>
+    /// <param name="scale">The desired scale (1.0 == 100%).</param>
+    public void RequestGlobalFontScale(float scale) => this.fontManager.RequestGlobalScale(scale);
+
+    /// <summary>
+    /// Requests a change to the global default font (the fonts[1] slot returned by
+    /// <c>UiBuilder.DefaultFont</c> and used as <c>io.FontDefault</c>). The atlas rebuild happens between
+    /// frames in <see cref="Update"/>. Pass <c>null</c> to restore the built-in default (AXIS game font).
+    /// </summary>
+    /// <param name="spec">The chosen font spec, or <c>null</c> for the built-in default.</param>
+    public void RequestDefaultFont(SingleFontSpec? spec) => this.fontManager.RequestDefaultFont(spec);
+
+    /// <summary>
+    /// Loads a TTF/OTF from this assembly's embedded resources and adds it to the global ImGui atlas.
+    /// </summary>
     public unsafe ImFontPtr LoadFontFromEmbeddedResource(
         string resourceName,
         float fontSize,
         ushort* glyphRanges = null,
-        bool mergeMode = false)
+        bool mergeMode = false) =>
+        this.fontManager.LoadFontFromEmbeddedResource(resourceName, fontSize, glyphRanges, mergeMode);
+
+    /// <summary>
+    /// Applies a pending global-scale or default-font change if one is queued. Must run on the render
+    /// thread, between frames (before <see cref="ImGui.NewFrame"/>): rebuilds the global atlas via the
+    /// font manager, re-uploads its textures, updates <c>io.FontGlobalScale</c>, and flags global-scaled
+    /// plugin atlases for rebuild.
+    /// </summary>
+    private unsafe void ApplyPendingGlobalScale()
     {
-        var io = ImGui.GetIO();
-
-        using var stream = typeof(ImGuiScene).Assembly
-                                             .GetManifestResourceStream(resourceName)
-                           ?? throw new InvalidOperationException($"Missing resource {resourceName}");
-
-        using var ms = new MemoryStream();
-        stream.CopyTo(ms);
-        var fontData = ms.ToArray();
-
-        var fontConfig = ImGui.ImFontConfig();
-        fontConfig.FontNo = 0;
-        fontConfig.GlyphRanges = glyphRanges;
-        fontConfig.FontDataOwnedByAtlas = true;
-        fontConfig.MergeMode = mergeMode;
-
-        var font = io.Fonts.AddFontFromMemoryTTF(
-            fontData,
-            fontSize,
-            fontConfig,
-            glyphRanges);
-
-        fontConfig.Destroy();
-        return font;
-    }
-
-    private byte[] LoadEmbeddedResource(string resourceName)
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-
-        var fullResourceName = typeof(ImGuiScene).Assembly.GetManifestResourceStream(resourceName);
-
-        if (fullResourceName == null)
+        if (!this.fontManager.TryConsumePending(out var scale))
         {
-            throw new FileNotFoundException(
-                $"Embedded resource '{resourceName}' not found. Available resources: {string.Join(", ", assembly.GetManifestResourceNames())}");
+            return;
         }
 
-        using var stream = typeof(ImGuiScene).Assembly
-                                             .GetManifestResourceStream(resourceName)
-                           ?? throw new InvalidOperationException($"Missing resource {resourceName}");
-        if (stream == null)
+        var atlas = ImGui.GetIO().Fonts;
+        atlas.Clear();
+        this.fontManager.BuildInto();
+        this.RecreateFontDeviceTexture(this.GraphicsDevice);
+
+        // FontGlobalScale carries the scale for layout (ImGuiHelpers.GlobalScale reads it); the manager
+        // already set each font's Scale to 1/scale so glyphs still render 1:1.
+        ImGui.GetIO().FontGlobalScale = scale;
+
+        // Tell global-scaled plugin atlases to rebuild at the new scale on this same frame.
+        MockFontAtlas[] atlasesSnapshot;
+        lock (this.registeredFontAtlases)
         {
-            throw new FileNotFoundException($"Could not load embedded resource '{resourceName}'");
+            atlasesSnapshot = this.registeredFontAtlases.ToArray();
         }
 
-        using var memoryStream = new MemoryStream();
-        stream.CopyTo(memoryStream);
-        return memoryStream.ToArray();
+        foreach (var pluginAtlas in atlasesSnapshot)
+        {
+            if (pluginAtlas.IsGlobalScaled)
+            {
+                pluginAtlas.RequestGlobalScaleRebuild();
+            }
+        }
     }
 }

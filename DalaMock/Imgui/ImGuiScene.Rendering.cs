@@ -9,6 +9,8 @@ namespace DalaMock.Core.Imgui;
 public partial class ImGuiScene
 {
     private readonly IntPtr fontAtlasId = (IntPtr)1;
+
+    private readonly List<IntPtr> fontPageBindingIds = new();
     private Texture? fontTexture;
     private ResourceSet? fontTextureResourceSet;
     private TextureView fontTextureView;
@@ -106,43 +108,175 @@ public partial class ImGuiScene
     {
         var io = ImGui.GetIO();
 
-        // Build
-        byte* pixels = null;
-        int width = 0, height = 0, bytesPerPixel = 0;
-        io.Fonts.GetTexDataAsRGBA32(0, ref pixels, ref width, ref height, ref bytesPerPixel);
+        foreach (var id in this.fontPageBindingIds)
+        {
+            this.viewsById.Remove(id);
+            if (this.atlasTexturesByBindingId.Remove(id, out var prev))
+            {
+                prev.ResourceSet.Dispose();
+                prev.TextureView.Dispose();
+                prev.Texture.Dispose();
+            }
+        }
 
-        // Store our identifier
-        io.Fonts.SetTexID(0, new ImTextureID(this.fontAtlasId));
+        this.fontPageBindingIds.Clear();
 
-        this.fontTexture?.Dispose();
-        this.fontTexture = gd.ResourceFactory.CreateTexture(
-            TextureDescription.Texture2D(
+        var pageCount = io.Fonts.Textures.Size;
+        for (var page = 0; page < pageCount; page++)
+        {
+            byte* pixels = null;
+            int width = 0, height = 0, bytesPerPixel = 0;
+            io.Fonts.GetTexDataAsRGBA32(page, ref pixels, ref width, ref height, ref bytesPerPixel);
+
+            if (bytesPerPixel == 4)
+            {
+                this.fontManager.AxisBakeJob?.FillRgba(pixels, width, height, page);
+            }
+
+            var texture = gd.ResourceFactory.CreateTexture(
+                TextureDescription.Texture2D(
+                    (uint)width,
+                    (uint)height,
+                    1,
+                    1,
+                    PixelFormat.R8_G8_B8_A8_UNorm,
+                    TextureUsage.Sampled));
+            gd.UpdateTexture(
+                texture,
+                (IntPtr)pixels,
+                (uint)(bytesPerPixel * width * height),
+                0,
+                0,
+                0,
                 (uint)width,
                 (uint)height,
                 1,
-                1,
-                PixelFormat.R8_G8_B8_A8_UNorm,
-                TextureUsage.Sampled));
-        this.fontTexture.Name = "ImGui.NET Font Texture";
-        gd.UpdateTexture(
-            this.fontTexture,
-            (IntPtr)pixels,
-            (uint)(bytesPerPixel * width * height),
-            0,
-            0,
-            0,
-            (uint)width,
-            (uint)height,
-            1,
-            0,
-            0);
-        this.fontTextureResourceSet?.Dispose();
-        this.fontTextureView = gd.ResourceFactory.CreateTextureView(this.fontTexture);
-        this.fontTextureResourceSet = gd.ResourceFactory.CreateResourceSet(new ResourceSetDescription(this.textureLayout, this.fontTextureView));
-        this.fontTextureResourceSet.Name = "ImGui.NET Font Texture Resource Set";
+                0,
+                0);
+
+            var textureView = gd.ResourceFactory.CreateTextureView(texture);
+            var resourceSet = gd.ResourceFactory.CreateResourceSet(
+                new ResourceSetDescription(this.textureLayout, textureView));
+
+            if (page == 0)
+            {
+                io.Fonts.SetTexID(0, new ImTextureID(this.fontAtlasId));
+                texture.Name = "ImGui.NET Font Texture";
+                resourceSet.Name = "ImGui.NET Font Texture Resource Set";
+
+                this.fontTexture?.Dispose();
+                this.fontTextureResourceSet?.Dispose();
+                this.fontTexture = texture;
+                this.fontTextureView = textureView;
+                this.fontTextureResourceSet = resourceSet;
+            }
+            else
+            {
+                texture.Name = $"ImGui.NET Font Texture (page {page})";
+                var bindingId = this.GetNextImGuiBindingId();
+                io.Fonts.SetTexID(page, new ImTextureID(bindingId));
+                this.viewsById[bindingId] = new ResourceSetInfo(bindingId, resourceSet);
+                this.atlasTexturesByBindingId[bindingId] = new AtlasTextureResources(texture, textureView, resourceSet);
+                this.fontPageBindingIds.Add(bindingId);
+            }
+        }
 
         io.Fonts.ClearTexData();
     }
+
+    private readonly Dictionary<IntPtr, AtlasTextureResources> atlasTexturesByBindingId = new();
+
+    /// <summary>
+    /// Builds and uploads a Veldrid texture for the given <paramref name="atlas"/>, registers it under a
+    /// fresh binding id, and returns the id. Used by <see cref="MockFontAtlas"/> so plugin atlases
+    /// render via the existing per-draw-command texture dispatch in <see cref="RenderImDrawData"/>.
+    /// </summary>
+    public unsafe IReadOnlyList<IntPtr> CreateAtlasTexture(ImFontAtlasPtr atlas)
+    {
+        var bindingIds = new List<IntPtr>();
+        var pageCount = atlas.Textures.Size;
+        for (var page = 0; page < pageCount; page++)
+        {
+            byte* pixels = null;
+            int width = 0, height = 0, bytesPerPixel = 0;
+            atlas.GetTexDataAsRGBA32(page, ref pixels, ref width, ref height, ref bytesPerPixel);
+
+            var texture = this.GraphicsDevice.ResourceFactory.CreateTexture(
+                TextureDescription.Texture2D(
+                    (uint)width,
+                    (uint)height,
+                    1,
+                    1,
+                    PixelFormat.R8_G8_B8_A8_UNorm,
+                    TextureUsage.Sampled));
+            texture.Name = $"MockFontAtlas Texture (page {page})";
+            this.GraphicsDevice.UpdateTexture(
+                texture,
+                (IntPtr)pixels,
+                (uint)(bytesPerPixel * width * height),
+                0,
+                0,
+                0,
+                (uint)width,
+                (uint)height,
+                1,
+                0,
+                0);
+
+            var textureView = this.GraphicsDevice.ResourceFactory.CreateTextureView(texture);
+            var resourceSet = this.GraphicsDevice.ResourceFactory.CreateResourceSet(
+                new ResourceSetDescription(this.textureLayout, textureView));
+            var bindingId = this.GetNextImGuiBindingId();
+
+            this.viewsById[bindingId] = new ResourceSetInfo(bindingId, resourceSet);
+            this.atlasTexturesByBindingId[bindingId] = new AtlasTextureResources(texture, textureView, resourceSet);
+            atlas.SetTexID(page, new ImTextureID(bindingId));
+            bindingIds.Add(bindingId);
+        }
+
+        atlas.ClearTexData();
+        return bindingIds;
+    }
+
+    /// <summary>
+    /// Disposes the Veldrid resources associated with a previously-issued binding id and removes the
+    /// mapping. Safe to call from the main render thread (where Veldrid is happy).
+    /// </summary>
+    public void DestroyAtlasTexture(IntPtr bindingId)
+    {
+        if (!this.atlasTexturesByBindingId.Remove(bindingId, out var res))
+        {
+            return;
+        }
+
+        this.viewsById.Remove(bindingId);
+        try
+        {
+            res.ResourceSet.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[ImGuiScene] atlas ResourceSet dispose threw");
+        }
+        try
+        {
+            res.TextureView.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[ImGuiScene] atlas TextureView dispose threw");
+        }
+        try
+        {
+            res.Texture.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[ImGuiScene] atlas Texture dispose threw");
+        }
+    }
+
+    private record struct AtlasTextureResources(Texture Texture, TextureView TextureView, ResourceSet ResourceSet);
 
     /// <summary>
     /// Retrieves the shader texture binding for the given helper handle.

@@ -391,6 +391,11 @@
           "SharpGen.Runtime": "2.0.0-beta.13"
         }
       },
+      "SixLabors.Fonts": {
+        "type": "Transitive",
+        "resolved": "2.1.3",
+        "contentHash": "ORWbZ5BHrC/LZvo+Y09MnoJq5VUKD85LsYALk+YI7CHFra+m5arCkz00IntDM6SrAiB22bvSdKtKmuCyHOKlqg=="
+      },
       "StbiSharp": {
         "type": "Transitive",
         "resolved": "1.2.1",
@@ -498,7 +503,7 @@
         "type": "Project",
         "dependencies": {
           "Autofac": "[9.0.0, )",
-          "DalaMock.Shared": "[5.1.0, )",
+          "DalaMock.Shared": "[6.0.0, )",
           "Microsoft.DotNet.PlatformAbstractions": "[3.1.6, )",
           "Microsoft.Extensions.Configuration": "[10.0.1, )",
           "Microsoft.Extensions.DependencyModel": "[10.0.1, )",
@@ -510,6 +515,7 @@
           "Newtonsoft.Json": "[13.0.4, )",
           "Serilog": "[4.3.0, )",
           "Serilog.Extensions.Logging": "[10.0.0, )",
+          "SixLabors.Fonts": "[2.1.3, )",
           "StbiSharp": "[1.2.1, )",
           "Veldrid": "[4.9.0, )",
           "Veldrid.SDL2": "[4.9.0, )",
@@ -520,7 +526,7 @@
         "type": "Project",
         "dependencies": {
           "Autofac.Extensions.DependencyInjection": "[10.0.0, )",
-          "DalaMock.Shared": "[5.1.0, )",
+          "DalaMock.Shared": "[6.0.0, )",
           "Microsoft.Extensions.Hosting": "[10.0.4, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[10.0.4, )",
           "Microsoft.Extensions.ObjectPool": "[10.0.4, )"
@@ -531,9 +537,9 @@
         "dependencies": {
           "Autofac": "[9.0.0, )",
           "Autofac.Extensions.DependencyInjection": "[10.0.0, )",
-          "DalaMock.Core": "[5.1.1, )",
-          "DalaMock.Host": "[5.1.0, )",
-          "DalaMock.Shared": "[5.1.0, )",
+          "DalaMock.Core": "[6.0.1, )",
+          "DalaMock.Host": "[6.0.0, )",
+          "DalaMock.Shared": "[6.0.0, )",
           "DalamudPackager": "[15.0.0, )"
         }
       },

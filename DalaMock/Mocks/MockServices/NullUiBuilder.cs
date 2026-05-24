@@ -2,33 +2,33 @@ namespace DalaMock.Core.Mocks.MockServices;
 
 public class NullUiBuilder : IUiBuilder, IMockService
 {
+    public NullUiBuilder()
+    {
+        this.DefaultFontHandle = new NullFontHandle();
+        this.IconFontHandle = new NullFontHandle();
+        this.MonoFontHandle = new NullFontHandle();
+        this.IconFontFixedWidthHandle = new NullFontHandle();
+        this.DefaultFontSpec = new MockFontSpec(this.FontDefaultSizePx);
+        this.FontAtlas = new NullFontAtlas();
+    }
+
     public UldWrapper LoadUld(string uldPath)
     {
         throw new NotImplementedException();
     }
 
-    public Task WaitForUi()
-    {
-        throw new NotImplementedException();
-    }
+    public Task WaitForUi() => Task.CompletedTask;
 
-    public Task<T> RunWhenUiPrepared<T>(Func<T> func, bool runInFrameworkThread = false)
-    {
-        throw new NotImplementedException();
-    }
+    public Task<T> RunWhenUiPrepared<T>(Func<T> func, bool runInFrameworkThread = false) =>
+        Task.FromResult(func());
 
-    public Task<T> RunWhenUiPrepared<T>(Func<Task<T>> func, bool runInFrameworkThread = false)
-    {
-        throw new NotImplementedException();
-    }
+    public Task<T> RunWhenUiPrepared<T>(Func<Task<T>> func, bool runInFrameworkThread = false) =>
+        func();
 
     public IFontAtlas CreateFontAtlas(
         FontAtlasAutoRebuildMode autoRebuildMode,
         bool isGlobalScaled = true,
-        string? debugName = null)
-    {
-        throw new NotImplementedException();
-    }
+        string? debugName = null) => new NullFontAtlas();
 
     public IFontHandle DefaultFontHandle { get; set; }
 
@@ -40,9 +40,9 @@ public class NullUiBuilder : IUiBuilder, IMockService
 
     public IFontSpec DefaultFontSpec { get; set; }
 
-    public float FontDefaultSizePt { get; set; }
+    public float FontDefaultSizePt { get; set; } = 12f;
 
-    public float FontDefaultSizePx { get; set; }
+    public float FontDefaultSizePx { get; set; } = (12f * 4f) / 3f;
 
     public ImFontPtr FontDefault { get; set; }
 

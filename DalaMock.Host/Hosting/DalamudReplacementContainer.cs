@@ -1,5 +1,6 @@
 using Autofac;
 
+using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 
 namespace DalaMock.Host.Hosting;
@@ -12,12 +13,13 @@ using Dalamud.Interface.ImGuiFileDialog;
 /// <inheritdoc />
 public class DalamudReplacementContainer : IReplacementContainer
 {
-    public DalamudReplacementContainer()
+    public DalamudReplacementContainer(IUiBuilder uiBuilder)
     {
         this.ImGuiComponents = new DalamudImGuiComponents();
         this.WindowSystemFactory = new WindowSystemFactory();
         this.Font = new Font();
         this.FileDialogManager = new DalamudFileDialogManager(new FileDialogManager());
+        this.FontChooserFactory = new DalamudFontChooserFactory(uiBuilder);
     }
 
     public IImGuiComponents ImGuiComponents { get; }
@@ -28,6 +30,8 @@ public class DalamudReplacementContainer : IReplacementContainer
 
     public IFileDialogManager FileDialogManager { get; }
 
+    public IFontChooserFactory FontChooserFactory { get; }
+
     /// <inheritdoc/>
     public void Register(ContainerBuilder containerBuilder)
     {
@@ -35,6 +39,7 @@ public class DalamudReplacementContainer : IReplacementContainer
         containerBuilder.RegisterInstance(this.WindowSystemFactory).AsImplementedInterfaces().AsSelf().SingleInstance();
         containerBuilder.RegisterInstance(this.Font).AsImplementedInterfaces().AsSelf().SingleInstance();
         containerBuilder.RegisterInstance(this.FileDialogManager).AsImplementedInterfaces().AsSelf().SingleInstance();
+        containerBuilder.RegisterInstance(this.FontChooserFactory).AsImplementedInterfaces().AsSelf().SingleInstance();
         containerBuilder.RegisterType<WindowSystem>().As<IWindowSystem>();
     }
 }

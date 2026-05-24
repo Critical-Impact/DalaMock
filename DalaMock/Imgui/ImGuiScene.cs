@@ -9,24 +9,29 @@ public partial class ImGuiScene : IDisposable
 {
     private const string StateFilePath = "dalamock_ui.json";
     private const int DebounceDelayMs = 500;
-    private static readonly char SeIconCharMin = (char)Enum.GetValues<SeIconChar>().Min();
-    private static readonly char SeIconCharMax = (char)Enum.GetValues<SeIconChar>().Max();
     private readonly AssertHandler assertHandler;
     private readonly Dictionary<Texture, TextureView> autoViewsByTexture = new();
     private readonly List<IDisposable> ownedResources = new();
     private readonly Dictionary<TextureView, ResourceSetInfo> setsByView = new();
     private readonly Dictionary<IntPtr, ResourceSetInfo> viewsById = new();
     private readonly Vector3 backgroundColour = new(0.45f, 0.55f, 0.6f);
-    private readonly byte[] gameFontData;
-    private readonly unsafe ushort* gameGlyphRanges;
     private readonly bool pauseRendering = false;
     private readonly Vector2 scaleFactor = Vector2.One;
+    private readonly GlobalFontManager fontManager;
 
     private MockWindowState currentWindowState;
     private CancellationTokenSource debounceCts;
 
     private bool disposedValue;
     private int lastAssignedId = 100;
+
+    private readonly List<MockFontAtlas> registeredFontAtlases = new();
+    private readonly ConcurrentQueue<DeferredAtlasDispose> deferredAtlasDisposes = new();
+
+    /// <summary>
+    /// Marshals work onto the ImGui render thread (e.g. atlas texture uploads from background-build threads).
+    /// </summary>
+    internal MockFontAtlasUploadQueue UploadQueue { get; } = new();
 
     /// <summary>
     /// User methods invoked every ImGui frame to construct custom UIs.
@@ -41,9 +46,11 @@ public partial class ImGuiScene : IDisposable
     /// </summary>
     /// <param name="createInfo">Creation details for the window.</param>
     /// <param name="assertHandler"></param>
-    public unsafe ImGuiScene(WindowCreateInfo createInfo, AssertHandler assertHandler)
+    /// <param name="gameData">Optional Lumina GameData for loading the AXIS game font.</param>
+    public unsafe ImGuiScene(WindowCreateInfo createInfo, AssertHandler assertHandler, GameData? gameData = null, float initialScale = 1f)
     {
         this.assertHandler = assertHandler;
+        this.fontManager = new GlobalFontManager(gameData, initialScale);
         GraphicsDevice graphicsDevice;
         Sdl2Window window;
         VeldridStartup.CreateWindowAndGraphicsDevice(
@@ -66,13 +73,11 @@ public partial class ImGuiScene : IDisposable
         ImGui.SetCurrentContext(context);
         assertHandler.Setup();
 
-        this.gameFontData = this.LoadEmbeddedResource("gf.ttf");
-        this.gameGlyphRanges = this.GetGameGlyphRanges();
-
-        this.BuildDefaultFonts();
+        this.fontManager.BuildInto();
 
         ImGui.GetIO().BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
-        ImGui.GetIO().FontGlobalScale = 1;
+
+        ImGui.GetIO().FontGlobalScale = this.fontManager.GlobalScale;
         var field = typeof(ImGuiHelpers).GetProperty("MainViewport", BindingFlags.Static | BindingFlags.Public);
         field?.SetValue(null, ImGui.GetMainViewport());
 
@@ -80,118 +85,12 @@ public partial class ImGuiScene : IDisposable
             this.GraphicsDevice,
             this.GraphicsDevice.MainSwapchain.Framebuffer.OutputDescription);
         this.SetKeyMappings();
+        this.SetClipboardFunctions();
         this.SetPerFrameImGuiData(0);
         ImGui.NewFrame();
         ImGui.EndFrame();
 
         this.currentWindowState = this.CaptureWindowState();
-    }
-
-    private unsafe void BuildDefaultFonts()
-    {
-        var baseFontSize = (12 * 4.0f) / 3.0f;
-        var gameGlyphSize = baseFontSize * 2.0f;
-
-        ImGui.GetIO().Fonts.AddFontDefault(null);
-        this.AddFontFromMemory(this.gameFontData, gameGlyphSize, this.gameGlyphRanges, mergeMode: true);
-
-        this.LoadFontFromEmbeddedResource(
-            "NotoSansCJKjp-Medium.otf",
-            baseFontSize,
-            ImGui.GetIO().Fonts.GetGlyphRangesJapanese());
-        this.AddFontFromMemory(this.gameFontData, gameGlyphSize, this.gameGlyphRanges, mergeMode: true);
-
-        this.LoadFontFromEmbeddedResource(
-            "Inconsolata-Regular.ttf",
-            baseFontSize,
-            ImGui.GetIO().Fonts.GetGlyphRangesDefault());
-        this.AddFontFromMemory(this.gameFontData, gameGlyphSize, this.gameGlyphRanges, mergeMode: true);
-
-        this.LoadFontFromEmbeddedResource(
-            "FontAwesomeFreeSolid.otf",
-            baseFontSize,
-            GetFontAwesomeRanges());
-        this.AddFontFromMemory(this.gameFontData, gameGlyphSize, this.gameGlyphRanges, mergeMode: true);
-
-        this.LoadFontFromEmbeddedResource(
-            "FontAwesome710FreeSolid.otf",
-            baseFontSize,
-            GetFontAwesomeFixedRanges());
-        this.AddFontFromMemory(this.gameFontData, gameGlyphSize, this.gameGlyphRanges, mergeMode: true);
-
-        ImGui.GetIO().Fonts.Build();
-
-        var fonts = ImGui.GetIO().Fonts.Fonts;
-        var iconFont = fonts[3];
-        var iconFixedFont = fonts[4];
-        ImGuiHelpers.CopyGlyphsAcrossFonts(iconFont, iconFixedFont, missingOnly: true, rebuildLookupTable: false);
-        FitRatio(iconFixedFont);
-    }
-
-    private static unsafe void FitRatio(ImFontPtr font)
-    {
-        var nsize = font.FontSize;
-        var glyphs = (ImGuiHelpers.ImFontGlyphReal*)font.Glyphs.Data;
-        if (glyphs == null)
-        {
-            return;
-        }
-
-        for (var i = 0; i < font.Glyphs.Size; i++)
-        {
-            ref var glyph = ref glyphs[i];
-            var ratio = 1f;
-            if (glyph.X1 - glyph.X0 > nsize)
-            {
-                ratio = MathF.Max(ratio, (glyph.X1 - glyph.X0) / nsize);
-            }
-
-            if (glyph.Y1 - glyph.Y0 > nsize)
-            {
-                ratio = MathF.Max(ratio, (glyph.Y1 - glyph.Y0) / nsize);
-            }
-
-            var w = MathF.Round((glyph.X1 - glyph.X0) / ratio, MidpointRounding.ToZero);
-            var h = MathF.Round((glyph.Y1 - glyph.Y0) / ratio, MidpointRounding.AwayFromZero);
-            glyph.X0 = MathF.Round((nsize - w) / 2f, MidpointRounding.ToZero);
-            glyph.Y0 = MathF.Round((nsize - h) / 2f, MidpointRounding.AwayFromZero);
-            glyph.X1 = glyph.X0 + w;
-            glyph.Y1 = glyph.Y0 + h;
-            glyph.AdvanceX = nsize;
-        }
-
-        font.BuildLookupTable();
-    }
-
-    private unsafe ushort* GetGameGlyphRanges()
-    {
-        var builder = ImGuiNative.ImFontGlyphRangesBuilder();
-
-        for (char c = SeIconCharMin; c <= SeIconCharMax; c++)
-        {
-            ImGuiNative.AddChar(builder, c);
-        }
-
-        ImVector<ushort> ranges;
-        ImGuiNative.BuildRanges(builder, &ranges);
-
-        return ranges.Data;
-    }
-
-    private unsafe void AddFontFromMemory(byte[] fontData, float size, ushort* glyphRanges, bool mergeMode)
-    {
-        var fontConfig = ImGui.ImFontConfig();
-        fontConfig.MergeMode = mergeMode;
-        fontConfig.GlyphMinAdvanceX = 13.0f;
-        fontConfig.FontDataOwnedByAtlas = true;
-
-        ImGui.GetIO().Fonts.AddFontFromMemoryTTF(
-            fontData,
-            size,
-            fontConfig,
-            glyphRanges);
-
-        fontConfig.Destroy();
     }
 
     /// <summary>
@@ -224,8 +123,9 @@ public partial class ImGuiScene : IDisposable
     /// Helper method to create a fullscreen window.
     /// </summary>
     /// <param name="assertHandler">The assert handler.</param>
+    /// <param name="gameData">Optional Lumina GameData for loading the AXIS game font.</param>
     /// <returns>Returns a imguiscene.</returns>
-    public static unsafe ImGuiScene CreateWindow(AssertHandler assertHandler)
+    public static unsafe ImGuiScene CreateWindow(AssertHandler assertHandler, GameData? gameData = null, float initialScale = 1f)
     {
         var savedState = LoadWindowState();
 
@@ -238,6 +138,8 @@ public partial class ImGuiScene : IDisposable
             Y = savedState?.Y ?? 0,
             WindowInitialState = WindowState.Maximized,
         };
+        Sdl2Native.SDL_Init(SDLInitFlags.Video);
+        Sdl2Native.SDL_Init(SDLInitFlags.GameController);
         if (savedState != null)
         {
             createInfo.WindowInitialState = savedState.IsMaximized
@@ -259,7 +161,7 @@ public partial class ImGuiScene : IDisposable
             createInfo.Y = clampedY;
         }
 
-        var scene = new ImGuiScene(createInfo, assertHandler);
+        var scene = new ImGuiScene(createInfo, assertHandler, gameData, initialScale);
         scene.Window.Opacity = 1;
 
         return scene;
@@ -298,6 +200,21 @@ public partial class ImGuiScene : IDisposable
             this.SetPerFrameImGuiData(deltaSeconds);
             this.UpdateImGuiInput(snapshot);
 
+            this.UploadQueue.Drain();
+
+            this.ApplyPendingGlobalScale();
+
+            MockFontAtlas[] atlasesSnapshot;
+            lock (this.registeredFontAtlases)
+            {
+                atlasesSnapshot = this.registeredFontAtlases.ToArray();
+            }
+
+            foreach (var atlas in atlasesSnapshot)
+            {
+                atlas.DrainPendingFrameRequests();
+            }
+
             ImGui.NewFrame();
             this.OnBuildUi?.Invoke();
             this.CommandList!.Begin();
@@ -310,6 +227,8 @@ public partial class ImGuiScene : IDisposable
             this.CommandList.End();
             this.GraphicsDevice.SubmitCommands(this.CommandList);
             this.GraphicsDevice.SwapBuffers(this.GraphicsDevice.MainSwapchain);
+
+            this.RunDeferredAtlasDisposes();
         }
     }
 
@@ -422,24 +341,6 @@ public partial class ImGuiScene : IDisposable
     }
 
 
-    private static unsafe ushort* GetFontAwesomeRanges()
-    {
-        var ranges = (ushort*)ImGui.MemAlloc(sizeof(ushort) * 3);
-        ranges[0] = 0xF000;
-        ranges[1] = 0xF8FF;
-        ranges[2] = 0;
-        return ranges;
-    }
-
-    private static unsafe ushort* GetFontAwesomeFixedRanges()
-    {
-        var ranges = (ushort*)ImGui.MemAlloc(sizeof(ushort) * 3);
-        ranges[0] = 0x20;
-        ranges[1] = 0x20;
-        ranges[2] = 0;
-        return ranges;
-    }
-
     private void WindowOnClosed()
     {
         this.debounceCts?.Cancel();
@@ -457,12 +358,104 @@ public partial class ImGuiScene : IDisposable
         io.DeltaTime = deltaSeconds; // DeltaTime is in seconds.
     }
 
+    /// <summary>
+    /// Registers a <see cref="MockFontAtlas"/> for frame-pumping (drain pending rebuilds before each NewFrame).
+    /// </summary>
+    internal void RegisterFontAtlas(MockFontAtlas atlas)
+    {
+        lock (this.registeredFontAtlases)
+        {
+            this.registeredFontAtlases.Add(atlas);
+        }
+    }
+
+    /// <summary>
+    /// Unregisters a <see cref="MockFontAtlas"/> previously registered via <see cref="RegisterFontAtlas"/>.
+    /// </summary>
+    internal void UnregisterFontAtlas(MockFontAtlas atlas)
+    {
+        lock (this.registeredFontAtlases)
+        {
+            this.registeredFontAtlases.Remove(atlas);
+        }
+    }
+
+    /// <summary>
+    /// Queues an action to be run after the next frame has been submitted to the GPU. Used to
+    /// defer native ImFontAtlas destruction past any in-flight draw commands that reference it.
+    /// </summary>
+    internal void EnqueueDeferredAtlasDispose(SysAction action)
+    {
+        this.deferredAtlasDisposes.Enqueue(new DeferredAtlasDispose(action, 1));
+    }
+
+    private void RunDeferredAtlasDisposes()
+    {
+        var requeue = new List<DeferredAtlasDispose>();
+        while (this.deferredAtlasDisposes.TryDequeue(out var item))
+        {
+            if (item.FramesRemaining <= 0)
+            {
+                try
+                {
+                    item.Action();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[ImGuiScene] deferred atlas dispose action threw");
+                }
+            }
+            else
+            {
+                requeue.Add(item with { FramesRemaining = item.FramesRemaining - 1 });
+            }
+        }
+
+        foreach (var item in requeue)
+        {
+            this.deferredAtlasDisposes.Enqueue(item);
+        }
+    }
+
+    private record struct DeferredAtlasDispose(SysAction Action, int FramesRemaining);
+
     protected virtual void Dispose(bool disposing)
     {
         if (!this.disposedValue)
         {
             if (disposing)
             {
+            }
+
+            MockFontAtlas[] atlasesSnapshot;
+            lock (this.registeredFontAtlases)
+            {
+                atlasesSnapshot = this.registeredFontAtlases.ToArray();
+                this.registeredFontAtlases.Clear();
+            }
+
+            foreach (var atlas in atlasesSnapshot)
+            {
+                try
+                {
+                    atlas.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[ImGuiScene] disposing font atlas failed");
+                }
+            }
+
+            while (this.deferredAtlasDisposes.TryDequeue(out var item))
+            {
+                try
+                {
+                    item.Action();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[ImGuiScene] deferred dispose flush threw");
+                }
             }
 
             this.assertHandler.Dispose();

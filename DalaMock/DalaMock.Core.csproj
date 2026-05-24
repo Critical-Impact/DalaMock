@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <LangVersion>13.0</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>6.1.1</Version>
+        <Version>6.1.2</Version>
         <PackageProjectUrl>https://github.com/Critical-Impact/DalaMock</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Critical-Impact/DalaMock</RepositoryUrl>
         <Authors>Critical-Impact</Authors>
@@ -127,37 +127,37 @@
         <None Update="cimgui.dll">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
             <Pack>true</Pack>
-            <PackagePath>runtimes/win-x64/native/</PackagePath>
+            <PackagePath>native/win-x64/</PackagePath>
         </None>
         <None Update="cimguizmo.dll">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
             <Pack>true</Pack>
-            <PackagePath>runtimes/win-x64/native/</PackagePath>
+            <PackagePath>native/win-x64/</PackagePath>
         </None>
         <None Update="cimplot.dll">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
             <Pack>true</Pack>
-            <PackagePath>runtimes/win-x64/native/</PackagePath>
+            <PackagePath>native/win-x64/</PackagePath>
         </None>
         <None Update="cimgui.so">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
             <Pack>true</Pack>
-            <PackagePath>runtimes/linux-x64/native/</PackagePath>
+            <PackagePath>native/linux-x64/</PackagePath>
         </None>
         <None Update="cimguizmo.so">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
             <Pack>true</Pack>
-            <PackagePath>runtimes/linux-x64/native/</PackagePath>
+            <PackagePath>native/linux-x64/</PackagePath>
         </None>
         <None Update="cimplot.so">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
             <Pack>true</Pack>
-            <PackagePath>runtimes/linux-x64/native/</PackagePath>
+            <PackagePath>native/linux-x64/</PackagePath>
         </None>
         <None Update="SDL2.so">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
             <Pack>true</Pack>
-            <PackagePath>runtimes/linux-x64/native/</PackagePath>
+            <PackagePath>native/linux-x64/</PackagePath>
         </None>
         <None Include="build\DalaMock.Core.targets" Pack="true" PackagePath="build\" />
     </ItemGroup>

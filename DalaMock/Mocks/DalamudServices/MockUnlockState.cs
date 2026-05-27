@@ -35,6 +35,7 @@ public class MockUnlockState : IUnlockState, IMockService
     public HashSet<uint> BuddyEquipUnlocked = new();
     public HashSet<uint> CharaMakeCustomizeUnlocked = new();
     public HashSet<uint> ChocoboTaxiStandUnlocked = new();
+    public HashSet<uint> ClassJobUnlocked = new();
     public HashSet<uint> CompanionUnlocked = new();
     public HashSet<uint> CraftActionUnlocked = new();
     public HashSet<uint> CSBonusContentTypeUnlocked = new();
@@ -129,6 +130,10 @@ public class MockUnlockState : IUnlockState, IMockService
     /// <inheritdoc/>
     public bool IsChocoboTaxiStandUnlocked(ChocoboTaxiStand row)
         => Check(this.ChocoboTaxiStandUnlocked, row.RowId);
+
+    /// <inheritdoc/>
+    public bool IsClassJobUnlocked(ClassJob row)
+        => Check(this.ClassJobUnlocked, row.RowId);
 
     /// <inheritdoc/>
     public bool IsCompanionUnlocked(Companion row)
@@ -374,6 +379,11 @@ public class MockUnlockState : IUnlockState, IMockService
         if (rowRef.TryGetValue<ChocoboTaxiStand>(out var chocoboTaxiStandRow))
         {
             return this.IsChocoboTaxiStandUnlocked(chocoboTaxiStandRow);
+        }
+
+        if (rowRef.TryGetValue<ClassJob>(out var classJobRow))
+        {
+            return this.IsClassJobUnlocked(classJobRow);
         }
 
         if (rowRef.TryGetValue<Companion>(out var companionRow))

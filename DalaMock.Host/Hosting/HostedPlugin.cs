@@ -134,7 +134,7 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
     /// <returns>A built host.</returns>
     public async Task<IHost> CreateHost(CancellationToken cancellationToken)
     {
-        await this.PreCreatingASync(cancellationToken);
+        await this.PreCreatingAsync(cancellationToken);
         this.HostedPluginOptions = this.ConfigureOptions();
         var hostBuilder = new HostBuilder()
             .UseContentRoot(this.pluginInterface.ConfigDirectory.FullName)
@@ -199,7 +199,7 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public virtual Task PreCreatingASync(CancellationToken cancellationToken)
+    public virtual Task PreCreatingAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
     }

@@ -130,9 +130,11 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
     /// <summary>
     /// Builds the host and starts the plugin.
     /// </summary>
+    /// <param name="cancellationToken"></param>
     /// <returns>A built host.</returns>
-    public IHost CreateHost()
+    public async Task<IHost> CreateHost(CancellationToken cancellationToken)
     {
+        await this.PreCreatingASync(cancellationToken);
         this.HostedPluginOptions = this.ConfigureOptions();
         var hostBuilder = new HostBuilder()
             .UseContentRoot(this.pluginInterface.ConfigDirectory.FullName)
@@ -165,7 +167,7 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
             });
         hostBuilder.ConfigureContainer<ContainerBuilder>(this.ConfigureContainer);
         hostBuilder.ConfigureServices(this.ConfigureServices);
-        this.PreBuild(hostBuilder);
+        await this.PreBuildingAsync(hostBuilder, cancellationToken);
         hostBuilder.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         {
             foreach (var service in this.hostedServices)
@@ -185,8 +187,21 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
     /// Override this function if you need to access the host builder while it is building.
     /// </summary>
     /// <param name="hostBuilder">The host builder.</param>
-    public virtual void PreBuild(IHostBuilder hostBuilder)
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public virtual Task PreBuildingAsync(IHostBuilder hostBuilder, CancellationToken cancellationToken)
     {
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Override this function if you need to run something before the host builder is created.
+    /// </summary>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public virtual Task PreCreatingASync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
     }
 
     private async Task Start(CancellationToken cancellationToken)
@@ -259,7 +274,7 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
 
     public async Task LoadAsync(CancellationToken cancellationToken)
     {
-        this.host = this.CreateHost();
+        this.host = await this.CreateHost(cancellationToken);
         await this.StartingAsync(cancellationToken);
         await this.Start(cancellationToken);
         await this.StartedAsync(cancellationToken);

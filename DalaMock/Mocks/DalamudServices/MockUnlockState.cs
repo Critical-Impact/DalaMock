@@ -66,6 +66,7 @@ public class MockUnlockState : IUnlockState, IMockService
     public HashSet<uint> TripleTriadCardUnlocked = new();
 
     public HashSet<uint> UnlockLinks = new();
+    public Dictionary<uint, byte> UnlockLinkProgression = new();
 
     /// <inheritdoc/>
     public bool IsAchievementComplete(Achievement row)
@@ -251,6 +252,13 @@ public class MockUnlockState : IUnlockState, IMockService
     public bool IsUnlockLinkUnlocked(uint unlockLink)
         =>
             this.UnlockLinks.Contains(unlockLink);
+
+    /// <inheritdoc/>
+    public bool IsUnlockLinkUnlocked(uint unlockLink, byte minimumQuestSequence)
+    {
+        return this.UnlockLinks.Contains(unlockLink) || (this.UnlockLinkProgression.ContainsKey(unlockLink) &&
+                                                         this.UnlockLinkProgression[unlockLink] >= minimumQuestSequence);
+    }
 
     /// <inheritdoc/>
     public bool IsUnlockLinkUnlocked(ushort unlockLink)

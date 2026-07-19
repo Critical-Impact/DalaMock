@@ -53,7 +53,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="../../DalaMock/DalaMock/DalaMock.Core.csproj" />
+        <ProjectReference Include="..\DalaMock\DalaMock.Core.csproj" />
         <ProjectReference Include="..\DalaMock.Host\DalaMock.Host.csproj" />
         <ProjectReference Include="..\DalaMock.Sample\DalaMock.Sample.csproj" />
         <ProjectReference Include="..\DalaMock.Shared\DalaMock.Shared.csproj" />

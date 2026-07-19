@@ -69,7 +69,7 @@ public class PluginLoader : IPluginLoader
             return false;
         }
 
-        var assemblyName = mockPlugin.PluginType.BaseType?.Assembly.GetName().Name ?? mockPlugin.PluginType.Assembly.GetName().Name ?? mockPlugin.PluginType.Name;
+        var assemblyName = GetPluginAssemblyName(mockPlugin.PluginType);
 
         var pluginDirectory = new DirectoryInfo(this.mockDalamudConfiguration.PluginSavePath.FullName);
         return await this.StartPlugin(mockPlugin, new PluginLoadSettings(pluginDirectory, new FileInfo(Path.Combine(this.mockDalamudConfiguration.PluginSavePath.FullName, assemblyName + ".json"))));
@@ -83,7 +83,7 @@ public class PluginLoader : IPluginLoader
     /// <returns>A boolean indicating whether or not the plugin started successfully.</returns>
     public async Task<bool> StartPlugin(MockPlugin plugin, PluginLoadSettings pluginLoadSettings)
     {
-        var assemblyName = plugin.PluginType.BaseType?.Assembly.GetName().Name ?? plugin.PluginType.Assembly.GetName().Name ?? plugin.PluginType.Name;
+        var assemblyName = GetPluginAssemblyName(plugin.PluginType, pluginLoadSettings);
 
         MockPluginManifest pluginManifest = null;
 
@@ -239,5 +239,44 @@ public class PluginLoader : IPluginLoader
     protected virtual void OnPluginStopped(MockPlugin mockPlugin)
     {
         this.PluginStopped?.Invoke(mockPlugin);
+    }
+
+    /// <summary>
+    /// Gets the assembly name DalaMock should expose for a plugin.
+    /// </summary>
+    /// <param name="pluginType">The plugin adapter type being loaded.</param>
+    /// <param name="pluginLoadSettings">The caller-supplied plugin load settings.</param>
+    /// <returns>The explicit target assembly name when provided, otherwise the adapter assembly name.</returns>
+    private static string GetPluginAssemblyName(Type pluginType, PluginLoadSettings? pluginLoadSettings = null)
+    {
+        if (!string.IsNullOrWhiteSpace(pluginLoadSettings?.AssemblyLocation))
+        {
+            var assemblyName = GetAssemblyNameFromLocation(pluginLoadSettings.AssemblyLocation);
+            if (!string.IsNullOrWhiteSpace(assemblyName))
+            {
+                return assemblyName;
+            }
+        }
+
+        return pluginType.Assembly.GetName().Name ?? pluginType.Name;
+    }
+
+    /// <summary>
+    /// Gets an assembly name from a caller-supplied assembly location.
+    /// </summary>
+    /// <param name="assemblyLocation">The explicit assembly location passed by the caller.</param>
+    /// <returns>The assembly identity name when it can be resolved, otherwise the file name.</returns>
+    private static string? GetAssemblyNameFromLocation(string assemblyLocation)
+    {
+        try
+        {
+            return AssemblyName.GetAssemblyName(assemblyLocation).Name;
+        }
+        catch (Exception) when (
+            !string.IsNullOrWhiteSpace(assemblyLocation) &&
+            (File.Exists(assemblyLocation) || Path.HasExtension(assemblyLocation)))
+        {
+            return Path.GetFileNameWithoutExtension(assemblyLocation);
+        }
     }
 }

@@ -85,6 +85,11 @@ public class MockFramework : IDisposable, IFramework, IMockService
         return Task.CompletedTask;
     }
 
+    public IDebouncer CreateDebouncer(TimeSpan delay, SysAction action)
+    {
+        return new MockDebouncer(delay, action);
+    }
+
     public Task Run(SysAction sysAction, CancellationToken cancellationToken = default(CancellationToken))
     {
         throw new NotImplementedException();
@@ -507,6 +512,49 @@ public class MockFramework : IDisposable, IFramework, IMockService
         protected override void CancelImpl()
         {
             this.TaskCompletionSource.SetCanceled();
+        }
+    }
+
+    private sealed class MockDebouncer : IDebouncer, IDisposable
+    {
+        private readonly SysAction action;
+        private readonly TimeSpan delay;
+        private Timer? timer;
+
+        public MockDebouncer(TimeSpan delay, SysAction action)
+        {
+            ArgumentNullException.ThrowIfNull(action);
+            this.delay = delay;
+            this.action = action;
+        }
+
+        public bool IsPending { get; private set; }
+
+        public void Debounce()
+        {
+            this.Cancel();
+            this.IsPending = true;
+            this.timer = new Timer(
+                _ =>
+                {
+                    this.IsPending = false;
+                    this.action();
+                },
+                null,
+                this.delay,
+                Timeout.InfiniteTimeSpan);
+        }
+
+        public void Cancel()
+        {
+            this.timer?.Dispose();
+            this.timer = null;
+            this.IsPending = false;
+        }
+
+        public void Dispose()
+        {
+            this.Cancel();
         }
     }
 }

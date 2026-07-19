@@ -2,6 +2,7 @@ namespace DalaMock.Core.Mocks.DalamudServices;
 
 public class MockGameGui : IGameGui, IMockService
 {
+    private readonly Dictionary<(string Name, int Index), nint> addonAddresses = [];
     private ulong hoveredItemId;
 
     public bool OpenMapWithMapLink(MapLinkPayload mapLink)
@@ -41,7 +42,7 @@ public class MockGameGui : IGameGui, IMockService
 
     public unsafe T* GetAddonByName<T>(string name, int index = 1) where T : unmanaged
     {
-        return null;
+        return (T*)this.GetAddonByName(name, index);
     }
 
     public AgentInterfacePtr GetAgentById(int id)
@@ -66,7 +67,9 @@ public class MockGameGui : IGameGui, IMockService
 
     public nint GetAddonByName(string name, int index = 1)
     {
-        return 0;
+        return this.addonAddresses.TryGetValue((name, index), out var addonAddress)
+            ? addonAddress
+            : 0;
     }
 
     public nint FindAgentInterface(string addonName)
@@ -89,10 +92,19 @@ public class MockGameGui : IGameGui, IMockService
     public ulong HoveredItem
     {
         get => this.hoveredItemId;
-        set => this.hoveredItemId = value;
+        set
+        {
+            if (this.hoveredItemId == value)
+            {
+                return;
+            }
+
+            this.hoveredItemId = value;
+            this.HoveredItemChanged?.Invoke(this, value);
+        }
     }
 
-    public HoveredAction HoveredAction { get; }
+    public HoveredAction HoveredAction { get; } = default!;
 
     public event EventHandler<bool>? UiHideToggled;
 
@@ -111,6 +123,17 @@ public class MockGameGui : IGameGui, IMockService
             itemId += 1_000_000;
         }
 
-        this.hoveredItemId = itemId;
+        this.HoveredItem = itemId;
+    }
+
+    public void RegisterAddon(string addonName, nint addonAddress, int index = 1)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(addonName);
+        this.addonAddresses[(addonName, index)] = addonAddress;
+    }
+
+    public void ClearAddons()
+    {
+        this.addonAddresses.Clear();
     }
 }

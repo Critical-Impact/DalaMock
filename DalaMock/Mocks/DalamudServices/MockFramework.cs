@@ -1,3 +1,5 @@
+using DalaMock.Core.Mocks.Misc;
+
 namespace DalaMock.Core.Mocks.DalamudServices;
 
 public class MockFramework : IDisposable, IFramework, IMockService
@@ -59,6 +61,11 @@ public class MockFramework : IDisposable, IFramework, IMockService
 
     /// <inheritdoc/>
     public event IFramework.OnUpdateDelegate Update;
+
+    public IDebouncer CreateDebouncer(TimeSpan delay, SysAction action)
+    {
+        return new Debouncer(this, delay, action);
+    }
 
     /// <inheritdoc/>
     public DateTime LastUpdate { get; private set; } = DateTime.MinValue;

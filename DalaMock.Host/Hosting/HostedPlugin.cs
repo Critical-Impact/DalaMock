@@ -33,8 +33,10 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
     private readonly IDalamudPluginInterface pluginInterface;
     private readonly IPluginLog pluginLog;
     private readonly HostedEvents hostedEvents;
+    private readonly CancellationTokenSource loadCts = new();
     private Dictionary<Type, Type> hostedServices;
     private IHost? host;
+    private bool disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HostedPlugin"/> class.
@@ -74,7 +76,15 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
     /// </summary>
     public virtual void Dispose()
     {
-        if (this.IsStarted)
+        if (this.disposed)
+        {
+            return;
+        }
+
+        this.disposed = true;
+        this.loadCts.Cancel();
+
+        if (this.host != null)
         {
             this.StoppingAsync().GetAwaiter().GetResult();
             this.Stop().GetAwaiter().GetResult();
@@ -82,6 +92,7 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
         }
 
         this.Host?.Dispose();
+        this.loadCts.Dispose();
     }
 
     /// <summary>
@@ -126,6 +137,11 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
     public virtual IReplacementContainer ReplacementContainer { get; }
 
     public IHost? Host => this.host;
+
+    /// <summary>
+    /// Gets a token that is cancelled when the plugin is disposed.
+    /// </summary>
+    protected CancellationToken LoadToken => this.loadCts.Token;
 
     /// <summary>
     /// Builds the host and starts the plugin.
@@ -187,7 +203,7 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
     /// Override this function if you need to access the host builder while it is building.
     /// </summary>
     /// <param name="hostBuilder">The host builder.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="cancellationToken">The plugin's <see cref="LoadToken"/>.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public virtual Task PreBuildingAsync(IHostBuilder hostBuilder, CancellationToken cancellationToken)
     {
@@ -197,14 +213,14 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
     /// <summary>
     /// Override this function if you need to run something before the host builder is created.
     /// </summary>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="cancellationToken">The plugin's <see cref="LoadToken"/>.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public virtual Task PreCreatingAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
     }
 
-    private async Task Start(CancellationToken cancellationToken)
+    private async Task Start()
     {
         if (this.Host == null)
         {
@@ -214,7 +230,7 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
 
         try
         {
-            await this.Host.StartAsync(cancellationToken);
+            await this.Host.StartAsync(CancellationToken.None);
         }
         catch (Exception startTask)
         {
@@ -262,7 +278,15 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
 
     public async ValueTask DisposeAsync()
     {
-        if (this.IsStarted)
+        if (this.disposed)
+        {
+            return;
+        }
+
+        this.disposed = true;
+        this.loadCts.Cancel();
+
+        if (this.host != null)
         {
             await this.StoppingAsync();
             await this.Stop();
@@ -270,14 +294,20 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
         }
 
         this.Host?.Dispose();
+        this.loadCts.Dispose();
     }
 
     public async Task LoadAsync(CancellationToken cancellationToken)
     {
-        this.host = await this.CreateHost(cancellationToken);
-        await this.StartingAsync(cancellationToken);
-        await this.Start(cancellationToken);
-        await this.StartedAsync(cancellationToken);
+        this.host = await this.CreateHost(this.LoadToken);
+        await this.StartingAsync(this.LoadToken);
+        await this.Start();
+        await this.StartedAsync();
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            this.pluginLog.Warning("Dalamud's load deadline elapsed while this plugin was loading, but the plugin started anyway. ");
+        }
     }
 
     public virtual Task StartingAsync(CancellationToken cancellationToken)
@@ -290,7 +320,7 @@ public abstract class HostedPlugin : IAsyncDalamudPlugin
         return Task.CompletedTask;
     }
 
-    public virtual Task StartedAsync(CancellationToken cancellationToken)
+    public virtual Task StartedAsync()
     {
         return Task.CompletedTask;
     }

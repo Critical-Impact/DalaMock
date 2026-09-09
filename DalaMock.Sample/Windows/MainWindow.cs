@@ -1,3 +1,6 @@
+using System;
+
+using Dalamud;
 using Dalamud.Game.Text;
 
 namespace DalaMock.Sample.Windows;
@@ -12,16 +15,23 @@ using Dalamud.Interface.Windowing;
 public class MainWindow : Window
 {
     private readonly IFont font1;
+    private readonly Version? version;
 
     public MainWindow(IFont font)
         : base("SamplePlugin")
     {
         this.font1 = font;
+        this.version = typeof(IServiceType).Assembly.GetName().Version;
     }
 
     public override void Draw()
     {
         ImGui.TextUnformatted("Hello, world!");
+
+        if (this.version != null)
+        {
+            ImGui.Text($"Mocking Dalamud Version {this.version}");
+        }
 
         ImGui.Text("A sample window");
         ImGui.Text("Icon Font");

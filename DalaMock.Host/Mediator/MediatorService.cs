@@ -35,27 +35,33 @@ public class MediatorService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        try
         {
-            await this.signal.WaitAsync(stoppingToken);
-
-            HashSet<MessageBase> processedMessages = [];
-            while (this.messageQueue.TryDequeue(out var message))
+            while (!stoppingToken.IsCancellationRequested)
             {
-                if (stoppingToken.IsCancellationRequested)
+                await this.signal.WaitAsync(stoppingToken);
+
+                HashSet<MessageBase> processedMessages = [];
+                while (this.messageQueue.TryDequeue(out var message))
                 {
-                    break;
+                    if (stoppingToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
+                    if (!processedMessages.Add(message))
+                    {
+                        continue;
+                    }
+
+                    this.ExecuteMessage(message);
                 }
 
-                if (!processedMessages.Add(message))
-                {
-                    continue;
-                }
-
-                this.ExecuteMessage(message);
+                await Task.Delay(50, stoppingToken);
             }
-
-            await Task.Delay(50, stoppingToken);
+        }
+        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+        {
         }
     }
 

@@ -68,7 +68,7 @@ public class DalamudPluginTest : HostedPlugin
         this.pluginLog.Verbose("Plugin starting!");
     }
 
-    public override Task StartedAsync(CancellationToken cancellationToken)
+    public override Task StartedAsync()
     {
         this.pluginLog.Verbose("Plugin started!");
         return Task.CompletedTask;

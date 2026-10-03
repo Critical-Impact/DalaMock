@@ -12,13 +12,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class Plugin : HostedPlugin
 {
+    private readonly IPluginLog pluginLog;
+
     public Plugin(
         IDalamudPluginInterface pluginInterface,
         IPluginLog pluginLog)
-        : base(pluginInterface, pluginLog)
+        : base(pluginInterface)
     {
-        this.CreateHost();
-        this.Start();
+        this.pluginLog = pluginLog;
     }
 
     /// <summary>

@@ -1,16 +1,18 @@
-﻿namespace SamplePlugin;
+namespace SamplePlugin;
 
-using DalaMock.Core.DI;
+using System.Threading.Tasks;
+
+using DalaMock.Core.Plugin;
 
 internal static class Program
 {
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
         var mockContainer = new MockContainer();
         var mockDalamudUi = mockContainer.GetMockUi();
         var pluginLoader = mockContainer.GetPluginLoader();
         var mockPlugin = pluginLoader.AddPlugin(typeof(MockPlugin));
-        pluginLoader.StartPlugin(mockPlugin);
+        await pluginLoader.StartPlugin(mockPlugin);
         mockDalamudUi.Run();
     }
 }

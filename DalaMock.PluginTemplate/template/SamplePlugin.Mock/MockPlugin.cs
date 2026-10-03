@@ -1,12 +1,9 @@
-﻿namespace SamplePlugin;
+namespace SamplePlugin;
 
-using Autofac;
 using DalaMock.Core.Mocks;
-using DalaMock.Core.Windows;
 using DalaMock.Shared.Interfaces;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using Microsoft.Extensions.Logging;
 
 public class MockPlugin : Plugin
 {
@@ -18,5 +15,5 @@ public class MockPlugin : Plugin
         this.mockReplacementContainer = mockReplacementContainer;
     }
 
-    public override IReplacementContainer ReplacementContainer => mockReplacementContainer;
+    public override IReplacementContainer ReplacementContainer => this.mockReplacementContainer;
 }

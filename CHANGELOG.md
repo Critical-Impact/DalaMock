@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [6.2.1] - 2026-10-14
+
+### Changed
+- Added missing methods/properties
+- Made improvements to MockDalamudPluginInterface to match Dalamud more closely
+
 ## [6.2.0] - 2026-09-09
 
 ### Changed

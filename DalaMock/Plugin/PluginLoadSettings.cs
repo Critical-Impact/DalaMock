@@ -21,5 +21,11 @@ public class PluginLoadSettings(DirectoryInfo configDir, FileInfo configFile)
     /// </summary>
     public string? AssemblyLocation { get; set; }
 
+    /// <summary>
+    /// Gets or sets the directory to provide as the Dalamud asset directory.
+    /// If not provided, a "dalamudAssets" directory next to the current executable will be used.
+    /// </summary>
+    public string? DalamudAssetDirectory { get; set; }
+
     public PluginLoadReason PluginLoadReason { get; set; } = PluginLoadReason.Boot;
 }

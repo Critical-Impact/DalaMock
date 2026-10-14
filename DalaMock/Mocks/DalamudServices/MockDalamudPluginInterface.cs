@@ -7,9 +7,11 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     private readonly MockDalamudVersionInfo mockDalamudVersionInfo;
     private readonly MockDataShare dataShare;
     private readonly ILogger<MockDalamudPluginInterface> logger;
+    private readonly MockPlugin mockPlugin;
 
     // private readonly MockProgram _mockProgram;
     private readonly IPluginManifest pluginManifest;
+    private readonly DirectoryInfo pluginConfigsDirectory;
     private PluginConfiguration pluginConfiguration;
     private PluginLoadReason pluginLoadReason;
     private readonly Guid pluginGuid;
@@ -21,7 +23,9 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         IComponentContext componentContext,
         MockDalamudVersionInfo mockDalamudVersionInfo,
         MockDataShare dataShare,
-        ILogger<MockDalamudPluginInterface> logger)
+        ILogger<MockDalamudPluginInterface> logger,
+        MockPlugin mockPlugin,
+        MockDalamudConfiguration mockDalamudConfiguration)
     {
         // _mockProgram = mockProgram;
         this.uiBuilder = uiBuilder;
@@ -29,10 +33,29 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         this.mockDalamudVersionInfo = mockDalamudVersionInfo;
         this.dataShare = dataShare;
         this.logger = logger;
+        this.mockPlugin = mockPlugin;
         this.ConfigFile = pluginLoadSettings.ConfigFile;
-        this.ConfigDirectory = pluginLoadSettings.ConfigDir;
+        this.pluginConfigsDirectory = pluginLoadSettings.ConfigDir;
         this.pluginLoadReason = pluginLoadSettings.PluginLoadReason;
-        this.AssemblyLocation = new FileInfo((pluginLoadSettings.AssemblyLocation ?? Environment.ProcessPath)!);
+        this.LoadTime = DateTime.Now;
+        this.LoadTimeUTC = DateTime.UtcNow;
+        this.UiLanguage = mockDalamudConfiguration.EffectiveLanguage;
+        this.Sanitizer = new Sanitizer(mockDalamudConfiguration.ClientLanguage);
+        this.DalamudAssetDirectory = new DirectoryInfo(pluginLoadSettings.DalamudAssetDirectory ?? Path.Combine(AppContext.BaseDirectory, "dalamudAssets"));
+        this.Assembly = mockPlugin.PluginType.Assembly;
+
+        var assemblyLocation = pluginLoadSettings.AssemblyLocation;
+        if (string.IsNullOrEmpty(assemblyLocation))
+        {
+            assemblyLocation = this.Assembly.Location;
+        }
+
+        if (string.IsNullOrEmpty(assemblyLocation))
+        {
+            assemblyLocation = Environment.ProcessPath!;
+        }
+
+        this.AssemblyLocation = new FileInfo(assemblyLocation);
         this.pluginConfiguration = new PluginConfiguration(pluginLoadSettings.ConfigDir.FullName);
         this.pluginManifest = pluginManifest;
         //TODO: Move this GUID into a LocalPluginManifest record
@@ -48,7 +71,8 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     /// <inheritdoc/>
     public Task InjectAsync(object instance, params object[] scopedObjects)
     {
-        throw new NotImplementedException();
+        this.Inject(instance, scopedObjects);
+        return Task.CompletedTask;
     }
 
     public Task<PluginUpdate?> CheckForUpdateAsync()
@@ -83,16 +107,16 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     public bool IsInProfile => false;
 
     /// <inheritdoc/>
-    public DateTime LoadTime => DateTime.Now;
+    public DateTime LoadTime { get; }
 
     /// <inheritdoc/>
-    public DateTime LoadTimeUTC => DateTime.Now;
+    public DateTime LoadTimeUTC { get; }
 
     /// <inheritdoc/>
-    public TimeSpan LoadTimeDelta => TimeSpan.Zero;
+    public TimeSpan LoadTimeDelta => DateTime.Now - this.LoadTime;
 
     /// <inheritdoc/>
-    public DirectoryInfo DalamudAssetDirectory => new(string.Empty);
+    public DirectoryInfo DalamudAssetDirectory { get; }
 
     /// <inheritdoc/>
     public FileInfo ConfigFile { get; }
@@ -104,15 +128,15 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     public bool IsDevMenuOpen => true;
 
     /// <inheritdoc/>
-    public bool IsDebugging => true;
+    public bool IsDebugging => Debugger.IsAttached;
 
     public bool AllowSeasonalEvents => true;
 
     /// <inheritdoc/>
-    public string UiLanguage => "English";
+    public string UiLanguage { get; private set; }
 
     /// <inheritdoc/>
-    public ISanitizer Sanitizer => new Sanitizer(ClientLanguage.English);
+    public ISanitizer Sanitizer { get; }
 
     /// <inheritdoc/>
     public XivChatType GeneralChatType => XivChatType.Debug;
@@ -125,7 +149,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         PluginInstallerOpenKind openTo = PluginInstallerOpenKind.AllPlugins,
         string? searchText = null)
     {
-        throw new NotImplementedException();
+        return false;
     }
 
     /// <inheritdoc/>
@@ -184,7 +208,10 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     }
 
     /// <inheritdoc/>
-    public DirectoryInfo ConfigDirectory { get; }
+    public DirectoryInfo ConfigDirectory => new(this.GetPluginConfigDirectory());
+
+    /// <inheritdoc/>
+    public Assembly Assembly { get; }
 
     /// <inheritdoc/>
     public FileInfo AssemblyLocation { get; }
@@ -304,6 +331,11 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     /// <inheritdoc/>
     public void SavePluginConfig(IPluginConfiguration? currentConfig)
     {
+        if (currentConfig == null)
+        {
+            return;
+        }
+
         var serializedConfig = SerializeConfig(currentConfig);
         File.WriteAllText(this.ConfigFile.FullName, serializedConfig);
     }
@@ -327,19 +359,13 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     /// <inheritdoc/>
     public string GetPluginConfigDirectory()
     {
-        var pluginConfigDirectory = Path.Combine(this.ConfigDirectory.FullName, this.InternalName);
-        if (!Path.Exists(pluginConfigDirectory))
-        {
-            Directory.CreateDirectory(pluginConfigDirectory);
-        }
-
-        return pluginConfigDirectory;
+        return this.GetOrCreateConfigDirectory(this.InternalName);
     }
 
     /// <inheritdoc/>
     public string GetPluginLocDirectory()
     {
-        return Path.Combine(Path.Combine(this.ConfigDirectory.FullName, this.InternalName), "loc");
+        return this.GetOrCreateConfigDirectory(Path.Combine(this.InternalName, "loc"));
     }
 
     /// <inheritdoc/>
@@ -362,33 +388,14 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     public T? Create<T>(params object[] scopedObjects)
         where T : class
     {
-        var mockServices = this.componentContext.Resolve<IEnumerable<IMockService>>();
-        Dictionary<Type, object> mockServicesDict = new();
-        foreach (var mockService in mockServices)
-        {
-            foreach (var interfaceType in mockService.GetType().GetInterfaces())
-            {
-                mockServicesDict.TryAdd(interfaceType, mockService);
-            }
-        }
-
-        foreach (var scopedObject in scopedObjects)
-        {
-            foreach (var interfaceType in scopedObject.GetType().GetInterfaces())
-            {
-                mockServicesDict.TryAdd(interfaceType, scopedObject);
-            }
-        }
+        var mockServicesDict = this.BuildServiceMap(scopedObjects);
 
         // Get the type of the class to instantiate
         var typeToCreate = typeof(T);
-
-        // Get all constructors of the class
-        var constructors = typeToCreate.GetConstructors();
         T? newInstance = null;
 
-        // Try to find a suitable constructor
-        foreach (var constructor in constructors)
+        // Try to find the most suitable constructor
+        foreach (var constructor in typeToCreate.GetConstructors().OrderByDescending(c => c.GetParameters().Length))
         {
             var parameters = constructor.GetParameters();
             var parameterValues = new List<object>();
@@ -407,18 +414,11 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
                 }
             }
 
-            // If all parameters are resolved, create an instance and return it
             if (parameterValues != null)
             {
                 newInstance = (T)constructor.Invoke(parameterValues.ToArray());
+                break;
             }
-        }
-
-        // If no suitable constructor is found, try to use a parameterless constructor
-        var parameterlessConstructor = constructors.FirstOrDefault(c => c.GetParameters().Length == 0);
-        if (parameterlessConstructor != null)
-        {
-            newInstance = (T)parameterlessConstructor.Invoke(null);
         }
 
         if (newInstance == null)
@@ -452,29 +452,20 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
     public Task<T> CreateAsync<T>(params object[] scopedObjects)
         where T : class
     {
-        throw new NotImplementedException();
+        var instance = this.Create<T>(scopedObjects);
+        if (instance == null)
+        {
+            return Task.FromException<T>(new InvalidOperationException(
+                $"Could not create an instance of '{typeof(T).FullName}' with the provided mock services."));
+        }
+
+        return Task.FromResult(instance);
     }
 
     /// <inheritdoc/>
     public bool Inject(object instance, params object[] scopedObjects)
     {
-        var mockServices = this.componentContext.Resolve<IEnumerable<IMockService>>();
-        Dictionary<Type, object> mockServicesDict = new();
-        foreach (var mockService in mockServices)
-        {
-            foreach (var interfaceType in mockService.GetType().GetInterfaces())
-            {
-                mockServicesDict.TryAdd(interfaceType, mockService);
-            }
-        }
-
-        foreach (var scopedObject in scopedObjects)
-        {
-            foreach (var interfaceType in scopedObject.GetType().GetInterfaces())
-            {
-                mockServicesDict.TryAdd(interfaceType, scopedObject);
-            }
-        }
+        var mockServicesDict = this.BuildServiceMap(scopedObjects);
 
         var properties = instance.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(prop => Attribute.IsDefined(prop, typeof(PluginServiceAttribute)) && prop.CanWrite && prop.CanRead);
@@ -494,6 +485,25 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
         }
 
         return true;
+    }
+
+    private string GetOrCreateConfigDirectory(string relativePath)
+    {
+        try
+        {
+            var path = new DirectoryInfo(Path.Combine(this.pluginConfigsDirectory.FullName, relativePath));
+            if (!path.Exists)
+            {
+                path.Create();
+            }
+
+            return path.FullName;
+        }
+        catch (Exception e)
+        {
+            this.logger.LogError(e, $"Could not create the config directory '{relativePath}'.");
+            return string.Empty;
+        }
     }
 
     internal static string SerializeConfig(object? config)
@@ -519,6 +529,7 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
 
     public virtual void OnLanguageChanged(string langcode)
     {
+        this.UiLanguage = langcode;
         this.LanguageChanged?.Invoke(langcode);
     }
 
@@ -529,6 +540,31 @@ public class MockDalamudPluginInterface : IDalamudPluginInterface, IDisposable
 
     public object? GetService(Type serviceType)
     {
-        throw new NotImplementedException();
+        return this.componentContext.ResolveOptional(serviceType);
+    }
+
+    private Dictionary<Type, object> BuildServiceMap(object[] scopedObjects)
+    {
+        Dictionary<Type, object> serviceMap = new();
+        foreach (var scopedObject in scopedObjects)
+        {
+            serviceMap.TryAdd(scopedObject.GetType(), scopedObject);
+            foreach (var interfaceType in scopedObject.GetType().GetInterfaces())
+            {
+                serviceMap.TryAdd(interfaceType, scopedObject);
+            }
+        }
+
+        serviceMap.TryAdd(typeof(IDalamudPluginInterface), this);
+
+        foreach (var mockService in this.componentContext.Resolve<IEnumerable<IMockService>>())
+        {
+            foreach (var interfaceType in mockService.GetType().GetInterfaces())
+            {
+                serviceMap.TryAdd(interfaceType, mockService);
+            }
+        }
+
+        return serviceMap;
     }
 }

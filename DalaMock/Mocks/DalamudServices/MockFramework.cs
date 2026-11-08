@@ -303,6 +303,16 @@ public class MockFramework : IDisposable, IFramework, IMockService
         this.HandleFrameworkUpdate();
     }
 
+    /// <summary>
+    /// Runs the tasks queued by RunOnTick and RunOnFrameworkThread, without raising the Update event.
+    /// Tests can use this to process queued work without running every update handler, some of which read game memory.
+    /// A task with a delay that has not passed stays in the queue.
+    /// </summary>
+    public void RunPendingTasks()
+    {
+        this.RunPendingTickTasks();
+    }
+
     private void RunPendingTickTasks()
     {
         if (this.runOnNextTickTaskList.Count == 0 && this.runOnNextTickTaskList2.Count == 0)

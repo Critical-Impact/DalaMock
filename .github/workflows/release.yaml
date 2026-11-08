@@ -14,8 +14,25 @@ defaults:
     shell: pwsh
 
 jobs:
+  validate_version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check tag matches csproj version
+        run: |
+          [xml]$csproj = Get-Content "DalaMock/DalaMock.Core.csproj"
+          $csprojVersion = ($csproj.Project.PropertyGroup | Where-Object { $_.Version } | Select-Object -First 1).Version
+          $tag = "${{ github.ref_name }}"
+          if ($csprojVersion -ne $tag) {
+            Write-Error "Tag '$tag' does not match DalaMock.Core.csproj version '$csprojVersion'. Aborting."
+            exit 1
+          }
+          Write-Host "Version check passed: $csprojVersion"
+
   create_nuget:
     runs-on: ubuntu-latest
+    needs: [ validate_version ]
     steps:
       - uses: actions/checkout@v4
         with:

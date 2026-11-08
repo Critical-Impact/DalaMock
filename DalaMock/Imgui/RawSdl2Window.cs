@@ -1,3 +1,5 @@
+using Rectangle = Veldrid.Rectangle;
+
 namespace DalaMock.Core.Imgui;
 
 public unsafe class RawSdl2Window : ISdl2Window

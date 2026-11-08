@@ -1,3 +1,4 @@
+using Rectangle = Veldrid.Rectangle;
 using Texture = Veldrid.Texture;
 
 namespace DalaMock.Core.Imgui;

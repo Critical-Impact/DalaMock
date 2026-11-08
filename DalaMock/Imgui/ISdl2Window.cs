@@ -1,3 +1,5 @@
+using Rectangle = Veldrid.Rectangle;
+
 namespace DalaMock.Core.Imgui;
 
 public interface ISdl2Window

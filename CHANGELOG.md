@@ -13,6 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+## [6.2.2] - 2026-11-08
+
+### Added
+- Added RunPendingTasks to MockFramework to run queued tasks without raising the Update event
+
+### Fixed
+- Service replacements in MockContainer now apply to the correct Dalamud service interface
+- Service replacements are only registered once when multiple mocks implement the same service
+
 ## [6.2.1] - 2026-10-14
 
 ### Changed
@@ -118,7 +127,7 @@ This version of DalaMock introduces several breaking changes with how non-dalamu
 ```
 
 ### Other Changes:
-- Split the plugin loader window 
+- Split the plugin loader window
 - Introduced IWindowSystemFactory and MockWindowSystemFactory
 - ImGuiComponents now includes HelpMarker
 - Switch DalaMock's WindowSystem to a similar system dalamud now uses.

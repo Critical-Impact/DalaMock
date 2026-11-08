@@ -326,16 +326,23 @@ public class MockContainer
             mockServiceTypes = fixedList;
         }
 
+        // Keyed by the Dalamud service interface (for example ITextureProvider), the same key as serviceReplacements
         var replacedTypes = new Dictionary<Type, Type>();
 
         // Register each type as implementing IMockService or as the replacement type if specified
         foreach (var type in mockServiceTypes)
         {
-            var backingInterface = type.GetInterfaces().FirstOrDefault(c => this.GetType() == typeof(IServiceType));
+            // The backing interface is the Dalamud service the mock implements, for example ITextureProvider for NullTextureProvider
+            var backingInterface = type.GetInterfaces().FirstOrDefault(c =>
+                c != typeof(Dalamud.Plugin.Services.IDalamudService) &&
+                typeof(Dalamud.Plugin.Services.IDalamudService).IsAssignableFrom(c));
             if (backingInterface != null && this.serviceReplacements != null && this.serviceReplacements.TryGetValue(backingInterface, out var replacementType))
             {
-                replacedTypes.Add(type, replacementType);
-                builder.RegisterType(replacementType).AsSelf().As(replacementType.GetInterfaces()).SingleInstance();
+                // Register the replacement once, even if more than one mock implements the same service
+                if (replacedTypes.TryAdd(backingInterface, replacementType))
+                {
+                    builder.RegisterType(replacementType).AsSelf().As(replacementType.GetInterfaces()).SingleInstance();
+                }
             }
             else
             {
